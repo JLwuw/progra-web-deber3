@@ -20,3 +20,8 @@ export async function getCurrentSession(): Promise<Session | null> {
   const { data } = await supabase.auth.getSession();
   return data.session;
 }
+
+export async function getCurrentUserId(): Promise<string | null> {
+  const session = await getCurrentSession();
+  return session?.user.id ?? null;
+}

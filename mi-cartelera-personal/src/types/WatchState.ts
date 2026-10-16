@@ -1,0 +1,1 @@
+export type WatchState = "plan_to_watch" | "watching" | "finished"

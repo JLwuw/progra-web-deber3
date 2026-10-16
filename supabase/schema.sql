@@ -1,5 +1,5 @@
 
-CREATE TYPE public.content_type AS ENUM (
+CREATE TYPE public.media_type AS ENUM (
     'movie',
     'series'
 );
@@ -16,7 +16,7 @@ create table if not exists public.my_listing (
     tmdb_id bigint not null,
     title text not null,
     poster_url text not null,
-    type_content public.content_type not null,
+    media_type public.media_type not null,
     watch_state public.watch_state not null,
     user_grade int check (user_grade between 1 and 5),
     comment text,

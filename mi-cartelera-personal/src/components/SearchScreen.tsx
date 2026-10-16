@@ -1,20 +1,75 @@
 import { useState, useEffect } from "react";
 
-import type { ContentType } from "../types/ContentType.ts"
+import type { MediaType } from "../types/MediaType.ts"
+import type { WatchState } from "../types/WatchState.ts";
+import type { Media } from "../types/Media.ts"
+
+import { MediaCard } from "./MediaCard.tsx"
 
 const BASE_URL = "https://api.themoviedb.org/3/search"
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
+
+const POSTER_SIZE = "w500"
+const POSTER_BASE_URL = `https://image.tmdb.org/t/p/${POSTER_SIZE}`
+
+const RESULT_COUNT = 5
 
 export function SearchScreen() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [input, setInput] = useState<string>("")
   const [search, setSearch] = useState<string>("")
-  const [searchType, setSearchType] = useState<ContentType>("movie");
+  const [searchType, setSearchType] = useState<MediaType>("movie");
   const [retryCounter, setRetryCounter] = useState<number>(1)
+  const [searchResult, setSearchResult] = useState<Omit<Media, "id" | "user_id">[]>([])
   
+  function onSearch(event: React.SubmitEvent) {
+    event.preventDefault()
+    if (input === '') return
+    setSearch(input.trim())
+  }
+  
+  function onRetry() {
+    setSearch(input.trim())
+    setRetryCounter((previous) => previous += 1)
+  }
+
+  function parseResults(
+    results: Array<{
+      title?: string
+      name?: string
+      id: number
+      poster_path: string | null
+    }>,
+    searchType: MediaType
+  ): Omit<Media, "id" | "user_id">[] {
+    let media_list: Array<Omit<Media, "id" | "user_id">> = []
+
+    results.forEach((element) => {
+      const title: string = (searchType === 'movie' ? element.title : element.name) ?? ""
+      const tmdb_id: number = element.id
+      const poster_url: string = POSTER_BASE_URL + element.poster_path
+      const media_type: MediaType = searchType
+      const watch_state: WatchState = "plan_to_watch"
+
+      const media: Omit<Media, "id" | "user_id"> = {
+        title: title,
+        tmdb_id: tmdb_id,
+        poster_url: poster_url,
+        media_type: media_type,
+        watch_state: watch_state
+      }
+
+      media_list.push(media) 
+    })
+
+    return media_list
+  }
+
   useEffect(() => {
     async function getSearchResults() {
+      if (search === "") return
+
       setLoading(true)
       setError(null)
 
@@ -29,12 +84,20 @@ export function SearchScreen() {
         }
 
         const data = await response.json()
-        console.log(data)
+        const results = data.results.slice(0, RESULT_COUNT);
+        
+        if (results.length <= 0) {
+          throw new Error(`No results found for: ${search}`)
+        }
+
+        console.log(results)
+
+        const cleaned_results = parseResults(results, searchType)
+        setSearchResult(cleaned_results)
       }
 
       catch(err: any) {
         setError(err instanceof Error ? err.message : "An unexpected error ocurred")
-        console.log(err.message)
       }
 
       finally {
@@ -46,17 +109,6 @@ export function SearchScreen() {
     getSearchResults()
 
   }, [search, retryCounter])
-
-  function onSearch(event: React.SubmitEvent) {
-    event.preventDefault()
-    if (input === '') return
-    setSearch(input.trim())
-  }
-
-  function onRetry() {
-    setSearch(input.trim())
-    setRetryCounter((previous) => previous += 1)
-  }
 
   return (
     <div className="search-screen container flex-column py-5">
@@ -106,6 +158,19 @@ export function SearchScreen() {
               <button className="btn btn-danger" onClick={onRetry}>
                 Retry
               </button>
+            </div>
+          )}
+
+          {!loading && !error && searchResult && (
+            <div className="d-flex flex-column align-items-center gap-2">
+              <h2 className="text-white"> 
+                Showing Results for {searchResult[0].media_type === "movie" ? "Movies" : "TV Shows"}
+              </h2>
+              {searchResult.map(result => (
+                <div className="col-8 mb-4" key={result.tmdb_id}>
+                  <MediaCard media={result}/>
+                </div>
+              ))}
             </div>
           )}
         </div>
