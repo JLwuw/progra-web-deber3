@@ -89,6 +89,22 @@
   to { transform: rotate(360deg); } 
 }
 
-.cambiar-modo-auth { background: none; border: none; color: #3ecf8e; cursor: pointer; font-size: 0.85rem; margin-top: 1rem; }
 .barra-usuario { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .barra-usuario .correo-usuario { font-size: 0.85rem; color: #9ce6b8; }
+
+.search-screen {
+  min-height: 50vh; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.search-bar {
+  border-radius: 10px;
+  background-color: var(--code-bg);
+  min-width: 800px;
+}
+
+.search-bar label {
+  color: var(--text-h)
+}

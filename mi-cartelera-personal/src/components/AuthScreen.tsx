@@ -11,19 +11,19 @@ export function AuthScreen() {
   const [sent, setSent] = useState(false);
 
   async function sendAuth(event: React.SubmitEvent) {
-    event.preventDefault();
-    setError(null);
-    setSent(true);
+    event.preventDefault()
+    setError(null)
+    setSent(true)
     try {
       if (type === "login") {
-        await startSession(email, password);
+        await startSession(email, password)
       } else {
-        await registerUser(email, password);
+        await registerUser(email, password)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado.");
+      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado.")
     } finally {
-      setSent(false);
+      setSent(false)
     }
   }
 
