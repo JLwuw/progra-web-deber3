@@ -5,8 +5,9 @@ import { getCurrentSession, closeSession } from "./services/authService.ts";
 
 import { LoadingScreen } from "./components/LoadingScreen.tsx" 
 import { AuthScreen } from "./components/AuthScreen.tsx"
-import { Navbar } from "./components/NavBar.tsx"
+import { Navbar } from "./components/Navbar.tsx"
 import { SearchScreen } from "./components/SearchScreen.tsx"
+import { ListingScreen } from "./components/ListingScreen.tsx";
 
 type View = "search" | "listing" | "editing"
 
@@ -59,6 +60,7 @@ function App() {
       return (
       <>
         <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch}/>
+        <ListingScreen />
       </>
     )
 }

@@ -4,7 +4,10 @@ import type { MediaType } from "../types/MediaType.ts"
 import type { WatchState } from "../types/WatchState.ts";
 import type { Media } from "../types/Media.ts"
 
-import { MediaCard } from "./MediaCard.tsx"
+import { insertListing } from "../services/listingService.ts"
+import { getCurrentUserId } from "../services/authService.ts";
+
+import { SearchMediaCard } from "./SearchMediaCard.tsx"
 
 const BASE_URL = "https://api.themoviedb.org/3/search"
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -64,6 +67,18 @@ export function SearchScreen() {
     })
 
     return media_list
+  }
+
+  async function onAddListing(media: Omit<Media, "id" | "user_id">) {
+    try {
+      const user_id = await getCurrentUserId()
+      if (!user_id) throw new Error("Unable to get User ID")
+      insertListing(media, user_id)
+    }
+
+    catch (err) {
+      setError(err instanceof Error ? err.message : "An unexpected error ocurred")
+    }
   }
 
   useEffect(() => {
@@ -168,7 +183,7 @@ export function SearchScreen() {
               </h2>
               {searchResult.map(result => (
                 <div className="col-8 mb-4" key={result.tmdb_id}>
-                  <MediaCard media={result}/>
+                  <SearchMediaCard media={result} onAddListing={onAddListing}/>
                 </div>
               ))}
             </div>
