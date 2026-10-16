@@ -161,7 +161,7 @@ export function SearchScreen() {
             </div>
           )}
 
-          {!loading && !error && searchResult && (
+          {!loading && !error && searchResult[0] && (
             <div className="d-flex flex-column align-items-center gap-2">
               <h2 className="text-white"> 
                 Showing Results for {searchResult[0].media_type === "movie" ? "Movies" : "TV Shows"}
