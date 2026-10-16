@@ -19,9 +19,6 @@
   text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 .auth-screen { 
@@ -85,6 +82,7 @@
   spin 0.8s linear infinite; 
 }
 
+
 @keyframes spin { 
   to { transform: rotate(360deg); } 
 }
@@ -94,7 +92,6 @@
 
 .search-screen {
   min-height: 50vh; 
-  display: flex; 
   align-items: center; 
   justify-content: center; 
 }
@@ -102,9 +99,18 @@
 .search-bar {
   border-radius: 10px;
   background-color: var(--code-bg);
-  min-width: 800px;
 }
 
 .search-bar label {
   color: var(--text-h)
+}
+
+.search-screen .error-search { 
+  background: #2a1414; 
+  border: 1px solid #b3261e; 
+  color: #f6d2cf; 
+  border-radius: 8px; 
+  padding: 0.75rem; 
+  font-size: 0.85rem;
+  margin-bottom: 1rem; 
 }
