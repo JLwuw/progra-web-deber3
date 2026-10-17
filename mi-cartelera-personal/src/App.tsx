@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabaseClient.ts";
 
-import { getCurrentSession } from "./services/authService.ts";
+import { getCurrentSession, closeSession } from "./services/authService.ts";
 import type { Media } from "./types/Media.ts";
 
 import { LoadingScreen } from "./components/LoadingScreen.tsx" 
@@ -27,6 +27,19 @@ function App() {
 
   function onNavSearch() {
     setView("search")
+  }
+
+  async function handleLogout() {
+    try {
+      await closeSession()
+      setView("search")
+      setTargetListing(null)
+    }
+
+    catch (error) {
+      console.error("Logout failed:", error);
+      return;
+    }
   }
 
   function onListingDetail(listing: Media) {
@@ -70,7 +83,7 @@ function App() {
   if (view === "search")
     return (
       <>
-        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch}/>
+        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch} handleLogout={handleLogout}/>
         <SearchScreen />
       </>
     )
@@ -78,7 +91,7 @@ function App() {
   if (view === "listing")
       return (
       <>
-        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch}/>
+        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch} handleLogout={handleLogout}/>
         <ListingScreen 
           onListingDetail={onListingDetail}
           onListingEdit={onListingEdit}
@@ -89,7 +102,7 @@ function App() {
     if (view === "details" && targetListing)
       return (
       <>
-        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch}/>
+        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch} handleLogout={handleLogout}/>
         <ListingDetailScreen listing={targetListing} onListingExit={onListingExit} />
       </>
     )
@@ -97,7 +110,7 @@ function App() {
     if (view === "edit" && targetListing)
       return (
       <>
-        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch}/>
+        <Navbar onNavListing={onNavListing} onNavSearch={onNavSearch} handleLogout={handleLogout}/>
         <ListingEditScreen listing={targetListing} onListingExit={onListingExit} />
       </>
     )

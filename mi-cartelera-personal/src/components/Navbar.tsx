@@ -1,23 +1,10 @@
-import { closeSession } from "../services/authService.ts";
-
 interface NavbarProps {
   onNavSearch: () => void
   onNavListing: () => void
+  handleLogout: () => void
 }
 
-export function Navbar( {onNavSearch, onNavListing}: NavbarProps) {
-  async function handleLogout() {
-    
-    try {
-      closeSession()
-    }
-
-    catch (error) {
-      console.error("Logout failed:", error);
-      return;
-    }
-  }
-
+export function Navbar( {onNavSearch, onNavListing, handleLogout}: NavbarProps) {
   return (
     <nav className="navbar navbar-expand">
       <div className="container justify-content-center">

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import type { Media } from "../types/Media.ts"
 
 import { getListings } from "../services/listingService.ts"
+import { deleteListing } from "../services/listingService.ts"
 
 import { ListingMediaCard } from "./ListingMediaCard.tsx";
 
@@ -19,6 +20,20 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
 
   function onRetry() {
     setRetryCounter((previous) => previous += 1)
+  }
+
+  async function onListingDelete(listing: Media) {
+    const id = listing.id
+
+    try {
+      await deleteListing(id)
+      setListing((prev) => prev.filter((listing) => listing.id !== id))
+    }
+
+    catch (err) {
+      setError(err instanceof Error ? err.message : "Failed remove listing");
+    }
+    return
   }
 
   useEffect(() => {
@@ -67,6 +82,7 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
                     media={result}
                     onListingDetail={onListingDetail}
                     onListingEdit={onListingEdit}
+                    onListingDelete={onListingDelete}
                   />
                 </div>
               ))}
