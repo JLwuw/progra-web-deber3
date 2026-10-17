@@ -6,7 +6,12 @@ import { getListings } from "../services/listingService.ts"
 
 import { ListingMediaCard } from "./ListingMediaCard.tsx";
 
-export function ListingScreen() {
+interface ListingScreenProps {
+    onListingDetail: (listing: Media) => void,
+    onListingEdit: (listing: Media) => void
+}
+
+export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenProps) {
   const [listing, setListing] = useState<Media[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -25,7 +30,7 @@ export function ListingScreen() {
         setListing(data);
       } 
       catch (err) {
-        setError(err instanceof Error ? err.message : "Error desconocido.");
+        setError(err instanceof Error ? err.message : "Failed to get Listings");
       }
       finally {
         setLoading(false);
@@ -58,7 +63,11 @@ export function ListingScreen() {
             <div className="d-flex flex-column align-items-center gap-2">
               {listing.map(result => (
                 <div className="col-8 mb-4" key={result.tmdb_id}>
-                  <ListingMediaCard media={result}/>
+                  <ListingMediaCard 
+                    media={result}
+                    onListingDetail={onListingDetail}
+                    onListingEdit={onListingEdit}
+                  />
                 </div>
               ))}
             </div>
