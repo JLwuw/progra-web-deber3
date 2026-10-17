@@ -132,8 +132,11 @@ export function SearchScreen() {
           <form onSubmit={onSearch}>
             <div className="mb-3">
               <label className="form-label"> Movie/Series Name </label>
-              <input type="text" className="form-control" value={input}
+              <input type="text" className="form-control mb-2" value={input} placeholder="Star Wars..."
               onChange={(e) => setInput(e.target.value)} required />
+              <button className="btn btn-primary" disabled={loading}>
+                {loading ? "Loading..." : "Search"}
+              </button>
             </div>
           </form>
           

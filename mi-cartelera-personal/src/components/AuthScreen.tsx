@@ -5,10 +5,10 @@ type TypeAuth = "login" | "register";
 
 export function AuthScreen() {
   const [type, setType] = useState<TypeAuth>("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState<boolean>(false);
 
   async function sendAuth(event: React.SubmitEvent) {
     event.preventDefault()
