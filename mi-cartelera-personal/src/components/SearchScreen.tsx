@@ -73,7 +73,8 @@ export function SearchScreen() {
     try {
       const user_id = await getCurrentUserId()
       if (!user_id) throw new Error("Unable to get User ID")
-      insertListing(media, user_id)
+      await insertListing(media, user_id)
+      window.alert(`"${media.title}" has been added successfully.`)
     }
 
     catch (err) {

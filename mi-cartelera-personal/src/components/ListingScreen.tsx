@@ -23,6 +23,8 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
   }
 
   async function onListingDelete(listing: Media) {
+    if (!window.confirm(`Are you sure you want to remove "${listing.title}"?`)) return
+
     const id = listing.id
 
     try {
