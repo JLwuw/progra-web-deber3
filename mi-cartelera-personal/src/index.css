@@ -135,3 +135,11 @@
 .media-card img {
   border-radius: 8px;
 }
+
+.media-poster {
+  display: block;
+  width: 500px;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
