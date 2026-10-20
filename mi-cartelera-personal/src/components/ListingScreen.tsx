@@ -23,6 +23,11 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
   const [dateFrom, setDateFrom] = useState("")
   const [dateTo, setDateTo] = useState("")
 
+  const watchStateCounts = listing.reduce<Record<WatchState, number>>((counts, item) => {
+    counts[item.watch_state] += 1
+    return counts
+  }, { plan_to_watch: 0, watching: 0, finished: 0 })
+
   const invalidDateRange = Boolean(dateFrom && dateTo && dateFrom > dateTo)
   const filteredListings = listing.filter((item) => {
     if (invalidDateRange) return false
@@ -90,6 +95,31 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
       <h2 className="my-5 text-white">My Listings: </h2>
       <div className="row justify-content-center">
         <div className="col-8">
+          {!loading && !error && (
+            <section aria-label="Watch state totals" className="mb-4">
+              <h3 className="h5 text-white">All Listings by Watch State</h3>
+              <dl className="row g-3 mb-0" aria-live="polite">
+                <div className="col-12 col-md-4">
+                  <div className="media-card rounded p-3 h-100">
+                    <dt className="text-white">Planning to Watch</dt>
+                    <dd className="fs-3 mb-0">{watchStateCounts.plan_to_watch}</dd>
+                  </div>
+                </div>
+                <div className="col-12 col-md-4">
+                  <div className="media-card rounded p-3 h-100">
+                    <dt className="text-white">Watching</dt>
+                    <dd className="fs-3 mb-0">{watchStateCounts.watching}</dd>
+                  </div>
+                </div>
+                <div className="col-12 col-md-4">
+                  <div className="media-card rounded p-3 h-100">
+                    <dt className="text-white">Finished</dt>
+                    <dd className="fs-3 mb-0">{watchStateCounts.finished}</dd>
+                  </div>
+                </div>
+              </dl>
+            </section>
+          )}
           <div className="row g-3 mb-4 text-start">
             <div className="col-12 col-md-6">
               <label htmlFor="watch-state-filter" className="form-label text-white">Watch State</label>
