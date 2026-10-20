@@ -11,4 +11,5 @@ export interface Media {
     watch_state: WatchState
     user_grade?: number
     comment?: string
+    created_at?: string | null
 }
