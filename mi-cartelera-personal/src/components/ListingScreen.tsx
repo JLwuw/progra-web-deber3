@@ -173,7 +173,7 @@ export function ListingScreen( { onListingDetail, onListingEdit}: ListingScreenP
           )}
 
           {!loading && !error && (
-            <div className="d-flex flex-column align-items-center gap-2">
+            <div className="media-grid">
               <p className="text-white" role="status">
                 {listing.length === 0 ? "You haven't added any listings yet." :
                   filteredListings.length === 0 ? "No listings match your filters." :

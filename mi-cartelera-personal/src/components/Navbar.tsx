@@ -7,7 +7,8 @@ interface NavbarProps {
 export function Navbar( {onNavSearch, onNavListing, handleLogout}: NavbarProps) {
   return (
     <nav className="navbar navbar-expand">
-      <div className="container justify-content-center">
+      <div className="container nav-shell">
+        <span className="app-brand"><span aria-hidden="true">◈</span> My Listing<span className="brand-caption">YOUR PERSONAL BOX OFFICE</span></span>
         <ul className="navbar-nav align-items-center gap-3">
           <li className="nav-item">
             <button 
@@ -30,7 +31,7 @@ export function Navbar( {onNavSearch, onNavListing, handleLogout}: NavbarProps) 
           <li className="nav-item">
             <button
               type="button"
-              className="btn btn-outline-danger btn-sm"
+              className="btn btn-danger"
               onClick={handleLogout}
             >
               Logout
