@@ -1,7 +1,7 @@
 
 CREATE TYPE public.media_type AS ENUM (
     'movie',
-    'series'
+    'tv'
 );
 
 CREATE TYPE public.watch_state AS ENUM (
