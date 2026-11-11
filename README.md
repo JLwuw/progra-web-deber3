@@ -37,7 +37,7 @@ npm run lint
 npm run build
 ```
 
-Tests type-check their sources and use mocked network/authentication boundaries; they do not load project environment files. They are not proof of deployed RLS or catalog availability. See [E1 repair results](docs/E1-REPAIRS.md) for the checklist and outstanding manual checks.
+Tests type-check their sources and use mocked network/authentication boundaries; they do not load project environment files. They are not proof of deployed RLS or catalog availability. See [E1 repair results](docs/specs/e1-repairs.md#historical-e1-implementation-and-verification-evidence) for the checklist and outstanding manual checks.
 
 ## Movie Night
 

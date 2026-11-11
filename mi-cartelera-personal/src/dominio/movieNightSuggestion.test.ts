@@ -40,6 +40,13 @@ describe("automatic movie-night suggestions", () => {
           status: "unknown",
           reason: "Missing",
         },
+        {
+          tmdbId: 4,
+          title: "Failed",
+          posterUrl: null,
+          status: "error",
+          reason: "Catalog failed",
+        },
       ]),
     ).toEqual([1]));
   it("prefers fewer movies at an equal occupied time", () =>
@@ -50,8 +57,21 @@ describe("automatic movie-night suggestions", () => {
     expect(movies[0].tmdbId).toBe(2);
   });
   it("filters by genre and never duplicates multi-genre films", () => {
-    const movies = [movie(1, 60), movie(2, 60, 2)];
-    expect(ids(60, movies, 2)).toEqual([2]);
+    const movies = [
+      {
+        ...movie(1, 60),
+        genres: [
+          { id: 1, name: "Drama" },
+          { id: 2, name: "Comedy" },
+        ],
+      },
+      movie(2, 60, 2),
+    ];
+    expect(ids(60, movies, 2)).toEqual([1]);
+    expect(
+      filterCandidatesByGenre(movies, 2).map((movie) => movie.tmdbId),
+    ).toEqual([1, 2]);
+    expect(ids(130, movies, 2)).toEqual([1, 2]);
     expect(filterCandidatesByGenre(movies, 3)).toEqual([]);
     expect(filterCandidatesByGenre(movies)).toEqual(movies);
   });

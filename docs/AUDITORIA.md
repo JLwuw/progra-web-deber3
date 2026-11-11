@@ -1,8 +1,92 @@
 # E2 — Implementation audit
 
-## Current audit — selected optional features and visual follow-up
+## Part D — Quality and verification, current checkpoint
 
-Audit date: November 11, 2026. Scope: the four selected details2.md §1.5 features and the subsequent disabled/loading-style and completion-button changes, including their effects on base E2/E1. Reviewed the PRD, epic, nine stories, 30 criteria, refinement, eleven tickets/DoD, core/optional/interface specs, DESIGN.md, brand board, migrations 000–004, services/domain/hooks/components, automated checks and current git status. This section is the current conclusion; the records below it describe earlier checkpoints.
+Verified November 11, 2026 against details2.md §1.4 D on commit d195929 (application code unchanged during this verification). English statuses **meets**, **does not meet**, and **unverified** correspond to cumple, no cumple, and sin verificar. This section supersedes earlier audit summaries for the current delivery; historical findings/evidence remain below.
+
+**Conclusion: five of seven Part D requirements meet the locally verifiable contract. Two are incomplete: scenario-level student browser evidence, and the literal early commit ordering.** No new application defect was reproduced. Passing local tests does not certify the deployed Supabase instance, real TMDB integration or browser accessibility.
+
+### Mandatory Part D requirements
+
+| ID | Requirement | Status | Evidence / limitation |
+| --- | --- | --- | --- |
+| D-01 | Pure fit calculation in src/dominio receiving time, durations and pause, without network/Supabase | meets | calculateSession in src/dominio/movieNight.ts receives all three inputs. Source review and AST inspection found only type imports and no runtime/network/database dependencies in the domain. |
+| D-02 | Vitest tests of fit, including exact fit, one movie, unknown runtime and invalid time | meets | src/dominio/movieNight.test.ts tests 90+100+10=200, a single 90-minute movie without breaks, null/undefined/invalid durations, rejected 29/601 budgets and accepted 30/600 boundaries. The invalid/boundary budget cases now call calculateSession directly as well as the validator. Full npm test: 113 tests passed across eight files, including strict test-source type checks. |
+| D-03 | TypeScript without any; components access Supabase/TMDB through services | meets | AST inspection of all 38 authored TS/TSX files found zero AnyKeyword nodes. Review of 29 production files found no direct runtime client imports in components/hooks/App and no component fetch/client calls. App's Supabase Session import is type-only. Strict application build and lint passed. |
+| D-04 | TMDB/Supabase keys obtained from environment, never committed | meets | Current services/client use import.meta.env references. Historical pattern scan of 226 text blobs across all refs found no JWT, private-key, provider-key or literal-credential patterns. No non-template environment paths exist in Git history; the tracked .env.example was excluded without reading it. This is a scoped source/history scan, not a guarantee against every possible secret format. No environment file was opened or modified. |
+| D-05 | Browser verification worksheet with actual-result column filled by the student | does not meet | VERIFICACION.md exists. The student reports browser workflows checked and two-account isolation pending, but detailed per-scenario outcomes, environment and evidence have not been supplied. Existing actual-result cells remain pending rather than inventing results. |
+| D-06 | Audit lists every criterion as meets / does not meet / unverified with evidence | meets | This checklist, the complete criterion register below and the retained findings document actual evidence and distinguish local results from live/browser gaps. |
+| D-07 | Git demonstrates harness → initial state → PRD → backlog → specs → code → verification | does not meet | Harness and first PRD are both in 7ba6971, before initial-state audit 3768c52 (which also revises the PRD). Backlog and specs first appear together in e3a0b7e. E2 specs do precede f32e474 code and 59c4603 verification. Optional sequence 4f379a7 → b63689b → d195929 is correct. The literal full early sequence is not demonstrated; do not rewrite history to imply otherwise. |
+
+The verification update also strengthens the existing optimizer fixtures with an actual error-status candidate and a multi-genre movie, closing the two narrow fixture gaps identified in the prior audit. No production behavior changed.
+
+### Executed checks
+
+| Check | Obtained result |
+| --- | --- |
+| npm test from mi-cartelera-personal | Passed: 113 tests / eight files; TypeScript test check included |
+| npm run build from mi-cartelera-personal | Passed: strict TypeScript and Vite production compilation |
+| npm run lint from mi-cartelera-personal | Passed |
+| node supabase/tests/movie-nights.test.mjs | Passed against disposable PostgreSQL 17.11: actual schema/migrations, invalid direct writes, owner/anonymous completion denial, idempotency and atomic rollback; no live service used |
+| Source/AST inspection | 38 TS/TSX files, zero explicit any; 29 production files reviewed; type-only imports distinguished from runtime calls |
+| Reachable Git history credential scan | 226 distinct text blobs checked; no pattern findings; no non-template environment paths; environment files excluded without reading |
+| Git chronology | Required spec-before-E2-code demonstrated; literal early harness/initial-state/first-PRD sequence does not meet D-07 |
+| Browser/live Supabase | Student reports workflow testing; detailed evidence and two-account checks remain pending. No browser or live database test was run by the agent in this checkpoint. |
+
+The credential scan examined authored text snapshots under all reachable refs for provider key/token formats, JWTs, private keys and long literal credential assignments, displaying no matched values. It does not inspect ignored files, excluded environment files or unreachable Git objects. The AST check is evidence of authored source structure, not a whole-program proof for arbitrary dependencies.
+
+### Complete current criterion register
+
+“Meets” below can be supported by pure/static/automated evidence where the criterion permits it. Criteria requiring observed browser behavior, real catalog/persistence or deployed isolation remain unverified. No per-scenario result is inferred from the student's general browser confirmation.
+
+| Criterion | Status | Evidence / remaining verification |
+| --- | --- | --- |
+| E2-AC01 | unverified | Auth gate/account-reset DOM checks pass; signed-out deployed access not evidenced |
+| E2-AC02 | meets | Pure budget invalid/range/boundary tests and labeled input feedback |
+| E2-AC03 | unverified | Owned pending movie filtering/deduplication service tests pass; real collection/catalog result not individually reported |
+| E2-AC04 | meets | Runtime/title/id sorting and individual exact-fit domain cases |
+| E2-AC05 | meets | Invalid/unknown runtime domain cases and unavailable-candidate DOM feedback |
+| E2-AC06 | meets | Per-movie error/retry and stale batch/retry ownership regressions |
+| E2-AC07 | meets | Separate empty collection/no-fit states and unavailable reasons in DOM tests |
+| E2-AC08 | meets | Single/empty math and remove-to-empty DOM flow |
+| E2-AC09 | meets | Exact 200-minute fit including one break in domain and DOM tests |
+| E2-AC10 | meets | Next-break overflow rejection, preserved selection and disabled add |
+| E2-AC11 | unverified | Removal math/order and focus target implemented; actual keyboard focus observation pending |
+| E2-AC12 | meets | Duplicate identity rejection and selected-candidate explanation |
+| E2-AC13 | meets | Budget reduction preserves selection and disables invalid save/add |
+| E2-AC14 | meets | Empty/name-length/Unicode/trimming domain validation and save gating |
+| E2-AC15 | unverified | Complete snapshot insert and save/detail DOM tests pass; real save/reload/unchanged progress result pending |
+| E2-AC16 | meets | Pending-save guards, uncertain UUID preservation and late-write recovery regressions |
+| E2-AC17 | meets | Removed/status/runtime/unknown source service cases and explicit accept/save-again DOM flow |
+| E2-AC18 | unverified | Reuse under distinct session identities covered locally; real persisted reuse pending |
+| E2-AC19 | unverified | Stable ordering, pagination and history DOM checks pass; real reload result not reported individually |
+| E2-AC20 | unverified | Immutable saved snapshot/detail tests pass; persisted history after collection deletion pending |
+| E2-AC21 | unverified | RLS/privileges present and local PostgreSQL checks pass for tested paths; deployed two-account read/write isolation explicitly pending |
+| E2-AC22 | unverified | Account-state reset and E1 regression suite pass; complete real reload/sign-out/E1 workflow evidence pending |
+| E2-AC23 | unverified | Owner-scoped deletion and cancel/pending/error UI tests pass; deployed owner/foreign/anonymous deletion pending |
+| E2-AC24 | meets | Exact-count/server-cap and retained history footer loading/retry/exhaustion tests |
+| E2-AC25 | meets | Pure optimizer tests and independent exhaustive audit comparison; automatic selection is unsaved |
+| E2-AC26 | unverified | Pure/service/DOM genre filtering preserves selection; actual catalog/filter observation pending |
+| E2-AC27 | unverified | Local SQL atomic movie/session completion and DOM confirmation/retry pass; live completion/collection observation pending |
+| E2-AC28 | unverified | Real local PostgreSQL rejects malformed/over-budget direct writes; deployed migration and bypass checks pending |
+| E2-AC29 | unverified | Local owner/anonymous denial, forged completion restriction, idempotency and completed button checks pass; deployed isolation pending |
+| E2-AC30 | meets | Confirmation/cancel/no-fit/load-failure draft preservation, pending locks and corrected save-label regression |
+| DES-01 | meets | Existing Bootstrap dependency/classes/shared styling retained; no new framework |
+| DES-02 | unverified | User says visual changes look fine; full typography/poster/brand-board comparison not recorded |
+| DES-03 | unverified | Responsive markup/wrapping present; 375/768/1280 and 200% zoom observations pending |
+| DES-04 | unverified | Native labels, actions and focus handling present; complete keyboard observation pending |
+| DES-05 | unverified | Text feedback/status/alert regions present; assistive-technology observation pending |
+| DES-06 | unverified | Reduced-motion CSS present; actual emulated preference check pending |
+| DES-07 | unverified | E1 automated regressions pass; per-workflow browser confirmation pending |
+| DES-08 | unverified | No rendered contrast measurements recorded |
+
+### Closing the remaining Part D gaps
+
+The student should complete the worksheet using actual scenario outcomes and environment/evidence, confirm applied migration versions, and run the two-account plus signed-out direct-access probes. No credentials should be recorded. D-07 is a documented process deviation; later correctly ordered commits do not repair the earlier chronology. Local checks and documentation completeness can be accepted independently from these outstanding observations.
+
+## Previous local audit — selected optional features and visual follow-up
+
+Audit date: November 11, 2026. Scope: the four selected details2.md §1.5 features and the subsequent disabled/loading-style and completion-button changes, including their effects on base E2/E1. Reviewed the PRD, epic, nine stories, 30 criteria, refinement, eleven tickets/DoD, core/optional/interface specs, DESIGN.md, brand board, migrations 000–004, services/domain/hooks/components, automated checks and current git status. This section records the optional-feature checkpoint before the Part D verification above.
 
 **Conclusion: E2-F03 and E2-F04 are fixed locally; no high-severity functional or security defect was reproduced.** Documentation now includes all four selected optional features consistently. Planning/general feedback is separate from save failure, and a permanent regression covers the corrected label. The delivery now commits requirements/design before implementation, then records audit/verification. No live migrations were applied. Live acceptance remains pending.
 

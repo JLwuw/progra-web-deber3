@@ -6,6 +6,12 @@ Scope: Movie Night from details2.md, implementing the existing PRD/backlog/specs
 
 Local regression, domain, service and DOM-interaction checks run without project environment files. They simulate catalog/database failure boundaries and are not a live browser, catalog or RLS demonstration. Actual command results are recorded in [AUDITORIA.md](AUDITORIA.md).
 
+## Student-reported checkpoint for Part D
+
+Reported in this conversation on November 11, 2026: **“Browser workflows checked; two-account tests pending.”** The student previously approved the visual changes as looking fine. The date/environment of those browser runs, individual scenario outcomes and applied migration versions are not yet confirmed. This general report does not establish every acceptance/edge/design scenario as passed. The actual-result cells below remain pending until the student supplies the corresponding observations. Two-account isolation is explicitly not yet tested.
+
+The agent's current local Part D checks passed: 113 Vitest tests, strict production build, lint and isolated PostgreSQL regression. These are recorded separately in [the audit](AUDITORIA.md#part-d--quality-and-verification-current-checkpoint) and must not be entered as student browser observations.
+
 ## Browser and live-database verification — student results
 
 The student must fill the “actual result” column with what was observed, plus date/environment and evidence links. Pending entries below are deliberately not filled with automated results. After the E1 migration, apply any unapplied E2 migrations 001–004 in order before checking the corresponding live functionality. The agent has tested them in a disposable local cluster, but has not applied or inspected them on the deployed database.

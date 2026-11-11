@@ -46,11 +46,18 @@ describe("Movie Night domain", () => {
   );
   it.each(["", " ", "abc", 29, 601, 30.5, NaN, null, true, "1e2", "0x64"])(
     "rejects invalid available time %s",
-    (value) => expect(validateAvailableMinutes(value).valid).toBe(false),
+    (value) => {
+      expect(validateAvailableMinutes(value).valid).toBe(false);
+      expect(calculateSession(value, [90], 10).valid).toBe(false);
+    },
   );
-  it.each([30, 600, "30", "600"])("accepts budget boundary %s", (value) =>
-    expect(validateAvailableMinutes(value).valid).toBe(true),
-  );
+  it.each([30, 600, "30", "600"])("accepts budget boundary %s", (value) => {
+    expect(validateAvailableMinutes(value).valid).toBe(true);
+    expect(calculateSession(value, [30], 10)).toMatchObject({
+      valid: true,
+      fits: true,
+    });
+  });
   it("rejects a next movie that fits alone but not with the next break", () => {
     expect(
       canAddMovie(

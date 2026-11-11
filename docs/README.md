@@ -2,7 +2,7 @@
 
 The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 now has local implementation and automated evidence; the deployed migration state and live/manual acceptance are still unverified. Selected optional features include automatic planning, genre filtering, explicit watched completion and database fit validation.
 
-Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governed by the [repair spec](specs/e1-repairs.md).
+E1 requirements and historical remediation evidence are consolidated in the [canonical E1 repair document](specs/e1-repairs.md). Current E2/Part D results remain in the implementation audit.
 
 ## Read in this order
 
@@ -31,3 +31,8 @@ The current checkpoint includes local Part C implementation and the automated po
 - **D:** Vitest/domain/service/DOM tests and service-only access are implemented; live RLS and browser verification remain pending.
 - **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` now record planned manual checks and actual local evidence. The student must still fill the browser “actual result” column.
 - **History:** commit documents before corresponding code in the required order. This task does not create commits or rewrite history.
+
+
+## Part D verification status
+
+The [current Part D audit](AUDITORIA.md#part-d--quality-and-verification-current-checkpoint) checks all seven mandatory quality/verification requirements and all E2/design criteria. Local domain tests, TypeScript/service boundaries, credential-pattern scan, build, lint and isolated SQL regression pass. The student reports browser workflows checked, but detailed actual-result cells and two-account isolation remain pending. The literal early Git sequence does not meet the requested order because the first PRD predates the initial-state audit; later E2/optional specs correctly precede their code. History is retained without rewriting it.

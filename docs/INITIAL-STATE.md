@@ -2,7 +2,7 @@
 
 Audit date: November 11, 2026.
 
-Historical baseline: the findings below describe the pre-repair state. See [E1 remediation and verification](E1-REPAIRS.md) for current status; this baseline is preserved rather than overwritten.
+Historical baseline: the findings below describe the pre-repair state. See [E1 remediation and verification](specs/e1-repairs.md#historical-e1-implementation-and-verification-evidence) for current status; this baseline is preserved rather than overwritten.
 
 ## Audit scope and confidence
 
