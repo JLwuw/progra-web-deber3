@@ -8,7 +8,7 @@ Local regression, domain, service and DOM-interaction checks run without project
 
 ## Browser and live-database verification — student results
 
-The student must fill the “actual result” column with what was observed, plus date/environment and evidence links. Pending entries below are deliberately not filled with automated results. Apply [001_movie_nights.sql](../supabase/migrations/001_movie_nights.sql) after the already-applied E1 migration before checking real persistence. The agent has not applied this new E2 migration.
+The student must fill the “actual result” column with what was observed, plus date/environment and evidence links. Pending entries below are deliberately not filled with automated results. After the E1 migration, apply any unapplied E2 migrations 001–004 in order before checking the corresponding live functionality. The agent has tested them in a disposable local cluster, but has not applied or inspected them on the deployed database.
 
 For security checks, use two ordinary accounts and a signed-out public client. Test direct access as well as hidden UI; never use a privileged key as proof of user isolation. Record only outcomes, affected rows and sanitized evidence, never credentials. See [database instructions](../supabase/README.md).
 
@@ -46,3 +46,23 @@ For security checks, use two ordinary accounts and a signed-out public client. T
 | DES-06 | Enable reduced motion during loading and interactions. | No nonessential spinner/transition motion; text remains. | Pending student verification | — |
 | DES-07 | Run E1 login/search/add/filter/edit/delete/details/logout after E2 integration. | Existing workflows and design preserved. | Pending student verification | — |
 | DES-08 | Measure actual rendered text/control/focus contrast, including alpha blends. | WCAG AA text targets and non-text contrast; state never color-only. | Pending student verification | — |
+
+
+## Selected E2 optional features — browser and live database checks
+
+Apply migrations 003_movie_night_fit.sql and 004_movie_night_watched.sql after 000–002 before these checks. Local SQL tests do not deploy them.
+
+| Criteria | Student action and expected result | Actual result (student) |
+| --- | --- | --- |
+| E2-AC25 | Plan my night from pending movies: optimal time including breaks, no duplicates, editable unsaved draft; single/exact fit works | Pending |
+| E2-AC26 | Choose genre / All genres; candidates and suggestions follow filter, selected movies remain; empty matches explained | Pending |
+| E2-AC30 | Cancel replacing draft; test no fit and load failure; draft stays. During planning budget/filter/save cannot conflict | Pending |
+| E2-AC27 | Confirm Watched on detail; reload detail/history/collection: session stays watched and matching movies show Finished; grades/comments/TV unchanged | Pending |
+| E2-AC29 | Cancel completion; test pending/failure/retry; completed button stays disabled and completion cannot be undone; repeat does not reapply collection changes | Pending |
+| E2-AC28 | Authenticated direct insert with over-budget/wrong-total/invalid snapshots denied by deployed database; exact fit succeeds | Pending |
+| E2-AC29 | Two accounts: foreign completion denied, anonymous denied, direct session update and precompleted insert denied; delete does not revert progress | Pending |
+| DES-01–08 | Keyboard, focus, contrast, narrow layouts and announced feedback for added controls; compare existing E1 views | Pending |
+
+Visual follow-up: during Plan my night and other submissions, confirm disabled inputs/selects remain dark and button variants retain their styling. Saved detail must show a prominent completion action near the top, with Planned, pending, retry and Watched states. Actual browser result: Pending.
+
+E2-F04 browser regression: create a named draft, run Plan my night with no fitting refreshed candidates, and confirm the warning and draft remain while the save action still reads Save Night. Only an actual failed/uncertain save should show Retry saving; editing a resolvable failed draft clears obsolete save-failure feedback. Actual student result: Pending.

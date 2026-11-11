@@ -1,5 +1,54 @@
 # E2 — Implementation audit
 
+## Current audit — selected optional features and visual follow-up
+
+Audit date: November 11, 2026. Scope: the four selected details2.md §1.5 features and the subsequent disabled/loading-style and completion-button changes, including their effects on base E2/E1. Reviewed the PRD, epic, nine stories, 30 criteria, refinement, eleven tickets/DoD, core/optional/interface specs, DESIGN.md, brand board, migrations 000–004, services/domain/hooks/components, automated checks and current git status. This section is the current conclusion; the records below it describe earlier checkpoints.
+
+**Conclusion: E2-F03 and E2-F04 are fixed locally; no high-severity functional or security defect was reproduced.** Documentation now includes all four selected optional features consistently. Planning/general feedback is separate from save failure, and a permanent regression covers the corrected label. The delivery now commits requirements/design before implementation, then records audit/verification. No live migrations were applied. Live acceptance remains pending.
+
+### E2-F03 — P2 at discovery, fixed locally: current documents contradict selected scope
+
+- **Sources at discovery:** [interface spec](specs/e2-interface.md), line 24 explicitly says there is no completion action, while its optional-controls section requires one. [Tickets](backlog/e2-tickets.md), line 59 excludes optimizer/genre/completion work even though T08–T11 now select it. Refinement R24/R25 retain the original rejection/deferral without explicit supersession links. E2-AC29 still describes an unchecked check instead of the requested completion button.
+- **Impact:** a reviewer or implementing agent can follow incompatible contracts. This conflicts with the shared DoD that documentation match delivered behavior. The old audit introduction also describes only five stories, 24 criteria and no optional features; it is retained below as historical evidence, not the current scope.
+- **Required correction:** reconcile current rules in place, mark prior decisions as superseded and link their replacements, update completion terminology, and keep historical audit checkpoints clearly identified. Preserve the important distinction: saving changes no progress; explicitly confirming completion does.
+- **Implemented correction:** interface and epic specs, stories, refinement R24/R25, ticket scope/checkpoints and documentation map now state the selected scope and completion-button behavior consistently. The original exclusions are explicitly superseded; historical audit results stay labeled as historical.
+
+### E2-F04 — P3 at discovery, fixed locally: a suggestion warning is treated as a failed save
+
+- **Sources at discovery (pre-patch line numbers):** [useMovieNight.ts](../mi-cartelera-personal/src/hooks/useMovieNight.ts), lines 111–116 put no-fit suggestion feedback in the shared error state; [MovieNightScreen.tsx](../mi-cartelera-personal/src/components/MovieNightScreen.tsx), lines 287–291 use any such error to label the save button Retry saving.
+- **Reproduction:** create a valid named draft without saving; refresh via Plan my night when the refreshed collection has no fitting candidates. The prior draft stays, a no-fit explanation appears, and the action reads Retry saving even though saveMovieNight has never been called. A temporary DOM audit probe reproduced this exactly.
+- **Impact:** misleading operation feedback; no data loss or duplicate write was observed. The preserved draft still uses normal source review when actually saved.
+- **Required correction:** distinguish planning/general feedback from save failure/recovery state. Only a failed or uncertain save should offer Retry saving; retain the suggestion warning and draft. Add a focused regression for this transition.
+- **Implemented correction:** useMovieNight now exposes separate saveError and general error feedback. Only saveError or uncertain recovery produces Retry saving. Manual draft edits, source-review acceptance and successful automatic replacement clear obsolete save errors. The permanent DOM regression verifies retained warning/selection and Save Night after no fit, Retry saving after a real rejected save, and reset to Save Night after an edit.
+
+### Criterion review and evidence
+
+| Criterion / ticket | Local result | Evidence and remaining limits |
+| --- | --- | --- |
+| E2-AC25 / T08 | meets locally | Dedicated pure-planner tests; independent exhaustive comparison across 120 generated eight-movie collections found identical optimal occupied time and minimum movie counts; deterministic sorting, deduplication, invalid/unknown durations, exact/single/no-fit cases reviewed |
+| E2-AC26 / T09 | meets locally | Runtime and genre share one catalog request; owner/pending eligibility remains in services; pure filter and DOM suggestion/filter flow preserve selected movies; missing genres match All genres only |
+| E2-AC27 / T10 | meets locally | Confirm/cancel/pending/error/retry UI tests; SQL completes only matching owned movie entries and preserves TV/foreign entries/grades/comments; missing entries skipped; injected failure rolls both tables back |
+| E2-AC28 / T11 | meets locally | Actual PostgreSQL migrations reject malformed/empty/duplicate/fractional/unknown/over-budget/wrong-total snapshots and invalid updates; exact-fit saves accepted; invalid legacy data stops migration without deletion |
+| E2-AC29 / T10 | meets locally; F03 fixed | SQL denies foreign/anonymous/unsigned completion, direct updates and forged initial completion; idempotency preserves timestamp and does not reapply progress; prominent button guards concurrent deletion and stays disabled after completion |
+| E2-AC30 / T08 | meets locally; F04 fixed | Cancellation/no-fit/collection failure retain selection; auto-planning locks conflicting edits and reuses save-time source review; no automatic save |
+| DES-01 / disabled-style request | meets source review | Shared dark disabled field selectors override Bootstrap specificity; disabled button variables retain variant styling; completion action is at least 48px high near the top; brand board/specs reflect these choices |
+| DES-02–08 / full live acceptance | unverified beyond local evidence | User reported that the visual result looks fine; this is limited subjective approval, not measured contrast, keyboard/assistive-technology or viewport evidence. Student verification worksheet remains authoritative |
+| E2-AC01–24 / regression baseline | no new failure reproduced | Existing service/domain/DOM/auth/E1 regression suite passes; original retry/review/save-identity protections remain in place. Live RLS/browser checks remain separate |
+
+Post-fix rerun results: **113 maintained Vitest tests across eight files passed**, including TypeScript checks; **production build passed; lint passed; git diff --check passed**. A separate disposable PostgreSQL 17.11 cluster applied the real schema/migrations and passed the database regression. Two temporary audit probes also passed: one independent exhaustive planner comparison and one confirming the F04 mislabel. Those probes were removed after the audit; the permanent F04 regression now verifies the corrected behavior and is included in the 113 maintained tests. The PostgreSQL result is retained from the immediately preceding audit because SQL was unchanged by these fixes.
+
+### Verification limits and process
+
+- No deployed Supabase schema, public HTTP RPC response, real catalog or two-account live result was inspected. SQL tests use synthetic auth identities/roles and cannot certify the deployed environment. Migrations 003/004 must be applied and exercised there before live acceptance.
+- Source/DOM checks do not render CSS. The recent visual approval does not fill the remaining detailed browser/accessibility checklist automatically.
+- The new pure test titled “deduplicates and excludes unknown, failed and invalid runtimes” has no error-status fixture; the multi-genre test uses only single-genre fixtures. These are narrow coverage gaps, not reproduced function defects. Direct catalog-fetch parsing, simultaneous RPC callers and lost-response completion are not end-to-end tested; existing SQL idempotency/locking and mocked service validation provide partial evidence.
+- Delivery order: requirements/design commit 4f379a7 precedes the implementation commit, followed by this audit/verification record. Existing history was not rewritten.
+- No environment files or secrets were read, no live migrations were applied, and product changes in this follow-up were limited to save-feedback isolation and its regression. No direct external-client access or any type was introduced in the reviewed components.
+
+## Historical audit checkpoints
+
+The following records preserve the base implementation and subsequent extensions as they were reviewed. Their scope/count statements are historical; use the current audit above for this working tree.
+
 Audit date: November 11, 2026. Scope: local E2 implementation against details2.md, the stories, epic/interface specs and DESIGN.md. E1 was preserved and its regressions were rerun. No optional optimizer, genre filter, completion action, sharing, calendar, or deployment feature was added.
 
 ## Audit conclusion
@@ -125,3 +174,21 @@ History now requests an exact owner-filtered total. It no longer offers an activ
 ## Final local review before commit
 
 Reviewed the final planner, retry/recovery transitions, immutable-content detail and owner deletion, exact-count history footer, additive migrations, all 24 acceptance criteria, and test/source/document consistency. All 98 tests, strict type checks, build, lint, local links and diff checks pass. No new blocking implementation issue was found. Environment files were not read. Live migration application, two-account RLS, real-browser accessibility and student observations remain unverified and are not certified by this commit.
+
+
+## Selected optional E2 features — local audit
+
+Added E2-US6–US9, E2-AC25–30, E2-T08–T11 and e2-optionals.md before implementing these extensions. Saving remains independent of the new explicit completion operation.
+
+| Criteria | Status | Evidence and limits |
+| --- | --- | --- |
+| E2-AC25 | meets locally | Own pure suggestion tests: exact/single/no fit, non-greedy optimum, duplicates, unknown/invalid runtime, stable ties, fewer-movie preference, input preservation |
+| E2-AC26 | meets locally | Candidate metadata service test, pure filtering and DOM filter-to-suggestion flow preserving selection |
+| E2-AC27 | meets locally | RPC response validation, confirmed/cancelled/failed/pending/retry DOM flow; PostgreSQL verifies matching movie changes, missing-title skip, preserved TV/foreign/grade/comment data, transaction rollback |
+| E2-AC28 | meets locally | Real PostgreSQL applies schema/migrations; direct invalid/overbudget/duplicate/fraction/unknown/wrong-total writes rejected; single/multiple exact fits accepted; invalid legacy migration fails without deleting rows |
+| E2-AC29 | meets locally | Real PostgreSQL rejects foreign/anonymous/unsigned completion, direct updates and forged initial completion; repeated completion preserves original timestamp and does not reapply progress |
+| E2-AC30 | meets locally | DOM checks confirmation/cancellation, pending locks, load failure and no-fit selection preservation; prior uncertain-save regressions retained |
+
+Automated evidence: 112 Vitest tests passed; production build and lint passed. The isolated PostgreSQL regression passed against PostgreSQL 17.11 using synthetic auth/roles, actual migrations and raw SQL. No deployed database or browser acceptance is claimed. Student checks for optional features remain pending in VERIFICACION.md. Migration 003 checks supplied runtime truth only; external catalog correctness and concurrent collection eligibility are still service concerns.
+
+Visual follow-up: shared disabled input/select and button variant styles now override Bootstrap defaults. Saved detail replaces the checkbox with a large completion button and explicit status panel above session metadata. Completion cancellation/failure/pending/retry tests were adapted and all 112 tests, build and lint passed. DESIGN.md, brand board and interface specs reflect the change; rendered-browser verification remains pending.
