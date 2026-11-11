@@ -1,6 +1,6 @@
 # Mi Cartelera Personal — Design Guide
 
-This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and the Bootstrap 5.3.3 stylesheet referenced by `index.html`. The [brand board](docs/diseno/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
+This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and the Bootstrap 5.3.3 stylesheet referenced by `index.html`. The [brand board](docs/design/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
 
 ## Direction and identity
 

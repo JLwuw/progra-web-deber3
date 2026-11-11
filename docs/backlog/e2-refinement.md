@@ -35,7 +35,7 @@ Integer available minutes from 30 to 600; own pending movies only; 10 minutes be
 | R23 | Unauthorized direct reads/writes | Reject access | Required real ownership isolation, E2-AC21 |
 | R24 | Automatic fill, genre filter, mark completed | Reject from required scope | Optional features need separate specs; completion conflicts with the no-state-change rule |
 | R25 | Backend repeats the full time-budget calculation | Defer optional hardening | Client explicitly lists database fit validation as extra; required RLS and basic constraints remain mandatory |
-| R26 | Ambiguous retry after a lost save response | Accept idempotent draft identity | A retry should recover the same completed plan, not silently duplicate it; supports E2-AC16 |
+| R26 | Ambiguous retry after a lost save response | Accept idempotent draft identity, S10 | A retry should recover the same completed plan, not silently duplicate it; supports E2-AC16 |
 
 ## Pending student review
 
