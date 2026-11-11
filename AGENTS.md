@@ -1,0 +1,40 @@
+# Mi Cartelera Personal
+
+## Project
+Web App to search for movies and TV shows, add them to a personal listing, and to add a comment and or rating to each entry
+
+## Stack
+- Vite + React + TypeScript
+- Supabase (`@supabase/supabase-js`)
+- Tests with Vitest; formatting Prettier
+
+## Project Structure
+The React App is inside `mi-cartelera-personal` from there:
+- `src/lib/supabase.ts`: Supabase client
+- `src/types/`: domain types
+- `src/services/`: access to Supabase
+- `src/components/`: React components
+- `src/index.css`: stylesheet
+- `supabase/migrations/`: SQL migrations
+- `docs/prd/`, `docs/backlog/`, `docs/specs/`: documentation
+- `docs/diseno/`: material de diseño
+
+## Commands
+`cd mi-cartelera-personal` to access React App root. From there:
+- `npm run dev`:  start dev server
+- `npm test`: Vite tests
+- `npm run build`: compile for prod
+
+## Conventions
+- Domain names and interface in English
+- camelCase for TypeScript; snake_case for DB.
+- Never use `any`.
+- Components never call Supabase directly. All DB access is done through services in `src/services/`.
+
+## Rules
+- Never read or modify `.env` or `.env.local`.
+- Never write keys or other sensive data in code
+- The frontend only uses the public (anon/publishable) keys. It never uses `service_role`.
+- No features are implemented without a corresponding spec inside `docs/specs/`.
+- Execute `npm test` and `npm run build` from the React App folder before deeming a task finished
+- For any visual task, read DESIGN.md before writing any code
