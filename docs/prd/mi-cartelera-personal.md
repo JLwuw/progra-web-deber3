@@ -1,78 +1,76 @@
 # Mi Cartelera Personal — Product Requirements Document
 
+Status: draft for section 1.4.B of details2.md. E1 is the existing product; E2 is the proposed extension. “Built” does not mean all requirements have been verified: the initial-state audit records E1 gaps.
+
 ## Problem
 
-People need a personal place to keep track of the movies and TV shows they want to watch, are watching, or have already watched. A title's public information and rating do not capture an individual's viewing progress, opinion, or experience.
+People need a private place to remember movies and TV shows they want to watch, are watching, or have finished, together with their own opinions.
 
-Mi Cartelera Personal lets users discover real titles, maintain a private collection, and record their own ratings and comments alongside the title's public information. The intended outcome is that a user can find a title, save it, and return later to review or update their viewing history.
+A saved watchlist does not solve another everyday problem: when a user has a limited amount of free time, they do not know which pending movies they can finish. Movie Night helps them assemble and save a session that fits their available time, including breaks. The intended outcome is that users finish what they start; no measured success rate is claimed yet.
 
 ## Users
 
-- People who want to keep a watchlist of movies and TV shows they plan to watch.
-- People who want to track what they are currently watching and what they have finished.
-- People who want to preserve personal ratings and notes about their viewing experiences.
+Registered users who keep a personal movie and TV collection. The same users plan Movie Night sessions from their own pending movies. There are no new social roles or shared sessions.
 
 ## Scope
 
-### Required for the initial release
+### E1 — Personal collection (already built; preserve existing behavior)
 
-- Account registration, sign-in, and sign-out. Access to search, collections, and title details requires an active session. A sign-out action remains available throughout the signed-in experience.
-- Search for movies and TV shows using The Movie Database (TMDB) as the source of title information. Search results show each title's poster, name, and release year, with clear feedback while results are loading or when a search fails.
-- Add a title from search results to the user's personal collection.
-- View the user's saved collection.
-- Update a saved title's viewing status, personal rating, and personal comment.
-- Remove a title from the personal collection.
-- Open a saved title's detailed view with a large poster, full synopsis, cast, public rating, personal rating, and personal comment.
-- Keep each user's collection private and prevent other users from accessing or changing it.
-- Preserve saved titles and personal updates so users can return to their collection in later sessions.
+Registration, sign-in, sign-out, protected content, movie/TV search, saving titles, viewing a private collection, editing viewing status and optional personal ratings/comments, deleting saved titles, and expanded title details. Search should present poster, title, and year. Detail includes synopsis, cast, public information, and personal information. Existing status/rating/date filters and status summaries must continue working.
 
-### Optional enhancements
+E1 acceptance gaps remain tracked by the initial-state audit. E2 must not be used as a reason to rewrite the original product or silently change its rules.
 
-The following are explicitly optional and are not conditions for completing the initial release:
+### E2 — Movie Night (new, required)
 
-- Filter the collection by viewing status.
-- Sort the collection by personal rating or date added.
-- Show a summary of the number of titles in each viewing status.
+The signed-in user supplies available minutes, sees which pending movies fit with their durations, assembles a session with one or more movies, sees total and remaining time, and saves and later consults their private sessions and details. Unknown durations and catalog failures receive explicit explanations. Adding a movie that would exceed the budget is prevented.
 
 ## Out of scope
 
-- Watching, streaming, or downloading movies and TV shows.
-- Public profiles, shared collections, social feeds, or interactions between users.
-- Publishing personal ratings or comments to TMDB, or changing its title information.
-- Personalized recommendations and viewing reminders.
-- Tracking individual seasons or episodes; the required collection tracks movie and TV show titles.
+Streaming or downloading content; shared sessions or viewing with friends; reminders and notifications; calendar or streaming-platform synchronization; recommendations outside the user's collection; TV shows in a session; automatic combinations; genre filtering; marking sessions completed or changing their movies to Watched; editing or deleting saved sessions in this E2 release; and offline planning.
 
-These capabilities are outside the requirements described in the project brief.
+Optional assignment features require their own stories, criteria, and spec before implementation. E1's unimplemented optional sorting and public deployment are not added to E2 scope.
 
 ## Business rules
 
-1. Visitors can register or sign in, but cannot access product content without an active session. Signing out ends access to that content.
-2. Every saved entry belongs to the user who added it. Only that user may view, update, or remove it. This restriction must hold even if someone attempts to bypass normal navigation.
-3. A saved title is either a movie or a TV show and originates from the search catalog.
-4. Every saved title has exactly one viewing status: To Watch, Watching, or Watched.
-5. A personal rating is optional. When present, it is a whole number from 1 through 5.
-6. A personal comment is optional and contains the user's own free-text notes.
-7. Personal ratings and comments are independent of the title's public rating and information.
-8. Users can change the viewing status, personal rating, or personal comment of titles in their own collection.
-9. Removing a title affects the user's personal collection; it does not remove the title from the search catalog or another user's collection.
-10. Adding or updating a personal entry does not change information published by TMDB.
+### E1 — preserved product rules
+
+- Only signed-in users access product content. Users can sign out throughout that experience.
+- Each user can see and change only their own personal collection.
+- Saved titles are movies or TV shows, each with one state: To Watch, Watching, or Watched.
+- Personal ratings are optional whole numbers from 1 through 5. Comments are optional personal text. Both are independent of the public rating.
+- Adding, editing, or removing a personal entry does not change the public catalog or another user's collection.
+
+### E2 — client decisions
+
+- Available time is a whole number of minutes from 30 through 600, inclusive.
+- Only movies in the user's own To Watch collection are eligible for a session.
+- Between consecutive movies there is a 10-minute break. There is no break before the first movie or after the last.
+- A session fits when its movie durations plus those breaks are less than or equal to the available time. An exact fit is valid.
+- Duration comes from TMDB. A movie without a known duration cannot be added, and the user sees why.
+- Saving a session leaves its movies in To Watch; saving is not evidence that the user watched them.
+- Sessions and their details are private to their owner.
 
 ## Suppositions
 
-- Users have internet access when searching for titles and managing their collections; offline use is not part of the initial release.
-- A single personal collection per account is sufficient for the initial release.
-- Registration and sign-in are the only experiences available before authentication. This interpretation reconciles the requirement for controlled access with the need to let visitors create or access an account.
-- The user-facing interface will be in English, following the project's stated convention. The status labels in this document express the same three states described in the brief.
+These are proposed student decisions, labeled `[SUPUESTO]` and reflected in E2 criteria. Their rationale is part of refinement.
+
+- **S1 [SUPUESTO]:** A movie may appear in different saved sessions, but only once within one session. This allows alternative plans without accidentally counting the same movie twice.
+- **S2 [SUPUESTO]:** Eligible movies are ordered by duration ascending, then title ascending, then a stable title identity. This makes short options easy to compare and keeps ties predictable. Unavailable entries appear separately in title order.
+- **S3 [SUPUESTO]:** Saved sessions cannot be edited or deleted in this release. Users may create another session instead. This bounds the required save-and-consult workflow.
+- **S4 [SUPUESTO]:** A saved session preserves its titles, movie order, and known durations at save time. Removing a movie from the collection, changing its viewing state, or later catalog changes do not rewrite past plans. Before saving, ownership, eligibility, and known durations are checked again; changes require the user to review the draft.
+- **S5 [SUPUESTO]:** A session requires a trimmed name of 1–80 characters and records when it was saved. It has no scheduled viewing date. A name helps distinguish plans without introducing calendar behavior.
+- **S6 [SUPUESTO]:** Empty sessions cannot be saved. Selection order is viewing order. Removal closes the gap and recalculates breaks; reordering controls are outside scope.
+- **S7 [SUPUESTO]:** Blank, nonnumeric, fractional, or out-of-range available time is invalid. Lowering the budget keeps the draft visible but prevents additions and saving while over budget, so users can remove movies deliberately.
+- **S8 [SUPUESTO]:** Zero, negative, nonnumeric, or non-whole durations are unknown/unusable. A catalog request failure is shown as a retryable retrieval failure, not as proof that duration is absent. Unaffected movies remain usable.
+- **S9 [SUPUESTO]:** Initial fit results compare each movie with the full valid budget; while building a draft, add availability uses the remaining budget including the next required break. Unavailable-duration movies remain visible with their reason, and known movies exceeding the full budget may be summarized separately.
+- **S10 [SUPUESTO]:** Drafts are not persisted across reloads or sign-out. Successful save clears the draft after opening the saved detail. Failed save preserves it and offers retry; only one save can be pending at once.
+- **S11 [SUPUESTO]:** Saved sessions are listed newest first, with a stable identity resolving timestamp ties. Viewing saved details does not require a fresh catalog request.
+- **S12 [SUPUESTO]:** Duplicate E1 collection entries referring to the same movie are represented once in the planner, without modifying the collection. This preserves E1 behavior while avoiding duplicate session titles.
 
 ## Open questions
 
-- Can the same movie or TV show be added more than once to a user's collection? If not, what feedback should a repeat attempt provide?
-- Which viewing status should a newly added title receive, or must the user choose one when adding it?
-- Can a title be rated in any viewing status, or only after it is marked Watched?
-- Can users clear a previously saved rating or comment?
-- Is there a maximum length for personal comments?
-- What should users see when a title has no poster, release year, synopsis, cast, or public rating?
-- Should saved title information reflect later catalog changes, or retain the information available when the title was added?
-- Should removing a title require confirmation or offer a way to undo the action?
-- Are account verification, password recovery, or account deletion required for the initial release?
-- Which optional enhancements, if any, will be included in the delivery?
+- The student still needs to confirm or revise S1–S12 and their associated acceptance criteria before implementation. They are explicit working decisions, not hidden requirements.
+- How will the qualitative goal “finishes what they start” be evaluated? Completion tracking and analytics are not currently in scope.
+- Which pre-existing E1 defects must be fixed before E2 delivery? Record them as separately specified work; the regression baseline must distinguish old defects from newly introduced ones.
+- Are any optional assignment features selected? None are assumed in this draft.
+- E1 still has unresolved product policies, including duplicate collection entries, when ratings may be assigned, and account recovery/deletion. E2 does not settle those policies globally.

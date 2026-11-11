@@ -1,6 +1,6 @@
 # Mi Cartelera Personal — Design Guide
 
-This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and the Bootstrap 5.3.3 stylesheet referenced by `index.html`. The [brand board](docs/design/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
+This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and the Bootstrap 5.3.3 stylesheet referenced by `index.html`. The [brand board](docs/diseno/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
 
 ## Direction and identity
 
@@ -111,3 +111,29 @@ Associate every label with its field, use semantic headings and landmarks, provi
 ## Applying this guide
 
 Keep the application stylesheet as the implementation source of truth for existing tokens. Reuse established patterns when adding features, and update this guide and the brand board together when visual decisions change. Product behavior belongs in feature specifications; this guide does not authorize new functionality. The brand board is local documentation, contains illustrative content, and does not alter the application stylesheet or behavior.
+
+
+## Bootstrap customization and allowed components
+
+The application uses Bootstrap 5.3.3 via its existing stylesheet link. Customization lives in `mi-cartelera-personal/src/index.css`, loaded by the app after the document stylesheet. Keep Bootstrap layout utilities and semantic control classes as the base; use the existing color tokens and scoped selectors to customize surfaces, buttons, forms, and typography.
+
+Reuse `container`, `row`, responsive column utilities, spacing/flex utilities, `card`/`card-body`, `btn` variants, `form-label`, `form-control`, `form-select`, `navbar`, and `btn-group`. Existing custom patterns include `media-grid`, `media-card`, `detail-layout`, error panels, and the loading indicator. Movie Night may reuse these patterns for candidates and summary/history panels. Bootstrap JavaScript plugins are not currently loaded; do not assume modal/dropdown behavior is available from CSS alone.
+
+Prohibited for E2: adding another CSS/component framework, replacing the current font/identity, introducing arbitrary new brand colors or copied visual constants inside the interface spec, global overrides that regress E1, removing focus outlines without a visible replacement, color-only state communication, animated-only loading feedback, and unlabeled or inaccessible icon-only actions. Do not reproduce all stylesheet values in each feature document. If a genuinely missing visual pattern is needed, extend this guide and the shared stylesheet deliberately.
+
+## Verifiable design criteria
+
+These criteria apply to E2 and are planned acceptance checks, not claims that the existing application already passes. The interface spec must cite **DESIGN.md** by name and criterion id without copying visual values.
+
+| ID | Requirement | Verification |
+| --- | --- | --- |
+| DES-01 | New screens use the existing Bootstrap classes and shared tokens/patterns; no additional UI/CSS framework or replacement identity | Review dependencies, new markup and styles against this guide; compare an E1 and E2 screen |
+| DES-02 | Heading, body, metadata, poster proportions and action hierarchy follow the typography/imagery/pattern sections | Browser comparison with the brand board; inspect computed styles and uncropped poster rendering |
+| DES-03 | Planning, history and detail stay readable without horizontal page overflow at viewport widths 375, 768 and 1280 CSS pixels; long titles wrap | Browser checks at each width plus 200% zoom on a desktop viewport; all actions remain reachable |
+| DES-04 | Every input has an associated label; all actions work by keyboard; focus remains visible and logical after add/remove or navigation | Keyboard-only flow and label/accessibility inspection; focus must not be lost when a selected item is removed |
+| DES-05 | Loading, error, empty, unavailable, over-budget, pending and disabled states have textual explanations; important total/error updates are announced | Exercise each state; inspect status/alert semantics with the accessibility tree and an assistive-technology check |
+| DES-06 | Reduced-motion preference removes nonessential transitions/spinner animation while preserving loading text | Emulate prefers-reduced-motion and inspect motion/text during a pending request |
+| DES-07 | Existing authenticated navigation and logout remain available, and existing E1 workflows keep their styling and behavior | Compare search, collection, edit and detail flows before/after E2; distinguish old defects from new regressions |
+| DES-08 | Text contrast meets WCAG AA targets for normal and large text; meaningful UI boundaries/focus meet non-text contrast requirements, and state is never color-only | Measure actual rendered foreground/background pairs, including alpha blends and error/disabled-adjacent explanations; record ratios and text alternatives |
+
+Design verification results belong in `docs/VERIFICACION.md`, with the student's obtained results, and `docs/AUDITORIA.md`, with criterion status/evidence. Passing a build does not prove a design criterion.
