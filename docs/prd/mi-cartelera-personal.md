@@ -40,6 +40,14 @@ Optional assignment features require their own stories, criteria, and spec befor
 - Personal ratings are optional whole numbers from 1 through 5. Comments are optional personal text. Both are independent of the public rating.
 - Adding, editing, or removing a personal entry does not change the public catalog or another user's collection.
 
+### E1 — repair decisions
+
+- New duplicate collection entries are rejected per movie/TV identity. Existing duplicates require manual review without silently deleting personal notes or ratings.
+- Personal ratings may be assigned in any viewing state and cleared. Empty comments clear the note; no new comment-length limit is imposed.
+- New entries default to To Watch. Removal requires confirmation.
+- Existing status, exact-rating/unrated and local date-range filters and whole-collection counters remain available.
+- Account recovery/deletion remains outside this repair scope.
+
 ### E2 — client decisions
 
 - Available time is a whole number of minutes from 30 through 600, inclusive.
@@ -73,4 +81,3 @@ These are proposed student decisions, labeled `[ASSUMPTION]` and reflected in E2
 - How will the qualitative goal “finishes what they start” be evaluated? Completion tracking and analytics are not currently in scope.
 - Which pre-existing E1 defects must be fixed before E2 delivery? Record them as separately specified work; the regression baseline must distinguish old defects from newly introduced ones.
 - Are any optional assignment features selected? None are assumed in this draft.
-- E1 still has unresolved product policies, including duplicate collection entries, when ratings may be assigned, and account recovery/deletion. E2 does not settle those policies globally.

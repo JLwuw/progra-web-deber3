@@ -1,6 +1,6 @@
 # Mi Cartelera Personal — Design Guide
 
-This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and the Bootstrap 5.3.3 stylesheet referenced by `index.html`. The [brand board](docs/design/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
+This guide records the existing visual direction of the application. Its source is `mi-cartelera-personal/src/index.css`, the screen markup, and Bootstrap 5.3.3 bundled through `src/main.tsx`. The [brand board](docs/design/brand-board.html) is a standalone visual companion. Open it directly in a browser; it requires no account, build, or network connection.
 
 ## Direction and identity
 
@@ -61,7 +61,7 @@ Use the existing system stack: **Segoe UI, system-ui, sans-serif**. No downloade
 | Card action | .76rem |
 | Summary total | 2rem, weight 700, gold |
 
-Interface copy should be English, concise, and personal: “My Listing,” “Add to my Listing,” “Watching,” and “Back to My Listings” reflect the current vocabulary. Existing Spanish labels and unrelated fallback messages are inconsistencies recorded in the initial-state audit, not a bilingual style rule. Use clear action names and distinguish the user's 1–5 rating from TMDB's public rating out of 10.
+Interface copy should be English, concise, and personal: “My Listing,” “Add to my Listing,” “Watching,” and “Back to My Listings” reflect the current vocabulary. The initial-state audit recorded Spanish labels and unrelated fallback messages; E1 repairs replace them with English. Use clear action names and distinguish the user's 1–5 rating from TMDB's public rating out of 10.
 
 ## Layout, spacing, and shape
 
@@ -87,7 +87,7 @@ At the smallest breakpoint, detail posters are capped at 250px and authenticatio
 
 Movie and TV posters are the primary imagery. Grid posters sit on a dark backing at a 2:3 aspect ratio with `object-fit: contain`, preserving the artwork without cropping. Detail posters remain proportional and larger than edit thumbnails. Keep imagery secondary to readable title and action text.
 
-Use descriptive alternative text for meaningful posters. When artwork is unavailable, the intended treatment is a neutral dark placeholder with a textual explanation; this fallback is guidance for future work and is not currently implemented in search. The brand board uses a clearly labeled poster placeholder rather than external artwork.
+Use descriptive alternative text for meaningful posters. When artwork is unavailable, the intended treatment is a neutral dark placeholder with a textual explanation; the shared MediaPoster pattern now implements this fallback, including failed image loads. The brand board uses a clearly labeled poster placeholder rather than external artwork.
 
 ## UI patterns and states
 
@@ -115,7 +115,7 @@ Keep the application stylesheet as the implementation source of truth for existi
 
 ## Bootstrap customization and allowed components
 
-The application uses Bootstrap 5.3.3 via its existing stylesheet link. Customization lives in `mi-cartelera-personal/src/index.css`, loaded by the app after the document stylesheet. Keep Bootstrap layout utilities and semantic control classes as the base; use the existing color tokens and scoped selectors to customize surfaces, buttons, forms, and typography.
+The application bundles Bootstrap 5.3.3 from its npm dependency through `src/main.tsx`. Customization lives in `mi-cartelera-personal/src/index.css`, imported after Bootstrap. Keep Bootstrap layout utilities and semantic control classes as the base; use the existing color tokens and scoped selectors to customize surfaces, buttons, forms, and typography.
 
 Reuse `container`, `row`, responsive column utilities, spacing/flex utilities, `card`/`card-body`, `btn` variants, `form-label`, `form-control`, `form-select`, `navbar`, and `btn-group`. Existing custom patterns include `media-grid`, `media-card`, `detail-layout`, error panels, and the loading indicator. Movie Night may reuse these patterns for candidates and summary/history panels. Bootstrap JavaScript plugins are not currently loaded; do not assume modal/dropdown behavior is available from CSS alone.
 
