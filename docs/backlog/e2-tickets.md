@@ -52,7 +52,7 @@ The ticket's criteria are implemented and mapped to evidence; relevant tests pas
 - **Dependencies:** E2-T05.
 - **Work:** run full domain/service checks, browser acceptance and design scenarios, E1 regressions, and two-account isolation probes; create docs/VERIFICACION.md and docs/AUDITORIA.md.
 - **Criteria:** E2-AC01–22 and DES-01–08.
-- **DoD:** shared DoD plus the student fills “resultado obtenido” for browser checks; audit marks every criterion cumple/no cumple/sin verificar with evidence. Security probes include attempts to insert under another owner and update/delete a foreign session, not only hidden UI. Existing E1 defects are separated from introduced regressions.
+- **DoD:** shared DoD plus the student fills “actual result” for browser checks; audit marks every criterion meets / does not meet / unverified with evidence. Security probes include attempts to insert under another owner and update/delete a foreign session, not only hidden UI. Existing E1 defects are separated from introduced regressions.
 
 ## Non-goals
 

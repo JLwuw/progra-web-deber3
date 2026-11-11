@@ -1,54 +1,54 @@
 # E2 — Stories and acceptance criteria
 
-Status: draft. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. DADO / CUANDO / ENTONCES are used as required by the assignment; the interface remains English.
+Status: draft. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. GIVEN / WHEN / THEN express the assignment’s acceptance format in English; user stories use As a / I want / so that.
 
 ## E2-US1 — Find movies for the time I have
 
-**Como** usuario con una lista personal, **quiero** indicar cuánto tiempo tengo y ver mis películas pendientes que caben, **para** elegir algo que pueda terminar.
+**As a** user with a personal collection, **I want** to enter my available time and see pending movies that fit, **so that** I can choose something I can finish.
 
-- **E2-AC01 — Access:** DADO que no he iniciado sesión, CUANDO intento acceder a Movie Night, ENTONCES debo iniciar sesión antes de ver contenido personal.
-- **E2-AC02 — Budget:** DADO un tiempo vacío, no numérico, fraccionario, menor de 30 o mayor de 600, CUANDO lo envío, ENTONCES se explica el rango y el formato admitidos y no se inicia una planificación válida. DADO 30 o 600 minutos, CUANDO lo envío, ENTONCES se acepta ese límite.
-- **E2-AC03 — Eligibility:** DADO que mi lista tiene películas pendientes, películas en otros estados y series, CUANDO consulto qué cabe, ENTONCES solo se ofrecen mis películas pendientes y cada película con duración conocida muestra sus minutos. Las entradas duplicadas del mismo título aparecen una sola vez.
-- **E2-AC04 — Individual fit and order:** DADO un presupuesto válido de 100 minutos y películas de 90, 100 y 101 minutos, CUANDO consulto qué cabe, ENTONCES se ofrecen las de 90 y 100 en ese orden y la de 101 no se ofrece como agregable. Los empates se ordenan por título y una identidad estable.
-- **E2-AC05 — Unknown duration:** DADO una película pendiente sin duración válida, CUANDO se presentan los resultados, ENTONCES aparece como no disponible con un motivo y no se puede agregar.
-- **E2-AC06 — Retrieval states:** DADO que se están obteniendo duraciones, CUANDO espero resultados, ENTONCES veo una indicación de carga; DADO que una consulta falla, CUANDO termina, ENTONCES veo el fallo y puedo reintentarlo sin confundirlo con duración desconocida ni perder los resultados válidos de otras películas.
-- **E2-AC07 — Empty states:** DADO que no tengo películas pendientes o ninguna con duración conocida cabe, CUANDO consulto qué cabe, ENTONCES veo el motivo correspondiente; las películas sin duración siguen identificadas como no disponibles.
+- **E2-AC01 — Access:** GIVEN I am signed out, WHEN I try to access Movie Night, THEN I must sign in before seeing personal content.
+- **E2-AC02 — Budget:** GIVEN an empty, nonnumeric, fractional, below-30, or above-600 time value, WHEN I submit it, THEN the accepted range and format are explained and no valid planning session begins. GIVEN 30 or 600 minutes, WHEN I submit it, THEN that boundary value is accepted.
+- **E2-AC03 — Eligibility:** GIVEN my collection includes pending movies, movies in other states, and TV shows, WHEN I check what fits, THEN only my pending movies are offered and each movie with a known duration shows its minutes. Duplicate entries for the same title appear only once.
+- **E2-AC04 — Individual fit and order:** GIVEN a valid budget of 100 minutes and movies lasting 90, 100, and 101 minutes, WHEN I check what fits, THEN the 90- and 100-minute movies are offered in that order and the 101-minute movie is not offered as addable. Ties are ordered by title and a stable identity.
+- **E2-AC05 — Unknown duration:** GIVEN a pending movie without a valid duration, WHEN results are displayed, THEN it appears as unavailable with a reason and cannot be added.
+- **E2-AC06 — Retrieval states:** GIVEN durations are being retrieved, WHEN I wait for results, THEN I see a loading indication; GIVEN a request fails, WHEN it finishes, THEN I see the failure and can retry without confusing it with an unknown duration or losing valid results for other movies.
+- **E2-AC07 — Empty states:** GIVEN I have no pending movies or no movie with a known duration fits, WHEN I check what fits, THEN I see the corresponding explanation; movies without durations remain identified as unavailable.
 
 ## E2-US2 — Assemble a session that fits
 
-**Como** usuario que encontró películas pendientes, **quiero** agregarlas y quitarlas de una sesión viendo su duración y sus pausas, **para** aprovechar mi tiempo sin excederlo.
+**As a** user who found pending movies, **I want** to add and remove movies while seeing their durations and breaks, **so that** I can use my available time without exceeding it.
 
-- **E2-AC08 — Single movie and empty draft:** DADO una sesión vacía, CUANDO agrego una película de 90 minutos con 120 disponibles, ENTONCES el total es 90 y quedan 30; no se añade ninguna pausa. Al quitar la última película, total y pausas son cero y queda todo el presupuesto.
-- **E2-AC09 — Breaks and exact fit:** DADO 200 minutos disponibles y una película de 90 seleccionada, CUANDO agrego una de 100, ENTONCES el total es 200 incluyendo una pausa de 10 y quedan cero minutos. La sesión es válida.
-- **E2-AC10 — Over budget:** DADO el mismo presupuesto y una película de 90 seleccionada, CUANDO intento agregar una de 101, ENTONCES no se agrega, el borrador se conserva y se explica que película y pausa superarían el tiempo.
-- **E2-AC11 — Removal and order:** DADO tres películas seleccionadas, CUANDO quito una, ENTONCES se conserva el orden de las restantes y se recalcula el total con una sola pausa. El orden de incorporación es el orden de visualización.
-- **E2-AC12 — Repeated title:** DADO que una película ya está seleccionada, CUANDO intento agregarla otra vez, ENTONCES no se duplica y se explica que ya está incluida.
-- **E2-AC13 — Reduced budget:** DADO un borrador válido, CUANDO reduzco el presupuesto por debajo del total o escribo un tiempo inválido, ENTONCES el borrador sigue visible, se explica el problema y no puedo agregar ni guardar hasta corregirlo. Puedo quitar películas.
+- **E2-AC08 — Single movie and empty draft:** GIVEN an empty session, WHEN I add a 90-minute movie with 120 minutes available, THEN the total is 90 and 30 remain, with no break added. Removing the last movie resets the total and break time to zero and restores the full budget.
+- **E2-AC09 — Breaks and exact fit:** GIVEN 200 minutes available and a selected 90-minute movie, WHEN I add a 100-minute movie, THEN the total is 200 including one 10-minute break, with zero minutes remaining. The session is valid.
+- **E2-AC10 — Over budget:** GIVEN the same budget and a selected 90-minute movie, WHEN I try to add a 101-minute movie, THEN it is not added, the draft is preserved, and an explanation states that the movie and break would exceed the available time.
+- **E2-AC11 — Removal and order:** GIVEN three selected movies, WHEN I remove one, THEN the remaining order is preserved and the total is recalculated with one break. Addition order is viewing order.
+- **E2-AC12 — Repeated title:** GIVEN a movie is already selected, WHEN I try to add it again, THEN it is not duplicated and an explanation states that it is already included.
+- **E2-AC13 — Reduced budget:** GIVEN a valid draft, WHEN I reduce the budget below the total or enter an invalid time, THEN the draft remains visible, the problem is explained, and I cannot add movies or save until it is corrected. I can remove movies.
 
 ## E2-US3 — Save my plan
 
-**Como** usuario con una sesión preparada, **quiero** guardarla con un nombre, **para** recuperar mi plan sin volver a elegir las películas.
+**As a** user with a prepared session, **I want** to save it with a name, **so that** I can retrieve my plan without selecting the movies again.
 
-- **E2-AC14 — Name and minimum content:** DADO un nombre vacío, solo espacios o de más de 80 caracteres, o una sesión vacía, CUANDO intento guardar, ENTONCES se explica el problema y no se guarda. Un nombre con 1 u 80 caracteres después de quitar espacios externos es válido.
-- **E2-AC15 — Successful save:** DADO una sesión válida y con nombre, CUANDO la guardo, ENTONCES se conserva como una sesión completa con orden, duraciones, pausas, presupuesto y momento de guardado; las películas siguen pendientes y se muestra el detalle guardado.
-- **E2-AC16 — Failure and pending save:** DADO que estoy guardando, CUANDO intento guardar otra vez, ENTONCES no se inicia otro guardado concurrente; DADO que el guardado falla, CUANDO veo el error, ENTONCES conservo el borrador y puedo reintentar. No debe aparecer una sesión parcialmente guardada.
-- **E2-AC17 — Changed source:** DADO que una película fue eliminada, cambió de estado o su duración cambió antes de guardar, CUANDO intento guardar, ENTONCES se solicita revisar el borrador con la información actual y no se guarda silenciosamente un plan distinto. Una duración que deja de estar disponible impide guardar esa selección.
-- **E2-AC18 — Reuse across sessions:** DADO una película en una sesión guardada, CUANDO creo otra sesión válida con la misma película aún pendiente, ENTONCES puedo guardarla también.
+- **E2-AC14 — Name and minimum content:** GIVEN an empty name, a whitespace-only name, a name longer than 80 characters, or an empty session, WHEN I try to save, THEN the problem is explained and nothing is saved. A name with 1 or 80 characters after trimming outer spaces is valid.
+- **E2-AC15 — Successful save:** GIVEN a valid named session, WHEN I save it, THEN a complete session is preserved with its order, durations, breaks, budget, and save timestamp; the movies remain pending and the saved detail is displayed.
+- **E2-AC16 — Failure and pending save:** GIVEN a save is pending, WHEN I try to save again, THEN no concurrent save begins; GIVEN saving fails, WHEN I see the error, THEN I retain the draft and can retry. No partially saved session may appear.
+- **E2-AC17 — Changed source:** GIVEN a movie was removed, changed viewing state, or changed duration before saving, WHEN I try to save, THEN I am asked to review the draft with current information and a different plan is not silently saved. A duration that becomes unavailable prevents saving that selection.
+- **E2-AC18 — Reuse across sessions:** GIVEN a movie appears in a saved session, WHEN I create another valid session with the same still-pending movie, THEN I can save it too.
 
 ## E2-US4 — Consult my saved sessions
 
-**Como** usuario que guardó sesiones, **quiero** consultar mis planes y sus detalles, **para** recordar qué ver y cuánto tiempo reservé.
+**As a** user with saved sessions, **I want** to consult my plans and their details, **so that** I can remember what to watch and how much time I reserved.
 
-- **E2-AC19 — Saved list:** DADO que tengo sesiones guardadas, CUANDO las consulto, ENTONCES aparecen de la más reciente a la más antigua con nombre, momento de guardado y total; los empates tienen un orden estable. Si no tengo ninguna, veo un estado vacío.
-- **E2-AC20 — Historical detail:** DADO una sesión guardada, CUANDO abro su detalle, ENTONCES veo sus películas en orden, duraciones guardadas, pausas, total, presupuesto y restante, aunque después elimine una película de mi lista o cambie su información. No se ofrecen edición, eliminación ni fecha de visualización programada.
-- **E2-AC21 — Isolation:** DADO dos usuarios con sesiones distintas, CUANDO uno intenta consultar o modificar las sesiones del otro, ENTONCES no puede verlas ni modificarlas, incluso mediante un acceso que evite la navegación habitual. Una persona sin sesión tampoco puede hacerlo.
-- **E2-AC22 — Draft lifecycle and regression:** DADO un borrador no guardado, CUANDO recargo o cierro sesión, ENTONCES no se conserva ni aparece en otra cuenta; los planes guardados sí vuelven al iniciar sesión con su propietario. Las funciones existentes de acceso, búsqueda, colección, edición y detalle siguen disponibles.
+- **E2-AC19 — Saved list:** GIVEN I have saved sessions, WHEN I consult them, THEN they appear newest first with their name, save timestamp, and total; ties have a stable order. If I have none, I see an empty state.
+- **E2-AC20 — Historical detail:** GIVEN a saved session, WHEN I open its detail, THEN I see its movies in order, saved durations, breaks, total, budget, and remaining time, even if I later remove a movie from my collection or its information changes. No editing, deletion, or scheduled viewing date is offered.
+- **E2-AC21 — Isolation:** GIVEN two users with different sessions, WHEN one attempts to consult or modify the other user's sessions, THEN access and modification are denied, even through an attempt that bypasses normal navigation. A signed-out person is also denied.
+- **E2-AC22 — Draft lifecycle and regression:** GIVEN an unsaved draft, WHEN I reload or sign out, THEN it is not retained or shown in another account; saved plans return when their owner signs in. Existing authentication, search, collection, editing, and detail features remain available.
 
 ## INVEST review
 
 - **Independent:** finding fitting movies has value without saving; assembling adds live planning; saving adds persistence; consulting adds retrieval. Stories share the domain model but remain separate user outcomes. Technical prerequisites are explicit ticket dependencies, not disguised user stories.
 - **Negotiable:** S1–S12 are visible proposals; wording and interface composition can change while client rules remain fixed.
-- **Valuable:** each story states its user benefit in “para”.
+- **Valuable:** each story states its user benefit in “so that”.
 - **Estimable:** boundaries, failures, and expected behavior are defined; no optional optimizer, calendar, or social scope is hidden.
 - **Small:** each story covers one stage of the workflow; implementation is split into bounded tickets.
 - **Testable:** each E2-AC scenario has an observable result and a planned verification mapping in the epic spec.

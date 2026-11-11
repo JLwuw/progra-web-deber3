@@ -52,20 +52,20 @@ Optional assignment features require their own stories, criteria, and spec befor
 
 ## Suppositions
 
-These are proposed student decisions, labeled `[SUPUESTO]` and reflected in E2 criteria. Their rationale is part of refinement.
+These are proposed student decisions, labeled `[ASSUMPTION]` and reflected in E2 criteria. Their rationale is part of refinement.
 
-- **S1 [SUPUESTO]:** A movie may appear in different saved sessions, but only once within one session. This allows alternative plans without accidentally counting the same movie twice.
-- **S2 [SUPUESTO]:** Eligible movies are ordered by duration ascending, then title ascending, then a stable title identity. This makes short options easy to compare and keeps ties predictable. Unavailable entries appear separately in title order.
-- **S3 [SUPUESTO]:** Saved sessions cannot be edited or deleted in this release. Users may create another session instead. This bounds the required save-and-consult workflow.
-- **S4 [SUPUESTO]:** A saved session preserves its titles, movie order, and known durations at save time. Removing a movie from the collection, changing its viewing state, or later catalog changes do not rewrite past plans. Before saving, ownership, eligibility, and known durations are checked again; changes require the user to review the draft.
-- **S5 [SUPUESTO]:** A session requires a trimmed name of 1–80 characters and records when it was saved. It has no scheduled viewing date. A name helps distinguish plans without introducing calendar behavior.
-- **S6 [SUPUESTO]:** Empty sessions cannot be saved. Selection order is viewing order. Removal closes the gap and recalculates breaks; reordering controls are outside scope.
-- **S7 [SUPUESTO]:** Blank, nonnumeric, fractional, or out-of-range available time is invalid. Lowering the budget keeps the draft visible but prevents additions and saving while over budget, so users can remove movies deliberately.
-- **S8 [SUPUESTO]:** Zero, negative, nonnumeric, or non-whole durations are unknown/unusable. A catalog request failure is shown as a retryable retrieval failure, not as proof that duration is absent. Unaffected movies remain usable.
-- **S9 [SUPUESTO]:** Initial fit results compare each movie with the full valid budget; while building a draft, add availability uses the remaining budget including the next required break. Unavailable-duration movies remain visible with their reason, and known movies exceeding the full budget may be summarized separately.
-- **S10 [SUPUESTO]:** Drafts are not persisted across reloads or sign-out. Successful save clears the draft after opening the saved detail. Failed save preserves it and offers retry; only one save can be pending at once.
-- **S11 [SUPUESTO]:** Saved sessions are listed newest first, with a stable identity resolving timestamp ties. Viewing saved details does not require a fresh catalog request.
-- **S12 [SUPUESTO]:** Duplicate E1 collection entries referring to the same movie are represented once in the planner, without modifying the collection. This preserves E1 behavior while avoiding duplicate session titles.
+- **S1 [ASSUMPTION]:** A movie may appear in different saved sessions, but only once within one session. This allows alternative plans without accidentally counting the same movie twice.
+- **S2 [ASSUMPTION]:** Eligible movies are ordered by duration ascending, then title ascending, then a stable title identity. This makes short options easy to compare and keeps ties predictable. Unavailable entries appear separately in title order.
+- **S3 [ASSUMPTION]:** Saved sessions cannot be edited or deleted in this release. Users may create another session instead. This bounds the required save-and-consult workflow.
+- **S4 [ASSUMPTION]:** A saved session preserves its titles, movie order, and known durations at save time. Removing a movie from the collection, changing its viewing state, or later catalog changes do not rewrite past plans. Before saving, ownership, eligibility, and known durations are checked again; changes require the user to review the draft.
+- **S5 [ASSUMPTION]:** A session requires a trimmed name of 1–80 characters and records when it was saved. It has no scheduled viewing date. A name helps distinguish plans without introducing calendar behavior.
+- **S6 [ASSUMPTION]:** Empty sessions cannot be saved. Selection order is viewing order. Removal closes the gap and recalculates breaks; reordering controls are outside scope.
+- **S7 [ASSUMPTION]:** Blank, nonnumeric, fractional, or out-of-range available time is invalid. Lowering the budget keeps the draft visible but prevents additions and saving while over budget, so users can remove movies deliberately.
+- **S8 [ASSUMPTION]:** Zero, negative, nonnumeric, or non-whole durations are unknown/unusable. A catalog request failure is shown as a retryable retrieval failure, not as proof that duration is absent. Unaffected movies remain usable.
+- **S9 [ASSUMPTION]:** Initial fit results compare each movie with the full valid budget; while building a draft, add availability uses the remaining budget including the next required break. Unavailable-duration movies remain visible with their reason, and known movies exceeding the full budget may be summarized separately.
+- **S10 [ASSUMPTION]:** Drafts are not persisted across reloads or sign-out. Successful save clears the draft after opening the saved detail. Failed save preserves it and offers retry; only one save can be pending at once.
+- **S11 [ASSUMPTION]:** Saved sessions are listed newest first, with a stable identity resolving timestamp ties. Viewing saved details does not require a fresh catalog request.
+- **S12 [ASSUMPTION]:** Duplicate E1 collection entries referring to the same movie are represented once in the planner, without modifying the collection. This preserves E1 behavior while avoiding duplicate session titles.
 
 ## Open questions
 

@@ -103,7 +103,7 @@ This is the correct direction for the required ownership model. The repository d
 
 ### Conventions and product consistency
 
-- Most visible text is English, but authentication includes “Contraseña,” and some error fallbacks are Spanish. The edit fallback refers to creating a “tripulante,” an unrelated domain concept.
+- Most visible text is English, but the authentication password label and some error fallbacks are Spanish. The edit fallback refers to creating a crew member, an unrelated domain concept.
 - TypeScript variables such as `saved_session`, `new_listing`, and `cleaned_results` do not follow the stated camelCase convention. Database-shaped domain fields also use snake_case directly throughout the UI.
 - `SearchScreen.tsx` uses an explicit `any` in a catch clause, violating the project rule.
 - Database CRUD is correctly isolated in services. However, `App.tsx` subscribes directly through the Supabase client rather than an auth-service wrapper. Search requests and response conversion also live in a screen, while detail requests use a service; external access is organized inconsistently.

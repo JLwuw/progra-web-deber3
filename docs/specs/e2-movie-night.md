@@ -4,34 +4,34 @@ Status: proposed implementation contract, not executed code. Sources: [PRD](../p
 
 ## Boundaries and normative criteria
 
-DEBE means required; NO DEBE means prohibited. Existing E1 behavior remains the regression baseline, with known defects recorded separately.
+MUST means required; MUST NOT means prohibited. Existing E1 behavior remains the regression baseline, with known defects recorded separately.
 
-- **E2-AC01:** navigation and content DEBE require authentication; NO DEBE expose a prior user's draft or sessions.
-- **E2-AC02:** available time DEBE be an integer in the inclusive interval 30–600; NO DEBE accept blanks, coercible nonsense, fractions, or out-of-range input.
-- **E2-AC03:** candidates DEBE be distinct movies owned by the current user in plan_to_watch; NO DEBE include TV or another user's entries.
-- **E2-AC04:** initial fitting results DEBE include movies with runtime at most the full budget and sort by runtime, title, then catalog identity; NO DEBE offer an individually oversized movie as addable.
-- **E2-AC05:** absent/nonpositive/noninteger runtime DEBE appear with a reason; NO DEBE be addable or treated as zero minutes.
-- **E2-AC06:** loading and retrieval failure DEBE be distinguishable, retryable, and independent per result where possible; NO DEBE discard successful results because another request fails.
-- **E2-AC07:** empty pending collection and no fitting known movies DEBE have distinct explanations; NO DEBE hide unknown-runtime explanations.
-- **E2-AC08:** empty selection DEBE total zero; one movie DEBE have no break.
-- **E2-AC09:** n movies DEBE have max(n−1, 0) ten-minute breaks; exact fit DEBE be valid.
-- **E2-AC10:** add checks DEBE include the next required break; NO DEBE change the draft on rejection.
-- **E2-AC11:** removing a movie DEBE preserve remaining order and recalculate totals and breaks.
-- **E2-AC12:** one movie identity NO DEBE occur twice within a session.
-- **E2-AC13:** an invalid or reduced budget DEBE preserve the visible draft and allow removal; NO DEBE allow additions/saving while invalid or over budget.
-- **E2-AC14:** saving DEBE require at least one movie and a trimmed name of 1–80 characters; NO DEBE save an empty plan.
-- **E2-AC15:** saving DEBE persist one complete ordered snapshot and display its detail; NO DEBE update E1 viewing state.
-- **E2-AC16:** pending saves DEBE prevent concurrent submission; failures DEBE preserve the draft; NO DEBE expose partial sessions or create another session when retrying the same unchanged draft after an ambiguous response.
-- **E2-AC17:** before insertion, services DEBE refresh collection eligibility and selected runtimes; changed or unavailable data DEBE require review; NO DEBE silently change and save the selection.
-- **E2-AC18:** the same eligible movie DEBE be permitted in separate sessions.
-- **E2-AC19:** saved sessions DEBE show name, saved timestamp, total and newest-first ordering with a stable id tie-break; empty history DEBE be explicit.
-- **E2-AC20:** details DEBE use saved order and snapshots, including budget/total/remaining; NO DEBE require TMDB or offer saved-plan mutation/scheduled viewing dates.
-- **E2-AC21:** database RLS and privileges DEBE isolate sessions; NO DEBE grant cross-account or anonymous reads/writes.
-- **E2-AC22:** reload/logout/account change DEBE discard draft state and restore only the signed-in owner's saved data; NO DEBE break E1 workflows.
+- **E2-AC01:** navigation and content MUST require authentication; MUST NOT expose a prior user's draft or sessions.
+- **E2-AC02:** available time MUST be an integer in the inclusive interval 30–600; MUST NOT accept blanks, coercible nonsense, fractions, or out-of-range input.
+- **E2-AC03:** candidates MUST be distinct movies owned by the current user in plan_to_watch; MUST NOT include TV or another user's entries.
+- **E2-AC04:** initial fitting results MUST include movies with runtime at most the full budget and sort by runtime, title, then catalog identity; MUST NOT offer an individually oversized movie as addable.
+- **E2-AC05:** absent/nonpositive/noninteger runtime MUST appear with a reason; MUST NOT be addable or treated as zero minutes.
+- **E2-AC06:** loading and retrieval failure MUST be distinguishable, retryable, and independent per result where possible; MUST NOT discard successful results because another request fails.
+- **E2-AC07:** empty pending collection and no fitting known movies MUST have distinct explanations; MUST NOT hide unknown-runtime explanations.
+- **E2-AC08:** empty selection MUST total zero; one movie MUST have no break.
+- **E2-AC09:** n movies MUST have max(n−1, 0) ten-minute breaks; exact fit MUST be valid.
+- **E2-AC10:** add checks MUST include the next required break; MUST NOT change the draft on rejection.
+- **E2-AC11:** removing a movie MUST preserve remaining order and recalculate totals and breaks.
+- **E2-AC12:** one movie identity MUST NOT occur twice within a session.
+- **E2-AC13:** an invalid or reduced budget MUST preserve the visible draft and allow removal; MUST NOT allow additions/saving while invalid or over budget.
+- **E2-AC14:** saving MUST require at least one movie and a trimmed name of 1–80 characters; MUST NOT save an empty plan.
+- **E2-AC15:** saving MUST persist one complete ordered snapshot and display its detail; MUST NOT update E1 viewing state.
+- **E2-AC16:** pending saves MUST prevent concurrent submission; failures MUST preserve the draft; MUST NOT expose partial sessions or create another session when retrying the same unchanged draft after an ambiguous response.
+- **E2-AC17:** before insertion, services MUST refresh collection eligibility and selected runtimes; changed or unavailable data MUST require review; MUST NOT silently change and save the selection.
+- **E2-AC18:** the same eligible movie MUST be permitted in separate sessions.
+- **E2-AC19:** saved sessions MUST show name, saved timestamp, total and newest-first ordering with a stable id tie-break; empty history MUST be explicit.
+- **E2-AC20:** details MUST use saved order and snapshots, including budget/total/remaining; MUST NOT require TMDB or offer saved-plan mutation/scheduled viewing dates.
+- **E2-AC21:** database RLS and privileges MUST isolate sessions; MUST NOT grant cross-account or anonymous reads/writes.
+- **E2-AC22:** reload/logout/account change MUST discard draft state and restore only the signed-in owner's saved data; MUST NOT break E1 workflows.
 
 ## Domain contracts — src/dominio/movieNight.ts
 
-Domain code DEBE be pure, typed without any, deterministic, and free of network, storage, React, dates generated internally, or Supabase imports.
+Domain code MUST be pure, typed without any, deterministic, and free of network, storage, React, dates generated internally, or Supabase imports.
 
 - `validateAvailableMinutes(raw)` returns a discriminated valid integer result or a validation reason. Check empty/text input before numeric conversion.
 - `normalizeRuntime(value: unknown)` returns a positive integer runtime or an unavailable reason. Do not trust an asserted external response type.
