@@ -17,7 +17,7 @@ The React App is inside `mi-cartelera-personal` from there:
 - `src/index.css`: stylesheet
 - `supabase/migrations/`: SQL migrations
 - `docs/prd/`, `docs/backlog/`, `docs/specs/`: documentation
-- `docs/diseno/`: material de diseño
+- `docs/design/`: Design references
 
 ## Commands
 `cd mi-cartelera-personal` to access React App root. From there:

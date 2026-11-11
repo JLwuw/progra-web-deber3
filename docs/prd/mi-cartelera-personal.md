@@ -1,101 +1,78 @@
 # Mi Cartelera Personal — Product Requirements Document
 
-## 1. Problem
+## Problem
 
-People need a single place to keep track of movies and TV shows they want to watch, are watching, or have finished. A title's public information does not capture an individual's progress, opinion, or rating. Mi Cartelera Personal provides a private collection that combines information about real titles with each user's viewing records.
+People need a personal place to keep track of the movies and TV shows they want to watch, are watching, or have already watched. A title's public information and rating do not capture an individual's viewing progress, opinion, or experience.
 
-## 2. Users
+Mi Cartelera Personal lets users discover real titles, maintain a private collection, and record their own ratings and comments alongside the title's public information. The intended outcome is that a user can find a title, save it, and return later to review or update their viewing history.
 
-- People who want to organize movies and TV shows across different viewing stages.
-- People who want to record their personal ratings and comments and revisit them later.
+## Users
 
-Each registered user manages an independent, private collection. The MVP has no additional user roles.
+- People who want to keep a watchlist of movies and TV shows they plan to watch.
+- People who want to track what they are currently watching and what they have finished.
+- People who want to preserve personal ratings and notes about their viewing experiences.
 
-## 3. Objectives and Success Metrics
+## Scope
 
-The MVP aims to make discovering, saving, and maintaining a personal collection possible from end to end. Success is measured against the following acceptance targets; no adoption or engagement targets are defined for the initial release.
+### Required for the initial release
 
-| Objective | Success metric |
-| --- | --- |
-| Provide controlled access | Registration, sign-in, and sign-out can be completed; all collection and search content requires an active session. |
-| Help users find real titles | Users can search for movies and TV shows and identify results by title, poster, and year when available. |
-| Support a lasting personal collection | Users can add, view, update, and remove titles, and saved changes remain available after signing in again. |
-| Capture personal viewing information | Each saved title supports one of the three viewing states, an optional rating from 1 to 5, and an optional comment. |
-| Provide useful title details | Users can open a saved title and review its synopsis, cast, poster, public rating, and their own information when available. |
-| Keep collections private | Verification with two accounts confirms that neither user can view or change the other's collection. |
+- Account registration, sign-in, and sign-out. Access to search, collections, and title details requires an active session. A sign-out action remains available throughout the signed-in experience.
+- Search for movies and TV shows using The Movie Database (TMDB) as the source of title information. Search results show each title's poster, name, and release year, with clear feedback while results are loading or when a search fails.
+- Add a title from search results to the user's personal collection.
+- View the user's saved collection.
+- Update a saved title's viewing status, personal rating, and personal comment.
+- Remove a title from the personal collection.
+- Open a saved title's detailed view with a large poster, full synopsis, cast, public rating, personal rating, and personal comment.
+- Keep each user's collection private and prevent other users from accessing or changing it.
+- Preserve saved titles and personal updates so users can return to their collection in later sessions.
 
-## 4. Functional Requirements
+### Optional enhancements
 
-### Account access
+The following are explicitly optional and are not conditions for completing the initial release:
 
-- Users can create an account, sign in, and sign out.
-- People without an active session can access registration and sign-in only.
-- A sign-out action remains visible throughout the authenticated experience.
+- Filter the collection by viewing status.
+- Sort the collection by personal rating or date added.
+- Show a summary of the number of titles in each viewing status.
 
-### Title discovery
+## Out of scope
 
-- Users can search for movies and TV shows by title using The Movie Database (TMDB) as the catalog source.
-- Search results show a poster, title, and year when available.
-- Users receive clear feedback while a search is in progress, when it returns no results, or when it cannot be completed.
+- Watching, streaming, or downloading movies and TV shows.
+- Public profiles, shared collections, social feeds, or interactions between users.
+- Publishing personal ratings or comments to TMDB, or changing its title information.
+- Personalized recommendations and viewing reminders.
+- Tracking individual seasons or episodes; the required collection tracks movie and TV show titles.
 
-### Personal collection
+These capabilities are outside the requirements described in the project brief.
 
-- Users can add a search result to their own collection.
-- Users can view all titles saved in their collection.
-- Users can change a saved title's viewing state, personal rating, and comment.
-- Users can remove titles from their collection.
-- Changes to a collection remain available across sessions.
+## Business rules
 
-### Viewing information
+1. Visitors can register or sign in, but cannot access product content without an active session. Signing out ends access to that content.
+2. Every saved entry belongs to the user who added it. Only that user may view, update, or remove it. This restriction must hold even if someone attempts to bypass normal navigation.
+3. A saved title is either a movie or a TV show and originates from the search catalog.
+4. Every saved title has exactly one viewing status: To Watch, Watching, or Watched.
+5. A personal rating is optional. When present, it is a whole number from 1 through 5.
+6. A personal comment is optional and contains the user's own free-text notes.
+7. Personal ratings and comments are independent of the title's public rating and information.
+8. Users can change the viewing status, personal rating, or personal comment of titles in their own collection.
+9. Removing a title affects the user's personal collection; it does not remove the title from the search catalog or another user's collection.
+10. Adding or updating a personal entry does not change information published by TMDB.
 
-- Each saved title has a viewing state: `To watch`, `Watching`, or `Watched`.
-- Users can optionally give each saved title a personal rating from 1 to 5.
-- Users can optionally record a free-text comment for each saved title.
-- Personal ratings and comments remain distinct from the title's public catalog information.
+## Suppositions
 
-### Title details
+- Users have internet access when searching for titles and managing their collections; offline use is not part of the initial release.
+- A single personal collection per account is sufficient for the initial release.
+- Registration and sign-in are the only experiences available before authentication. This interpretation reconciles the requirement for controlled access with the need to let visitors create or access an account.
+- The user-facing interface will be in English, following the project's stated convention. The status labels in this document express the same three states described in the brief.
 
-- Users can open a detailed view from a title in their collection.
-- The detail view includes a larger poster, full synopsis, cast, public rating, viewing state, personal rating, and personal comment when available.
+## Open questions
 
-### Privacy
-
-- Users can view and manage only the titles they saved themselves.
-- This restriction applies to every access to a collection, including attempts to access another user's saved title directly.
-
-## 5. MVP Scope
-
-The MVP includes account registration and session management, authenticated title search, a persistent private collection, adding and removing titles, editing viewing information, and viewing title details. It covers both movies and TV shows and includes feedback for search progress and unavailable results.
-
-The release is complete when all mandatory functional requirements and acceptance targets in this document are satisfied. Optional enhancements do not block MVP completion.
-
-## 6. Out of Scope
-
-The following enhancements are optional in the source description and are deferred beyond the MVP:
-
-- Filtering the collection by viewing state.
-- Sorting the collection by personal rating or date added.
-- Displaying summary counts for each viewing state.
-- Providing a publicly hosted application link.
-
-The MVP also does not include shared collections, social interactions, personalized recommendations, playback, or tracking individual seasons and episodes.
-
-## 7. Business Rules
-
-- An active session is required to search the catalog or access a collection.
-- Every saved entry belongs to the user who added it; other users cannot view, edit, or remove it.
-- A saved entry represents either a movie or a TV show from the catalog.
-- Each saved title has exactly one viewing state: `To watch`, `Watching`, or `Watched`.
-- A personal rating is optional; when provided, it must be a whole number from 1 to 5.
-- A personal comment is optional and contains the user's own notes about the title.
-- Personal ratings do not replace or change public catalog ratings.
-- Adding, editing, or removing a title affects only the user's collection and does not modify the source catalog.
-
-## 8. Supositions
-
-- Users have internet access and an individual account to use the application.
-- TMDB supplies the catalog information needed for discovery and title details; some titles may have incomplete information.
-- Users maintain their own collections without sharing them or collaborating with other accounts.
-- Viewing progress is recorded at the movie or whole-series level.
-- English is the language for the product interface and domain terminology, following the project conventions.
-- The initial viewing state, handling of duplicate additions, and comment length limits are not specified in the source description and remain to be defined in the relevant feature specifications.
+- Can the same movie or TV show be added more than once to a user's collection? If not, what feedback should a repeat attempt provide?
+- Which viewing status should a newly added title receive, or must the user choose one when adding it?
+- Can a title be rated in any viewing status, or only after it is marked Watched?
+- Can users clear a previously saved rating or comment?
+- Is there a maximum length for personal comments?
+- What should users see when a title has no poster, release year, synopsis, cast, or public rating?
+- Should saved title information reflect later catalog changes, or retain the information available when the title was added?
+- Should removing a title require confirmation or offer a way to undo the action?
+- Are account verification, password recovery, or account deletion required for the initial release?
+- Which optional enhancements, if any, will be included in the delivery?
