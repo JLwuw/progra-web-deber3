@@ -113,3 +113,11 @@ Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie re
 ## Current optional-feature checkpoint
 
 E2-T07–T11 have local implementation and automated evidence. T08 provides the pure optimizer and safe replacement; T09 adds combined runtime/genre metadata and filtering; T10 provides the prominent one-way watched action and atomic RPC; T11 enforces snapshot fit in migration 003. Migration 004 adds completion. Live migration state, two-account security and detailed browser/design acceptance remain unverified. See [audit](../AUDITORIA.md) and [verification](../VERIFICACION.md). Save-warning isolation is covered by E2-F04's regression under T08/T05.
+
+
+## E2-T12 — Independent adversarial pre-commit review
+
+- **Type:** selected quality/harness bonus. **Dependencies:** E2-T06, existing commit skill and project rules.
+- **Criteria:** E2-AC31–33; ADV-01–05 in [review spec](../specs/adversarial-review.md).
+- **Work:** independent-review skill, staged snapshot request/report gate, local pre-commit hook, commit-skill/AGENTS integration and setup documentation.
+- **DoD:** specs/criteria precede the implementation commit; independent forward-test and gate integration checks demonstrate blocked missing/stale/failed review and allowed matching approval; existing hook/index settings preserved; application tests/build pass. No retroactive review claims, automatic commits/pushes or hosted enforcement claims.

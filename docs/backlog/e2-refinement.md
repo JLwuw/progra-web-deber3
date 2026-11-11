@@ -64,3 +64,11 @@ The requested implementation follows S1–S12, including immutable plans, name r
 | False catalog runtimes | Database enforces supplied runtimes and arithmetic, not external catalog authenticity; no server TMDB integration is implied | E2-AC28 |
 | Invalid pre-existing session payload | Migration fails transactionally for manual review; do not silently delete or change saved plans | E2-AC28 |
 | Suggestion warning after a named draft | Keep planning/general feedback separate from save failure; no-fit preserves the draft and Save Night label, while actual failed/uncertain saves offer retry | E2-AC16/30; audit E2-F04 |
+
+
+## Adversarial review refinement
+
+- Accept a separate subagent for every proposed commit, including docs/tests/tooling; self-review alone does not satisfy the bonus (E2-AC31).
+- Bind a review to the staged tree, parent and request. Restaging or changing the parent requires a fresh review; an unchanged tree with a renewed request also invalidates the old response (E2-AC32).
+- Keep records outside the staged tree to avoid circular approval. Preserve local response history; evidence can be exported for a later separately reviewed commit (E2-AC32/33).
+- Reject silent replacement of existing hooks, staging by reviewers, fabricated approvals and false live-test claims. A local hook cannot prove reviewer identity or prevent deliberate local bypass; no server enforcement is implied (E2-AC33).

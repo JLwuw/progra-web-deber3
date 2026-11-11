@@ -77,6 +77,14 @@ Status: implemented locally; final browser/live acceptance remains pending. Scop
 
 - **E2-AC28 — Database invariant:** GIVEN a direct save request bypassing the normal interface, WHEN its declared durations plus breaks exceed the budget, or its selection/durations/total are invalid, THEN the database rejects it. Exact fit and one movie without breaks remain valid. Ordinary callers cannot forge completion or bypass ownership checks.
 
+## E2-US10 — Independently review changes before committing
+
+**As a** project maintainer, **I want** a separate reviewer to challenge proposed changes before each commit, **so that** defects and unsupported acceptance claims are caught before they enter history.
+
+- **E2-AC31 — Independent review:** GIVEN proposed changes, WHEN I request a commit, THEN a separate reviewer examines the changes and relevant requirements, reports concrete findings with evidence, and does not modify the work or approve its own implementation.
+- **E2-AC32 — Approval matches the proposal:** GIVEN missing, failed, incomplete or outdated review, WHEN I attempt to commit, THEN the local gate blocks it. A passing review permits only the reviewed staged version and parent; changes to either require another review.
+- **E2-AC33 — Honest operation:** GIVEN existing staging, hooks or unavailable verification, WHEN review is prepared or activated, THEN staging is preserved, incompatible hook settings are not silently replaced, missing evidence is reported accurately, and no commit/push happens without its own authorization. Local bypass limits are documented.
+
 ## INVEST review
 
 - **Independent:** finding fitting movies has value without saving; assembling adds live planning; saving adds persistence; consulting adds retrieval. Stories share the domain model but remain separate user outcomes. Technical prerequisites are explicit ticket dependencies, not disguised user stories.

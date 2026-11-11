@@ -30,6 +30,7 @@ The signed-in user supplies available minutes, sees which pending movies fit wit
 - Filter pending candidates by one movie genre or All genres. Changing the filter does not remove already-selected movies.
 - Owners can explicitly mark a saved session Watched. This is a separate confirmed action; saving alone still leaves movies pending.
 - Saved sessions must fit their declared time budget even if someone bypasses the normal interface.
+- Project maintainers receive independent review of proposed changes before committing, with defects and missing verification reported. Approval applies only to the reviewed version; changed proposals require another review.
 
 ## Out of scope
 
@@ -96,4 +97,4 @@ These are proposed student decisions, labeled `[ASSUMPTION]` and reflected in E2
 - The implementation follows S1–S12 as explicit working decisions. Revise the corresponding criteria and specs before changing those behaviors.
 - How will the qualitative goal “finishes what they start” be evaluated? Sessions now record explicit completion; analytics and measured success rates remain outside scope.
 - Which pre-existing E1 defects must be fixed before E2 delivery? Record them as separately specified work; the regression baseline must distinguish old defects from newly introduced ones.
-- Four optional features are selected above. Social/calendar/streaming/deployment and adversarial-agent extras remain outside this change.
+- Four optional features are selected above. Independent pre-commit adversarial review is also selected as a development-quality bonus. Social/calendar/streaming/deployment extras remain outside this change.

@@ -25,3 +25,7 @@ Traceability uses E2-US identifiers for stories, E2-AC for acceptance criteria, 
 ## Selected optional E2 extensions
 
 The user selected four extensions from details2.md §1.5: automatic planning, movie-genre filtering, explicit watched-session completion, and database fit validation. These extend E2 rather than replace E1. Read [optional-feature specification](../specs/e2-optionals.md), stories E2-US6–US9, criteria E2-AC25–30 and tickets E2-T08–T11 before implementing. User terminology “gender” means movie genre.
+
+## Selected development-quality bonus
+
+Independent adversarial review before every commit is tracked by E2-US10, E2-AC31–33 and E2-T12. See [review spec](../specs/adversarial-review.md). This extends the development workflow; it adds no Movie Night interface or social/deployment feature.

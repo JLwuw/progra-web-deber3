@@ -36,3 +36,5 @@ The current checkpoint includes local Part C implementation and the automated po
 ## Part D verification status
 
 The [current Part D audit](AUDITORIA.md#part-d--quality-and-verification-current-checkpoint) checks all seven mandatory quality/verification requirements and all E2/design criteria. Local domain tests, TypeScript/service boundaries, credential-pattern scan, build, lint and isolated SQL regression pass. The student reports browser workflows checked, but detailed actual-result cells and two-account isolation remain pending. The literal early Git sequence does not meet the requested order because the first PRD predates the initial-state audit; later E2/optional specs correctly precede their code. History is retained without rewriting it.
+
+Independent adversarial review is an additional selected development bonus: [spec](specs/adversarial-review.md), E2-US10 / AC31–33 / T12. The original four product optionals remain selected. Its results are recorded separately from the earlier Part D checkpoint; local review does not complete pending student/live acceptance.
