@@ -1,5 +1,20 @@
 # E2 — Implementation audit
 
+## Windows tooling repair — November 11, 2026
+
+This checkpoint supersedes earlier environment-specific activation claims for this Windows clone. The user authorized review-gate, hook and formatting repairs; no project commit, staging, history rewrite or live-service action was performed.
+
+- The pre-commit hook now discovers working Python 3 through python, python3 or py -3. It executes the gate once, preserving a rejection rather than falling back after failure. Installation succeeded and a fresh `git config --get core.hooksPath` returned `.githooks`.
+- Direct `git hook run pre-commit` in the real clone reached the gate and rejected the empty index with “Nothing is staged”; staging remained empty. Successful reviewed commits and rejected missing/stale/failed reviews were exercised only in disposable fixtures.
+- All 14 gate integration tests pass on Windows with Python 3.14. The former unmerged-index failure was a fixture problem: Windows text-mode CRLF translation prevented entries from being created. Binary Git protocol input and an assertion of three unmerged entries now demonstrate actual conflict rejection. No production snapshot-validation change was necessary.
+- All four formatter integration tests pass with Node 22.23.3: Edit/Write formatting and idempotency; multiple added/updated/renamed patch paths; excluded/outside/deleted paths; Windows launcher with Unicode input and the inherited inactive NVM shim. Fixtures use disposable temporary directories; no environment file is created or read. The launcher locates installed Node without modifying global PATH/NVM selection and explicitly decodes/forwards UTF-8.
+- Official documentation confirms Edit/Write matcher aliases cover apply_patch; the earlier suspected matcher issue was not a defect. The Windows command now uses the tested launcher. Source: [official hook reference](https://learn.chatgpt.com/docs/hooks).
+- Application checks rerun after repair: all 113 tests across eight files passed; TypeScript/Vite production build and lint passed. Browser/live database checks remain the student's separate work.
+
+**Trust boundary:** the formatter handler and Windows launcher are tested, but an automatic lifecycle invocation under the changed definition is not certified. Codex requires the user to review/trust changed project hooks through `/hooks` or Settings > Hooks / Review hooks. Trust records were not edited or bypassed. README documents this final activation step. The Git commit hook is already activated and its mechanics are demonstrated by the disposable-repository tests; it does not share Codex's formatter trust mechanism.
+
+Historical plan-mode/chronology deviations and pending student evidence remain unchanged. This repair is not an independent approval for a later commit; the actual staged proposal still requires fresh independent review.
+
 ## Selected quality bonus — adversarial review
 
 The user selected independent review before every commit after the Part D checkpoint below. This adds E2-US10, E2-AC31–33, E2-T12 and ADV-01–05; the previous four product optionals remain selected. Specification: [adversarial-review.md](specs/adversarial-review.md). No historical commit is retroactively certified.

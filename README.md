@@ -65,10 +65,26 @@ python3 .agents/skills/adversarial-review/scripts/review_gate.py install
 
 Python 3 and Git are required. Installation changes only the local hooks path and refuses incompatible existing hooks. Stage the intended changes yourself or explicitly authorize staging, then ask Codex to review/commit (or invoke the existing explicit-only commit skill). The reviewer checks the actual staged version; unresolved findings or missing required verification block approval. Any staged change or parent change requires a fresh independent review. The commit skill retains its existing staging restrictions.
 
+On Windows use `python` instead of `python3` in these setup/test commands (or `py -3`). The Git hook probes for working Python 3 before running the check. It never retries a rejected review through another interpreter.
+
 Review requests/reports stay in local Git metadata. The hook checks snapshot binding and report shape; it does not launch an agent by itself. Without a valid recorded review, an ordinary git commit is blocked. Local hooks/records can be bypassed or modified; this is a development guard, not a tamper-proof or hosted policy. Other clones must activate it themselves. See [spec and verification criteria](docs/specs/adversarial-review.md).
 
 Run the isolated gate checks with:
 
 ```bash
 python3 .agents/skills/adversarial-review/scripts/test_review_gate.py
+```
+
+## Automatic formatting after edits
+
+The repository's .codex/hooks.json configures PostToolUse formatting for Edit/Write, which are also Codex aliases for apply_patch. Only edited supported files inside the repository are formatted; environment files, Git metadata, dependencies, output, removed files and paths resolving outside the repository are excluded.
+
+Install app dependencies first. On Windows the launcher finds working Node 22.12+ on PATH or beside an inactive NVM shim under its installs directory; it does not change your global runtime selection. Failures produce a Prettier hook diagnostic.
+
+Codex requires trust for project hooks and changed definitions. After opening/reloading this project, review and trust this formatter through `/hooks` in the CLI or Settings > Hooks / Review hooks in the app. Handler tests do not grant trust or prove an automatic lifecycle invocation. See the [official hook documentation](https://learn.chatgpt.com/docs/hooks).
+
+Run formatter integration checks from the repository root with a working Node runtime:
+
+```bash
+node --test .codex/hooks/format.test.cjs
 ```

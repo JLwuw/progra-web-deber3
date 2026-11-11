@@ -1,4 +1,14 @@
 #!/bin/sh
 set -eu
 repo_root=$(git rev-parse --show-toplevel)
-exec python3 "$repo_root/.agents/skills/adversarial-review/scripts/review_gate.py" check
+gate="$repo_root/.agents/skills/adversarial-review/scripts/review_gate.py"
+for interpreter in python python3; do
+  if "$interpreter" -c 'import sys; sys.exit(sys.version_info.major != 3)' >/dev/null 2>&1; then
+    exec "$interpreter" "$gate" check
+  fi
+done
+if py -3 -c 'import sys; sys.exit(sys.version_info.major != 3)' >/dev/null 2>&1; then
+  exec py -3 "$gate" check
+fi
+echo 'Review gate: install Python 3 and make python, python3, or py -3 available.' >&2
+exit 1

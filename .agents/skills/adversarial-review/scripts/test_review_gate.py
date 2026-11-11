@@ -184,7 +184,14 @@ class ReviewGateTests(unittest.TestCase):
 
     def test_unmerged_index_is_rejected(self):
         oid = self.git('hash-object', '-w', '--stdin', text='fixture conflict').strip()
-        self.git('update-index', '--index-info', text=f'100644 {oid} 1\tconflict.txt\n100644 {oid} 2\tconflict.txt\n100644 {oid} 3\tconflict.txt\n')
+        entries = ''.join(
+            f'100644 {oid} {stage}\tconflict.txt\n' for stage in (1, 2, 3)
+        )
+        # Binary input avoids Windows text-mode CRLF translation in Git's protocol.
+        result = subprocess.run(['git', 'update-index', '--index-info'],
+            cwd=self.repo, env=self.env, input=entries.encode('ascii'), capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.git('ls-files', '--unmerged').splitlines()), 3)
         self.gate('prepare', expected=1)
 
     def test_install_preserves_other_hook_config_and_active_default_hook(self):

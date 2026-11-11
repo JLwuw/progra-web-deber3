@@ -7,7 +7,7 @@
           {
             "type": "command",
             "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/format.cjs\" || true",
-            "commandWindows": "powershell -NoProfile -Command \"try { $repoRoot = git rev-parse --show-toplevel; if ($LASTEXITCODE -eq 0) { & node (Join-Path $repoRoot '.codex/hooks/format.cjs') } } catch { Write-Warning $_ }; exit 0\"",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/format.ps1')\"",
             "timeout": 60,
             "statusMessage": "Formatting edited files with Prettier"
           }

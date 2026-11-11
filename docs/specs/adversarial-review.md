@@ -26,6 +26,14 @@ Installation sets `core.hooksPath` locally to `.githooks`. It MUST refuse to rep
 
 ## Verification criteria
 
+### Windows portability and formatter repair
+
+The pre-commit hook MUST discover working Python 3 (python, python3, or py -3), execute the gate once and preserve its exit status. Gate rejection MUST NOT cause interpreter fallback. Conflict fixtures MUST assert that actual unmerged entries exist before checking rejection.
+
+The formatter MUST support Codex apply_patch command payloads and Edit/Write file paths. Codex supports the existing Edit/Write matcher aliases. Its Windows launcher MUST locate working Node 22.12+, including installed NVM runtimes with an inactive shim, without changing global configuration, and forward UTF-8 event stdin. Disposable fixtures MUST check formatting, idempotency, multiple/renamed paths and ignored/outside paths without opening environment files. Failures remain visible diagnostics without failing completed edits. Hook trust remains user-controlled; evidence MUST distinguish tested handlers from observed trusted lifecycle invocation.
+
+Repair files: .githooks/pre-commit, existing gate tests, .codex/hooks.json, format.cjs, new .codex/hooks/format.ps1 and format.test.cjs; setup/evidence in README.md and AUDITORIA.md. No application feature or live-service change is included.
+
 | ID | Requirement | Verification |
 | --- | --- | --- |
 | ADV-01 | An independent subagent reviews the actual proposed commit against specs and project rules | Isolated forward-test with a staged project; reviewer identity/output recorded without revealing the intended outcome |
@@ -35,6 +43,8 @@ Installation sets `core.hooksPath` locally to `.githooks`. It MUST refuse to rep
 | ADV-05 | Commit instructions and documentation describe activation, limits and re-review | Source review, skill validator and independent review; no automatic commit/push |
 
 Run `python3 .agents/skills/adversarial-review/scripts/test_review_gate.py`. The application baseline still requires `npm test` and `npm run build` from mi-cartelera-personal. Record executed evidence and limitations in docs/AUDITORIA.md. The local gate can verify a report's shape and snapshot binding; it cannot prove that a human/agent's claimed independence or observations are truthful.
+
+On Windows equivalent test/setup commands use `python` or `py -3`. Formatter tests run with `node --test .codex/hooks/format.test.cjs`. Hook discovery, Edit/Write matcher aliases and user-controlled trust follow the [official hook reference](https://learn.chatgpt.com/docs/hooks).
 
 
 | Story criteria | Spec criteria | Implementation |
