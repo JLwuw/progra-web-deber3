@@ -1,6 +1,6 @@
 # E2 — Refinement record
 
-Status: agent-authored refinement draft, not a transcript of student approval. Accepted means included in this proposed documentation baseline; the student may revise it before implementation. Source facts are in details2.md. Assumption identifiers refer to the PRD.
+Status: agent-authored refinement draft, not a transcript of student approval. Accepted means included in this proposed documentation baseline; the student may revise it through updated criteria and specs. Source facts are in details2.md. Assumption identifiers refer to the PRD.
 
 ## Client decisions preserved
 
@@ -13,7 +13,7 @@ Integer available minutes from 30 to 600; own pending movies only; 10 minutes be
 | R01 | Same movie in different sessions | Accept, S1 | Alternative plans are useful; allow reuse, E2-AC18 |
 | R02 | Same movie twice in one draft | Reject duplicate inclusion, S1 | Prevent accidental double counting, E2-AC12 |
 | R03 | Unspecified result order | Accept deterministic duration/title/identity order, S2 | Easier comparison and repeatable results, E2-AC04 |
-| R04 | Editing/deleting saved plans | Reject for this release, S3 | Save-and-consult is sufficient; immutable snapshots bound scope, E2-AC20 |
+| R04 | Editing/deleting saved plans | Editing rejected; deletion now accepted by explicit user request | S3 revised: owner-only confirmed deletion from detail; snapshot contents stay immutable, E2-AC20/23 |
 | R05 | Delete a collection entry used by a saved session | Accept preserving historical plan, S4 | Do not destroy a previously saved plan; E1 deletion remains unchanged, E2-AC20 |
 | R06 | Name and viewing date | Accept required trimmed name and saved timestamp; reject scheduled date, S5 | Distinguish plans without calendar scope, E2-AC14/19/20 |
 | R07 | Empty session or blank name | Reject saving, S5/S6 | Empty plans have no viewing value, E2-AC14 |
@@ -36,7 +36,13 @@ Integer available minutes from 30 to 600; own pending movies only; 10 minutes be
 | R24 | Automatic fill, genre filter, mark completed | Reject from required scope | Optional features need separate specs; completion conflicts with the no-state-change rule |
 | R25 | Backend repeats the full time-budget calculation | Defer optional hardening | Client explicitly lists database fit validation as extra; required RLS and basic constraints remain mandatory |
 | R26 | Ambiguous retry after a lost save response | Accept idempotent draft identity, S10 | A retry should recover the same completed plan, not silently duplicate it; supports E2-AC16 |
+| R27 | Leave the planner for another screen before saving | Accept discarding the mounted draft, S10 | Keep the documented in-memory draft lifecycle; saved plans remain available in history. Navigating away is not a background save. |
 
-## Pending student review
+## User-requested extension
 
-Confirm or amend S1–S12, especially immutable plans, name requirements, and deletion behavior. Changes must propagate PRD → criteria → tickets/specs before code. New edge cases must be added here with a decision and reason; rejected scope should not be implemented silently.
+- Saved-session deletion is required from the detail page, with confirmation, pending/error handling and owner-only RLS. The original no-deletion decision is superseded, not silently bypassed.
+- History uses an exact row count to distinguish exhausted results from additional pages; the footer remains visible while loading, on error, and after completion. A short server-capped page alone does not prove exhaustion.
+
+## Student review and change control
+
+The requested implementation follows S1–S12, including immutable plans, name requirements, and deletion behavior. Amend these working decisions through the documents before changing code. Changes must propagate PRD → criteria → tickets/specs before code. New edge cases must be added here with a decision and reason; rejected scope should not be implemented silently.

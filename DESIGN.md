@@ -137,3 +137,8 @@ These criteria apply to E2 and are planned acceptance checks, not claims that th
 | DES-08 | Text contrast meets WCAG AA targets for normal and large text; meaningful UI boundaries/focus meet non-text contrast requirements, and state is never color-only | Measure actual rendered foreground/background pairs, including alpha blends and error/disabled-adjacent explanations; record ratios and text alternatives |
 
 Design verification results belong in `docs/VERIFICACION.md`, with the student's obtained results, and `docs/AUDITORIA.md`, with criterion status/evidence. Passing a build does not prove a design criterion.
+
+
+## Movie Night application
+
+E2 reuses the existing surfaces and Bootstrap responsive columns. The planner places candidates beside a session summary on large screens and stacks them on smaller screens. The summary exposes movie time, break time, total and remaining time as a compact definition list with a polite live region. Removing a movie moves focus to the summary so keyboard focus is retained. Candidate errors and unavailable-duration reasons stay in text beside their controls; uncertain-save recovery locks draft editing until the unchanged save can be retried. History and saved detail use the same cards and poster fallback, with no editing controls. Saved detail includes a confirmed destructive Delete session action; the history footer stays visible through loading, retry and completion. Long saved names and movie titles wrap within their containers.

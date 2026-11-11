@@ -1,6 +1,6 @@
 # E2 — Tickets
 
-Status: all E2 tickets are TODO; documentation only. E1 prerequisites are tracked separately in [E1 repairs](../specs/e1-repairs.md); reuse completed test infrastructure and service cleanup rather than rebuilding them. Read the PRD, refinement, stories, epic spec, interface spec, and DESIGN.md before implementing. Dependencies give implementation order, not permission to bypass the spec.
+Status: E2-T01–T05 are implemented locally; E2-T02/T04/T05 still require live/database/browser acceptance before their full Definition of Done is met. E2-T06 has verification/audit worksheets; student results remain pending. E1 prerequisites are tracked separately in [E1 repairs](../specs/e1-repairs.md); reuse completed test infrastructure and service cleanup rather than rebuilding them. Read the PRD, refinement, stories, epic spec, interface spec, and DESIGN.md before implementing. Dependencies give implementation order, not permission to bypass the spec.
 
 ## Shared Definition of Done
 
@@ -57,3 +57,29 @@ The ticket's criteria are implemented and mapped to evidence; relevant tests pas
 ## Non-goals
 
 These tickets do not select optional optimizer/genre/completion/deployment work, rewrite E1, repair every old E1 defect, or claim that Part A's process has already been satisfied.
+
+
+## Implementation checkpoint
+
+| Ticket | Local implementation/evidence | Remaining acceptance |
+| --- | --- | --- |
+| E2-T01 | Pure domain rules and unit tests; existing Vitest runner reused | None for the local domain scope |
+| E2-T02 | Snapshot schema/RLS migration and persistence/idempotency tests | Apply 001_movie_nights.sql; verify live isolation with two accounts |
+| E2-T03 | Runtime-only TMDB service, bounded concurrency, partial error/retry and cancellation tests | Real catalog/collection smoke test |
+| E2-T04 | Authenticated planner and timing/selection DOM tests | Browser viewport, keyboard and accessibility checks |
+| E2-T05 | Named save/review/retry, history/detail, account reset and immutable snapshots | Real save/reload/deletion-history flows after migration |
+| E2-T06 | VERIFICACION.md and AUDITORIA.md prepared with local evidence | Student fills actual browser results; live RLS evidence and final audit update |
+
+No application commit or database deployment is created automatically by writing this checkpoint. The previously committed PRD/backlog/specs precede the E2 implementation.
+
+
+Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie request ownership and overrides; uncertain saves retain their UUID and recover matching submitted attempts through source review. Regression tests pass. The database migration is unchanged; live/browser acceptance remains pending.
+
+
+## E2-T07 — Delete owned sessions and repair history pagination feedback
+
+- **Type:** user-requested feature / usability fix.
+- **Dependencies:** E2-T02, E2-T05.
+- **Criteria:** E2-AC23/24, DES-04/05/07.
+- **Work:** confirmed owner-only detail deletion via service and additive migration 002; exact-count history and persistent loading/retry/completion footer.
+- **DoD:** shared DoD; deletion cancellation/pending/error/zero-row/owner tests and pagination count/cap/loading/completion/retry tests pass. Live deletion isolation requires 002 and two test accounts. E1 collection data and other sessions remain unchanged.

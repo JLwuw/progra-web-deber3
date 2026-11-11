@@ -1,6 +1,6 @@
 # E2 — Movie Night epic specification
 
-Status: proposed implementation contract, not executed code. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
+Status: implemented locally against this contract; the new migration and live acceptance checks remain pending. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
 
 ## Boundaries and normative criteria
 
@@ -25,7 +25,7 @@ MUST means required; MUST NOT means prohibited. Existing E1 behavior remains the
 - **E2-AC17:** before insertion, services MUST refresh collection eligibility and selected runtimes; changed or unavailable data MUST require review; MUST NOT silently change and save the selection.
 - **E2-AC18:** the same eligible movie MUST be permitted in separate sessions.
 - **E2-AC19:** saved sessions MUST show name, saved timestamp, total and newest-first ordering with a stable id tie-break; empty history MUST be explicit.
-- **E2-AC20:** details MUST use saved order and snapshots, including budget/total/remaining; MUST NOT require TMDB or offer saved-plan mutation/scheduled viewing dates.
+- **E2-AC20:** details MUST use saved order and snapshots, including budget/total/remaining; MUST NOT require TMDB or offer saved-content editing/scheduled viewing dates; owner deletion follows E2-AC23.
 - **E2-AC21:** database RLS and privileges MUST isolate sessions; MUST NOT grant cross-account or anonymous reads/writes.
 - **E2-AC22:** reload/logout/account change MUST discard draft state and restore only the signed-in owner's saved data; MUST NOT break E1 workflows.
 
@@ -69,7 +69,7 @@ Each snapshot has tmdbId (positive integer), title (nonempty string), posterUrl 
 
 ### Proposed migration and RLS
 
-Implement in `supabase/migrations/001_movie_nights.sql` during E2-T02, after confirming the deployed schema. This SQL is part of the spec only; it has not been applied. Use the existing bootstrap script only for a fresh E1 database. Run migrations once in order; do not pretend the bootstrap is an upgrade system.
+Implement in `supabase/migrations/001_movie_nights.sql` during E2-T02, after confirming the deployed schema. The matching SQL file now exists; it has not been applied by the agent. Use the existing bootstrap script only for a fresh E1 database. Run migrations once in order; do not pretend the bootstrap is an upgrade system.
 
 ```sql
 begin;
@@ -108,7 +108,7 @@ create policy movie_nights_insert_own
 commit;
 ```
 
-There are intentionally no UPDATE/DELETE grants or policies: S3 excludes saved-plan mutation for every frontend user, including the owner. Other users cannot overwrite a UUID owned by someone else; duplicate ids fail insertion. Only select and insert are exposed. Privileged administrative roles are not frontend credentials.
+The original 001 migration has no UPDATE/DELETE grants or policies. The user-requested deletion extension below adds owner-only DELETE in 002; UPDATE remains prohibited. Other users cannot overwrite a UUID owned by someone else; duplicate ids fail insertion. 001 exposes select/insert; after 002, authenticated owners may also delete their own sessions. Privileged administrative roles are not frontend credentials.
 
 Required checks above enforce basic structure/ranges and owner isolation. This migration does **not** validate every nested snapshot, re-query catalog eligibility, or reproduce the total/fit function in SQL. Such database-level fit validation is explicitly optional in details2.md. Do not claim this design rejects an owner forging their own payload by bypassing the service; the mandatory domain/service path enforces those rules, and RLS prevents cross-user access independently.
 
@@ -163,7 +163,7 @@ U = domain unit test, S = service/integration test, B = browser check, DB = actu
 
 ## Ticket → files
 
-New paths below are proposed targets, not claims that files exist. Add focused service/component tests only where they verify behavior; do not create tests that merely mirror markup.
+Paths below identify ticket ownership; existing E1 infrastructure was reused where the ticket checkpoint notes it. Add focused service/component tests only where they verify behavior; do not create tests that merely mirror markup.
 
 | Ticket | Target files |
 | --- | --- |
@@ -177,3 +177,49 @@ New paths below are proposed targets, not claims that files exist. Add focused s
 ## Delivery and limitations
 
 Commit harness/baseline work separately, then PRD → backlog → specs/design before implementation tickets, then verification/audit. Do not claim the existing initial-state audit was produced in plan mode if it was not. No migration, tests, browser results, or security checks in this spec have been executed merely by writing it.
+
+
+## Implementation notes
+
+E2-T01–T05 now have local code and automated tests. E1 service cleanup/test infrastructure was reused. Source changes are recorded by the [implementation audit](../AUDITORIA.md); manual results belong in [verification](../VERIFICACION.md).
+
+Source-refresh changes are presented before mutating the selected draft. “Accept updated draft” explicitly applies the new durations/removals, updates the matching candidate cards, and requires a second save. Unknown save outcomes lock manual name/budget/selection editing. Explicit source review keeps the same UUID; retry checks for an existing matching submitted attempt before current-payload validation or source refresh. The actual committed snapshot wins, including a late original or intermediate attempt. All transport exceptions or invalid responses after issuing an insert are treated as uncertain. Known database rejections preserve a normal editable draft.
+
+History requests use bounded offset pages and advance by actual returned row count, allowing a lower server cap. An empty follow-up page ends loading; overlapping rows are deduplicated in the UI. This is not a transactional snapshot of concurrent activity in other tabs. Drafts live only while the planner is mounted; leaving the planner, reloading, or ending/changing the authenticated session discards them. No draft is placed in browser storage.
+
+
+## Audit repair contract — E2-F01 and E2-F02
+
+- Initial-load progress and completion MUST merge with newer per-movie retry/review results. Each full refresh establishes a generation; each individual retry has its own request owner. An older result MUST NOT overwrite a newer result within the same generation. Explicitly accepted removals MUST remain removed until a new full refresh.
+- An uncertain save MUST pin its UUID until a saved outcome is recovered. Explicit source review may refresh durations or remove unavailable selections without releasing that identity; manual name/budget/movie edits remain locked. The service accepts the already-submitted snapshots for this identity as recovery evidence, and may recover whichever matching attempt actually committed. It MUST NOT overwrite a stored snapshot or accept a foreign/unrecognized identity/payload.
+- Recovery lookup MUST remain available even if reviewed sources leave an empty or over-budget selection. A new write still requires full current validation. Missing rows alone do not justify creating a different UUID while an earlier write may still commit. Multiple candidate payloads under one pinned UUID remain protected by its unique constraint; if an earlier payload wins the race, show that actual saved snapshot.
+- Candidate loading/review and save recovery require regressions covering overlapping batch progress, overlapping retries, late original insert completion, and unavailable selections. These are local fixes; the existing SQL migration is unchanged.
+
+
+## User-requested deletion and pagination extension — E2-T07
+
+E2-AC23 MUST permit owner-only deletion from saved detail after confirmation. Cancellation MUST NOT write. Pending deletion MUST prevent duplicate requests. The service MUST filter by owner/id, verify one returned deleted row, and report failure without hiding the plan. Success MUST return to newly loaded history. Collection entries, their notes/ratings and other nights MUST NOT be mutated. Contents of saved snapshots remain uneditable.
+
+E2-AC24 MUST request an exact count for owner-filtered history, advance offsets by returned row count, and use that count to determine whether more results exist. If count metadata is unavailable, preserve the conservative empty-page fallback. The footer MUST remain visible through loading, error/retry and completion, retaining existing results. Completion shows disabled “All sessions loaded”.
+
+Implement deleteSavedMovieNight in services/movieNightService.ts and the action in MovieNightDetailScreen.tsx; update history pagination in the service and SavedMovieNightsScreen.tsx. Use DESIGN.md’s existing destructive buttons and feedback. Tests MUST cover confirmed/cancelled/pending/failed deletion, zero affected rows, owner scoping and pagination loading/completion/retry/server caps.
+
+Additive migration supabase/migrations/002_movie_night_deletion.sql (apply after 001, even if 001 was applied already):
+
+```sql
+begin;
+grant delete on table public.movie_nights to authenticated;
+create policy movie_nights_delete_own
+  on public.movie_nights for delete to authenticated
+  using ((select auth.uid()) = user_id);
+commit;
+```
+
+| Criterion | Verification |
+| --- | --- |
+| E2-AC23 | Service/UI regression tests plus live A/B and anonymous deletion probes; verify E1 collection unchanged |
+| E2-AC24 | Service exact-count/capped-page cases and UI loading/completion/retry tests |
+
+| Ticket | Files |
+| --- | --- |
+| E2-T07 | supabase/migrations/002_movie_night_deletion.sql; src/services/movieNightService.ts and tests; src/components/MovieNightDetailScreen.tsx, SavedMovieNightsScreen.tsx and UI tests; related product/verification docs |

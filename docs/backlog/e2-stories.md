@@ -1,6 +1,6 @@
 # E2 — Stories and acceptance criteria
 
-Status: draft. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. GIVEN / WHEN / THEN express the assignment’s acceptance format in English; user stories use As a / I want / so that.
+Status: implemented locally; final browser/live acceptance remains pending. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. GIVEN / WHEN / THEN express the assignment’s acceptance format in English; user stories use As a / I want / so that.
 
 ## E2-US1 — Find movies for the time I have
 
@@ -40,9 +40,16 @@ Status: draft. Scope and assumptions come from the [PRD](../prd/mi-cartelera-per
 **As a** user with saved sessions, **I want** to consult my plans and their details, **so that** I can remember what to watch and how much time I reserved.
 
 - **E2-AC19 — Saved list:** GIVEN I have saved sessions, WHEN I consult them, THEN they appear newest first with their name, save timestamp, and total; ties have a stable order. If I have none, I see an empty state.
-- **E2-AC20 — Historical detail:** GIVEN a saved session, WHEN I open its detail, THEN I see its movies in order, saved durations, breaks, total, budget, and remaining time, even if I later remove a movie from my collection or its information changes. No editing, deletion, or scheduled viewing date is offered.
+- **E2-AC20 — Historical detail:** GIVEN a saved session, WHEN I open its detail, THEN I see its movies in order, saved durations, breaks, total, budget, and remaining time, even if I later remove a movie from my collection or its information changes. No editing or scheduled viewing date is offered; owner deletion is specified separately in E2-AC23.
 - **E2-AC21 — Isolation:** GIVEN two users with different sessions, WHEN one attempts to consult or modify the other user's sessions, THEN access and modification are denied, even through an attempt that bypasses normal navigation. A signed-out person is also denied.
-- **E2-AC22 — Draft lifecycle and regression:** GIVEN an unsaved draft, WHEN I reload or sign out, THEN it is not retained or shown in another account; saved plans return when their owner signs in. Existing authentication, search, collection, editing, and detail features remain available.
+- **E2-AC22 — Draft lifecycle and regression:** GIVEN an unsaved draft, WHEN I leave the planner, reload, or sign out, THEN it is not retained or shown in another account; saved plans return when their owner signs in. Existing authentication, search, collection, editing, and detail features remain available.
+
+## E2-US5 — Remove a saved session
+
+**As a** user with saved plans, **I want** to delete a session from its detail view, **so that** I can remove plans I no longer need.
+
+- **E2-AC23 — Owner deletion:** GIVEN my saved session is open, WHEN I confirm deleting it, THEN the session is removed and I return to refreshed Saved Nights. Its movies, collection entries, ratings, comments and other sessions remain unchanged. Cancelling confirmation makes no change. Pending deletion prevents duplicate submission; failure retains the detail and offers retry. Other accounts and signed-out visitors cannot delete it.
+- **E2-AC24 — History pagination feedback:** GIVEN saved history, WHEN I load another page, THEN existing sessions stay visible, the control indicates pending work, and errors can be retried. Once all sessions are loaded the control remains visible and disabled with an explicit completion label. If no further rows exist, no active load-more control is offered; short server-capped pages must not hide remaining sessions.
 
 ## INVEST review
 

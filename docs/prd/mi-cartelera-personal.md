@@ -1,6 +1,6 @@
 # Mi Cartelera Personal — Product Requirements Document
 
-Status: draft for section 1.4.B of details2.md. E1 is the existing product; E2 is the proposed extension. “Built” does not mean all requirements have been verified: the initial-state audit records E1 gaps.
+Status: product requirements for details2.md. E1 is the existing product; E2 is implemented locally with live acceptance still pending. “Built” does not mean all requirements have been verified: the initial-state audit records E1 gaps.
 
 ## Problem
 
@@ -22,11 +22,11 @@ E1 acceptance gaps remain tracked by the initial-state audit. E2 must not be use
 
 ### E2 — Movie Night (new, required)
 
-The signed-in user supplies available minutes, sees which pending movies fit with their durations, assembles a session with one or more movies, sees total and remaining time, and saves and later consults their private sessions and details. Unknown durations and catalog failures receive explicit explanations. Adding a movie that would exceed the budget is prevented.
+The signed-in user supplies available minutes, sees which pending movies fit with their durations, assembles a session with one or more movies, sees total and remaining time, and saves and later consults their private sessions and details. Owners can delete a saved session from its detail view after confirmation. Unknown durations and catalog failures receive explicit explanations. Adding a movie that would exceed the budget is prevented.
 
 ## Out of scope
 
-Streaming or downloading content; shared sessions or viewing with friends; reminders and notifications; calendar or streaming-platform synchronization; recommendations outside the user's collection; TV shows in a session; automatic combinations; genre filtering; marking sessions completed or changing their movies to Watched; editing or deleting saved sessions in this E2 release; and offline planning.
+Streaming or downloading content; shared sessions or viewing with friends; reminders and notifications; calendar or streaming-platform synchronization; recommendations outside the user's collection; TV shows in a session; automatic combinations; genre filtering; marking sessions completed or changing their movies to Watched; editing saved sessions in this E2 release; and offline planning.
 
 Optional assignment features require their own stories, criteria, and spec before implementation. E1's unimplemented optional sorting and public deployment are not added to E2 scope.
 
@@ -64,20 +64,20 @@ These are proposed student decisions, labeled `[ASSUMPTION]` and reflected in E2
 
 - **S1 [ASSUMPTION]:** A movie may appear in different saved sessions, but only once within one session. This allows alternative plans without accidentally counting the same movie twice.
 - **S2 [ASSUMPTION]:** Eligible movies are ordered by duration ascending, then title ascending, then a stable title identity. This makes short options easy to compare and keeps ties predictable. Unavailable entries appear separately in title order.
-- **S3 [ASSUMPTION]:** Saved sessions cannot be edited or deleted in this release. Users may create another session instead. This bounds the required save-and-consult workflow.
+- **S3 [ASSUMPTION]:** Saved session contents cannot be edited. Owners can delete a saved session from its detail view after confirmation. Deleting a session leaves all movies, ratings, comments and other sessions unchanged. This supersedes the original no-deletion assumption at the user’s request.
 - **S4 [ASSUMPTION]:** A saved session preserves its titles, movie order, and known durations at save time. Removing a movie from the collection, changing its viewing state, or later catalog changes do not rewrite past plans. Before saving, ownership, eligibility, and known durations are checked again; changes require the user to review the draft.
 - **S5 [ASSUMPTION]:** A session requires a trimmed name of 1–80 characters and records when it was saved. It has no scheduled viewing date. A name helps distinguish plans without introducing calendar behavior.
 - **S6 [ASSUMPTION]:** Empty sessions cannot be saved. Selection order is viewing order. Removal closes the gap and recalculates breaks; reordering controls are outside scope.
 - **S7 [ASSUMPTION]:** Blank, nonnumeric, fractional, or out-of-range available time is invalid. Lowering the budget keeps the draft visible but prevents additions and saving while over budget, so users can remove movies deliberately.
 - **S8 [ASSUMPTION]:** Zero, negative, nonnumeric, or non-whole durations are unknown/unusable. A catalog request failure is shown as a retryable retrieval failure, not as proof that duration is absent. Unaffected movies remain usable.
 - **S9 [ASSUMPTION]:** Initial fit results compare each movie with the full valid budget; while building a draft, add availability uses the remaining budget including the next required break. Unavailable-duration movies remain visible with their reason, and known movies exceeding the full budget may be summarized separately.
-- **S10 [ASSUMPTION]:** Drafts are not persisted across reloads or sign-out. Successful save clears the draft after opening the saved detail. Failed save preserves it and offers retry; only one save can be pending at once. If the save response is lost and the outcome is uncertain, retrying the unchanged draft recovers the same saved session rather than creating a duplicate. This avoids duplicate plans when a connection fails after a successful save.
+- **S10 [ASSUMPTION]:** Drafts are not persisted when leaving the planner, reloading, or signing out. Successful save clears the draft after opening the saved detail. Failed save preserves it and offers retry; only one save can be pending at once. If the save response is lost and the outcome is uncertain, retrying the unchanged draft recovers the same saved session rather than creating a duplicate. This avoids duplicate plans when a connection fails after a successful save.
 - **S11 [ASSUMPTION]:** Saved sessions are listed newest first, with a stable identity resolving timestamp ties. Viewing saved details does not require a fresh catalog request.
 - **S12 [ASSUMPTION]:** Duplicate E1 collection entries referring to the same movie are represented once in the planner, without modifying the collection. This preserves E1 behavior while avoiding duplicate session titles.
 
 ## Open questions
 
-- The student still needs to confirm or revise S1–S12 and their associated acceptance criteria before implementation. They are explicit working decisions, not hidden requirements.
+- The implementation follows S1–S12 as explicit working decisions. Revise the corresponding criteria and specs before changing those behaviors.
 - How will the qualitative goal “finishes what they start” be evaluated? Completion tracking and analytics are not currently in scope.
 - Which pre-existing E1 defects must be fixed before E2 delivery? Record them as separately specified work; the regression baseline must distinguish old defects from newly introduced ones.
 - Are any optional assignment features selected? None are assumed in this draft.

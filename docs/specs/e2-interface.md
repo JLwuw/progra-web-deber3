@@ -1,6 +1,6 @@
 # E2 — Interface specification
 
-Status: proposed. Behavior references [E2 acceptance criteria](../backlog/e2-stories.md). Visual source of truth: **DESIGN.md**, at the repository root, especially Bootstrap customization, responsive behavior, UI patterns, and DES-01–08. This spec deliberately does not duplicate colors, dimensions, or typography values.
+Status: implemented locally; real-browser acceptance remains pending. Behavior references [E2 acceptance criteria](../backlog/e2-stories.md). Visual source of truth: **DESIGN.md**, at the repository root, especially Bootstrap customization, responsive behavior, UI patterns, and DES-01–08. This spec deliberately does not duplicate colors, dimensions, or typography values.
 
 ## Entry and navigation
 
@@ -19,17 +19,17 @@ Coverage: E2-AC02–14; DES-01–08. Candidate cards reuse the app's media-card 
 
 ## Save interaction
 
-Show an in-progress state and prevent repeated submission. Before committing, refresh selected sources. If a movie is removed, no longer pending, has a new runtime, or becomes unavailable, display the affected titles and ask the user to review the updated draft; no automatic save follows. A failed save retains the draft and offers retry. A successful save opens the saved detail and clears the draft. Network-ambiguous retries use the same unchanged draft identity.
+Show an in-progress state and prevent repeated submission. Before committing, refresh selected sources. If a movie is removed, no longer pending, has a new runtime, or becomes unavailable, display the affected titles and ask the user to review the updated draft; no automatic save follows. A failed save retains the draft and offers retry. A successful save opens the saved detail and clears the draft. Network-ambiguous retries keep the same draft identity, including through explicit source review. Manual changes stay locked until resolution. If a previous attempt committed first, show that actual saved plan; do not create a replacement identity.
 
 Saving never marks movies Watched. There is no “session completed” action. Coverage: E2-AC15–18; DES-05/07/08.
 
 ## Saved history — SavedMovieNightsScreen
 
-Show newest first with name, saved timestamp, and total minutes, a detail action, and a load-more action when another page exists. Include loading, retryable error, and no-saved-sessions states. Do not expose edit/delete controls. Coverage: E2-AC19/21; DES-04/05/07.
+Show newest first with name, saved timestamp, and total minutes, a detail action, and a load-more action when another page exists. Include loading, retryable error, and no-saved-sessions states. Do not expose edit/delete controls in history; deletion belongs on the detail screen. Keep the pagination footer visible after the first results: loading, load more, retry, or disabled “All sessions loaded”. Coverage: E2-AC19/21; DES-04/05/07.
 
 ## Saved detail — MovieNightDetailScreen
 
-Show saved name/timestamp, movies in saved order, runtimes, inter-movie breaks, budget, total, and remaining time. Use only saved snapshots: collection deletion or catalog failure must not remove historical content. Poster failures have a readable fallback. Provide a return action to Saved Nights. There is no scheduled-date field or saved-session editing. Coverage: E2-AC20; DES-02/04/07/08.
+Show saved name/timestamp, movies in saved order, runtimes, inter-movie breaks, budget, total, and remaining time. Use only saved snapshots: collection deletion or catalog failure must not remove historical content. Poster failures have a readable fallback. Provide a return action to Saved Nights. There is no scheduled-date field or saved-session editing. Add a destructive “Delete session” action with confirmation; cancellation makes no request. Pending deletion disables repeated deletion and Back; errors retain details and offer retry. Success returns to refreshed Saved Nights. Coverage: E2-AC20; DES-02/04/07/08.
 
 ## Design verification
 
