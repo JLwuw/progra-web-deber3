@@ -78,6 +78,9 @@
       input, select { width: 100%; min-width: 0; background: #111217; border: 1px solid #3d3e48; color: var(--text-h); border-radius: 9px; padding: .75rem .9rem; }
       input::placeholder { color: #81828f; }
       input:focus, select:focus { outline: 0; background: #15161c; border-color: var(--accent); box-shadow: 0 0 0 3px #e6b86a1c; }
+      input:disabled, select:disabled { background: #111217; color: var(--text); border-color: #3d3e48; opacity: 1; cursor: not-allowed; }
+      .completion { min-height: 48px; padding: .9rem 1.5rem; font-size: 1rem; }
+      .btn.secondary:disabled { color: #ded5c7; background: #ffffff06; border-color: #5c5140; }
       .error { color: #efb8b3; background: #693c3c22; border: 1px solid #a46c6c66; border-radius: 10px; padding: 1rem; margin-top: 1rem; }
       .loading { display: flex; gap: .75rem; align-items: center; margin-top: 1.5rem; }
       .spinner { display: inline-block; width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; flex-shrink: 0; }
@@ -163,6 +166,9 @@
             <p class="annotation">Default · secondary · destructive</p>
             <div class="button-row"><button type="button" class="btn hover-sample">Hover sample</button><button type="button" class="btn focus-sample">Focus sample</button><button type="button" class="btn" disabled>Disabled</button></div>
             <p class="annotation">Gold focus outline: 3px, offset 4px. Transitions: .18s.</p>
+            <p class="meta">Session status · Planned</p>
+            <button type="button" class="btn completion">Mark as watched</button>
+            <div class="button-row"><button type="button" class="btn completion" disabled>Marking as watched…</button><button type="button" class="btn secondary completion" disabled>✓ Watched</button></div>
             <div class="loading"><span class="spinner" aria-hidden="true"></span><span>Loading… <small>(specimen)</small></span></div>
             <p class="annotation">Motion stops when reduced motion is preferred.</p>
           </div>
@@ -173,6 +179,11 @@
             <label for="sample-state">Watch State</label>
             <select id="sample-state"><option>Plan to Watch</option><option>Watching</option><option>Finished</option></select>
             <p class="annotation" id="field-note">Editable samples; values are not saved. Dark fields use a gold border and subtle ring on focus.</p>
+            <label for="sample-loading">Disabled while loading</label>
+            <input id="sample-loading" value="200 minutes" disabled />
+            <label for="sample-disabled-genre">Genre while loading</label>
+            <select id="sample-disabled-genre" disabled><option>All genres</option></select>
+            <p class="annotation">Loading retains the dark field surface and readable values.</p>
             <div class="error"><strong>Error specimen</strong><br />Unable to load details. Please try again.</div>
           </div>
         </div>

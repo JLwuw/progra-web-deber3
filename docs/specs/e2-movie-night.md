@@ -1,6 +1,6 @@
 # E2 — Movie Night epic specification
 
-Status: implemented locally against this contract; the new migration and live acceptance checks remain pending. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
+Status: base and four selected optional features are implemented locally. Apply the additive migrations in sequence; deployed migration state and live acceptance remain unverified. The [optional-feature spec](e2-optionals.md) extends this contract with E2-AC25–30. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
 
 ## Boundaries and normative criteria
 
@@ -110,14 +110,14 @@ commit;
 
 The original 001 migration has no UPDATE/DELETE grants or policies. The user-requested deletion extension below adds owner-only DELETE in 002; UPDATE remains prohibited. Other users cannot overwrite a UUID owned by someone else; duplicate ids fail insertion. 001 exposes select/insert; after 002, authenticated owners may also delete their own sessions. Privileged administrative roles are not frontend credentials.
 
-Required checks above enforce basic structure/ranges and owner isolation. This migration does **not** validate every nested snapshot, re-query catalog eligibility, or reproduce the total/fit function in SQL. Such database-level fit validation is explicitly optional in details2.md. Do not claim this design rejects an owner forging their own payload by bypassing the service; the mandatory domain/service path enforces those rules, and RLS prevents cross-user access independently.
+Required checks above enforce basic structure/ranges and owner isolation. This migration does **not** validate every nested snapshot, re-query catalog eligibility, or reproduce the total/fit function in SQL. This was the original base implementation; database fit validation is now selected and added by migration 003 under e2-optionals.md. Before 003, do not claim the base design rejects an owner forging their own payload by bypassing the service; the mandatory domain/service path enforces those rules, and RLS prevents cross-user access independently.
 
 Before application: inspect existing table names/permissions and test on an isolated database with two accounts. Verify anonymous denial, foreign-owner insert denial, foreign read invisibility, and update/delete denial. Rollback before real usage can drop the new table and index transactionally, without changing E1; after real usage, a destructive rollback requires a data-preservation plan. This document authorizes no production execution or data deletion.
 
 ## Types and services
 
 - `src/types/MovieNight.ts`: draft, movie snapshot, saved session, candidate loading/ready/unknown/error states, validation result unions. Validate external and database payloads at service boundaries; nullable poster metadata stays explicit.
-- `src/services/tmdbService.ts`: add runtime-only movie lookup, validate its payload, accept AbortSignal, distinguish failed response from missing runtime. Reuse the existing detail service where appropriate without changing E1 detail behavior. Move existing search networking/parsing here; components must not call TMDB directly.
+- `src/services/tmdbService.ts`: retain the runtime-only movie API and add combined runtime/genre lookup under E2-T09, validate payloads, accept AbortSignal, distinguish failed response from missing runtime. Reuse the existing detail service where appropriate without changing E1 detail behavior. Move existing search networking/parsing here; components must not call TMDB directly.
 - `src/services/authService.ts`: expose auth-change subscription and cleanup; App must not import the Supabase client. Reset account-scoped state when owner changes.
 - `src/services/movieNightService.ts`: obtain current owner via auth service, load own eligible movies via listing service, orchestrate independent runtime requests and retries, build typed candidates, and expose saved create/list/detail methods. Use bounded concurrency and cleanup guards; an old user's result must not update the new user's screen.
 - Before save, re-read current owner/collection and selected runtimes. If identity, eligibility, or runtime differs, return a review-required result instead of inserting. Retain/remap the draft visibly; do not silently replace totals. Re-run pure validation only after current values are reviewed. This is a best-effort service refresh, not an atomic lock on external TMDB or concurrent collection changes; strict transactional eligibility would require additional database validation.
@@ -223,3 +223,8 @@ commit;
 | Ticket | Files |
 | --- | --- |
 | E2-T07 | supabase/migrations/002_movie_night_deletion.sql; src/services/movieNightService.ts and tests; src/components/MovieNightDetailScreen.tsx, SavedMovieNightsScreen.tsx and UI tests; related product/verification docs |
+
+
+## Selected optional extensions
+
+The user selected automatic planning, genre filtering, explicit watched completion and database fit enforcement. See [e2-optionals.md](e2-optionals.md), E2-US6–US9, E2-AC25–30 and E2-T08–T11. Saving still never changes progress; separate confirmed watched completion is the deliberate exception to the former no-completion scope. New migrations 003/004 extend 001/002 without rewriting or replaying them. Deployed application of each migration remains unverified.

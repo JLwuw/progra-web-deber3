@@ -24,9 +24,16 @@ E1 acceptance gaps remain tracked by the initial-state audit. E2 must not be use
 
 The signed-in user supplies available minutes, sees which pending movies fit with their durations, assembles a session with one or more movies, sees total and remaining time, and saves and later consults their private sessions and details. Owners can delete a saved session from its detail view after confirmation. Unknown durations and catalog failures receive explicit explanations. Adding a movie that would exceed the budget is prevented.
 
+### Selected optional E2 features
+
+- Plan my night suggests a combination of eligible pending movies that uses the available time as fully as possible, including breaks. Suggestions respect the chosen genre. They are editable drafts, never automatic saves.
+- Filter pending candidates by one movie genre or All genres. Changing the filter does not remove already-selected movies.
+- Owners can explicitly mark a saved session Watched. This is a separate confirmed action; saving alone still leaves movies pending.
+- Saved sessions must fit their declared time budget even if someone bypasses the normal interface.
+
 ## Out of scope
 
-Streaming or downloading content; shared sessions or viewing with friends; reminders and notifications; calendar or streaming-platform synchronization; recommendations outside the user's collection; TV shows in a session; automatic combinations; genre filtering; marking sessions completed or changing their movies to Watched; editing saved sessions in this E2 release; and offline planning.
+Streaming or downloading content; shared sessions or viewing with friends; reminders and notifications; calendar or streaming-platform synchronization; recommendations outside the user's collection; TV shows in a session; editing saved sessions in this E2 release; and offline planning.
 
 Optional assignment features require their own stories, criteria, and spec before implementation. E1's unimplemented optional sorting and public deployment are not added to E2 scope.
 
@@ -55,7 +62,7 @@ Optional assignment features require their own stories, criteria, and spec befor
 - Between consecutive movies there is a 10-minute break. There is no break before the first movie or after the last.
 - A session fits when its movie durations plus those breaks are less than or equal to the available time. An exact fit is valid.
 - Duration comes from TMDB. A movie without a known duration cannot be added, and the user sees why.
-- Saving a session leaves its movies in To Watch; saving is not evidence that the user watched them.
+- Saving a session leaves its movies in To Watch; saving is not evidence that the user watched them. A separate owner-confirmed Mark as watched action completes the session and marks all matching movies still in that owner’s collection Watched together. This explicitly revises the earlier no-completion scope, not the no-progress-change-on-save rule.
 - Sessions and their details are private to their owner.
 
 ## Suppositions
@@ -75,9 +82,18 @@ These are proposed student decisions, labeled `[ASSUMPTION]` and reflected in E2
 - **S11 [ASSUMPTION]:** Saved sessions are listed newest first, with a stable identity resolving timestamp ties. Viewing saved details does not require a fresh catalog request.
 - **S12 [ASSUMPTION]:** Duplicate E1 collection entries referring to the same movie are represented once in the planner, without modifying the collection. This preserves E1 behavior while avoiding duplicate session titles.
 
+### Optional-feature decisions
+
+- Automatic planning maximizes occupied minutes within the budget; equal totals prefer fewer movies, then a stable duration/title/identity order. Each movie appears at most once. Unknown or failed durations are excluded. No movies outside the owner’s pending collection are suggested.
+- Planning refreshes the pending collection and metadata. It requires valid time, and waits for that refresh to finish. Replacing a nonempty draft requires confirmation. Load failure or no fitting results preserves the previous draft and explains the outcome.
+- Genre comes from catalog metadata. Missing genre information remains visible under All genres and is excluded from a specific-genre match. The filter applies to candidates and suggestions, not saved sessions or the existing draft.
+- Watched completion is one-way. Repeating the action is harmless and does not reapply progress changes after completion. Removed collection entries remain removed; matching movie entries still present are completed regardless of their previous status. TV entries and other users’ entries, ratings, comments, other sessions and saved snapshots stay unchanged. Deleting a completed session does not revert movie progress.
+- All movie-state changes and session completion succeed together or leave everything unchanged. Only the session owner may complete it. A rejected operation changes neither session nor movie progress. A lost response may hide a successful completion; the interface retains its previous state and retry safely recovers the recorded result.
+- Database validation rejects empty/duplicate selections, unknown or invalid durations, incorrect totals and sessions exceeding available time, counting exactly the inter-movie breaks. It checks the durations supplied in the saved plan; it does not independently verify catalog truth or contact TMDB.
+
 ## Open questions
 
 - The implementation follows S1–S12 as explicit working decisions. Revise the corresponding criteria and specs before changing those behaviors.
-- How will the qualitative goal “finishes what they start” be evaluated? Completion tracking and analytics are not currently in scope.
+- How will the qualitative goal “finishes what they start” be evaluated? Sessions now record explicit completion; analytics and measured success rates remain outside scope.
 - Which pre-existing E1 defects must be fixed before E2 delivery? Record them as separately specified work; the regression baseline must distinguish old defects from newly introduced ones.
-- Are any optional assignment features selected? None are assumed in this draft.
+- Four optional features are selected above. Social/calendar/streaming/deployment and adversarial-agent extras remain outside this change.

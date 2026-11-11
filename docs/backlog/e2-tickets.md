@@ -26,7 +26,7 @@ The ticket's criteria are implemented and mapped to evidence; relevant tests pas
 
 - **Type:** service feature / bounded integration cleanup.
 - **Dependencies:** E2-T01.
-- **Work:** add planner service orchestration and runtime-only catalog retrieval; deduplicate pending movies; distinguish unknown runtime from request failure; support cancellation and retry. Move the existing search fetch/response mapping into tmdbService without changing E1 search behavior; expose auth subscriptions via authService so App does not use the Supabase client directly.
+- **Work:** add planner service orchestration and runtime and genre catalog retrieval (extended by E2-T09); deduplicate pending movies; distinguish unknown runtime from request failure; support cancellation and retry. Move the existing search fetch/response mapping into tmdbService without changing E1 search behavior; expose auth subscriptions via authService so App does not use the Supabase client directly.
 - **Criteria:** E2-AC03–07, E2-AC17 revalidation, E2-AC22 service-boundary regression.
 - **DoD:** shared DoD plus service tests for partial failures, stale/cancelled requests, source eligibility changes and duration changes; no external-client or fetch calls in components, including App and the existing search screen.
 
@@ -56,7 +56,7 @@ The ticket's criteria are implemented and mapped to evidence; relevant tests pas
 
 ## Non-goals
 
-These tickets do not select optional optimizer/genre/completion/deployment work, rewrite E1, repair every old E1 defect, or claim that Part A's process has already been satisfied.
+E2-T08–T11 explicitly select automatic planning, genre filtering, watched completion and database fit validation. Public deployment, social/calendar features, rewriting E1 and repairing unrelated E1 debt remain outside scope. These tickets do not certify Part A compliance.
 
 
 ## Implementation checkpoint
@@ -65,7 +65,7 @@ These tickets do not select optional optimizer/genre/completion/deployment work,
 | --- | --- | --- |
 | E2-T01 | Pure domain rules and unit tests; existing Vitest runner reused | None for the local domain scope |
 | E2-T02 | Snapshot schema/RLS migration and persistence/idempotency tests | Apply 001_movie_nights.sql; verify live isolation with two accounts |
-| E2-T03 | Runtime-only TMDB service, bounded concurrency, partial error/retry and cancellation tests | Real catalog/collection smoke test |
+| E2-T03 | Runtime/genre TMDB service under E2-T09, bounded concurrency, partial error/retry and cancellation tests | Real catalog/collection smoke test |
 | E2-T04 | Authenticated planner and timing/selection DOM tests | Browser viewport, keyboard and accessibility checks |
 | E2-T05 | Named save/review/retry, history/detail, account reset and immutable snapshots | Real save/reload/deletion-history flows after migration |
 | E2-T06 | VERIFICACION.md and AUDITORIA.md prepared with local evidence | Student fills actual browser results; live RLS evidence and final audit update |
@@ -83,3 +83,33 @@ Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie re
 - **Criteria:** E2-AC23/24, DES-04/05/07.
 - **Work:** confirmed owner-only detail deletion via service and additive migration 002; exact-count history and persistent loading/retry/completion footer.
 - **DoD:** shared DoD; deletion cancellation/pending/error/zero-row/owner tests and pagination count/cap/loading/completion/retry tests pass. Live deletion isolation requires 002 and two test accounts. E1 collection data and other sessions remain unchanged.
+
+
+## E2-T08 — Pure automatic planner and Plan my night UI
+
+- **Type:** optional domain/UI feature. **Dependencies:** E2-T01, E2-T03, E2-T09.
+- **Criteria:** E2-AC25/30; DES-01–07.
+- **DoD:** deterministic optimal bounded suggestion function and own unit tests; fresh metadata, safe replacement, no-fit/failure preservation and UI regression tests; full checks pass. No automatic save.
+
+## E2-T09 — Genre metadata and filter
+
+- **Type:** optional service/UI feature. **Dependencies:** E2-T03, E2-T04.
+- **Criteria:** E2-AC26; DES-01–07.
+- **DoD:** typed genre metadata through services, All genres/default and missing-metadata handling, existing draft retained, filter and suggestion tests; full checks pass.
+
+## E2-T10 — Atomic watched-session completion
+
+- **Type:** optional database/service/UI feature. **Dependencies:** E2-T02, E2-T05, E2-T11.
+- **Criteria:** E2-AC27/29; DES-04/05/07.
+- **DoD:** migration 004, authenticated owner-only transactional completion, idempotent retry and direct-write restrictions; service/UI and isolated PostgreSQL rollback/isolation tests pass; live application/RLS/browser evidence remains separately pending.
+
+## E2-T11 — Database fit enforcement
+
+- **Type:** optional database integrity feature. **Dependencies:** E2-T02.
+- **Criteria:** E2-AC28, E2-AC09.
+- **DoD:** migration 003 validates actual saved JSON durations/breaks and total on every write, rejects invalid legacy data without deleting it, tests raw SQL bypass/edge cases in isolated PostgreSQL, documents migration/rollback and limitations. Existing migrations are not rewritten.
+
+
+## Current optional-feature checkpoint
+
+E2-T07–T11 have local implementation and automated evidence. T08 provides the pure optimizer and safe replacement; T09 adds combined runtime/genre metadata and filtering; T10 provides the prominent one-way watched action and atomic RPC; T11 enforces snapshot fit in migration 003. Migration 004 adds completion. Live migration state, two-account security and detailed browser/design acceptance remain unverified. See [audit](../AUDITORIA.md) and [verification](../VERIFICACION.md). Save-warning isolation is covered by E2-F04's regression under T08/T05.

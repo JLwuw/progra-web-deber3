@@ -20,3 +20,8 @@ Status: implemented locally; migration application and live/manual acceptance re
 - [Design criteria](../../DESIGN.md#verifiable-design-criteria)
 
 Traceability uses E2-US identifiers for stories, E2-AC for acceptance criteria, E2-T for tickets, and DES for design criteria. Verification remains planned until evidence is recorded by the student.
+
+
+## Selected optional E2 extensions
+
+The user selected four extensions from details2.md §1.5: automatic planning, movie-genre filtering, explicit watched-session completion, and database fit validation. These extend E2 rather than replace E1. Read [optional-feature specification](../specs/e2-optionals.md), stories E2-US6–US9, criteria E2-AC25–30 and tickets E2-T08–T11 before implementing. User terminology “gender” means movie genre.

@@ -51,11 +51,37 @@ Status: implemented locally; final browser/live acceptance remains pending. Scop
 - **E2-AC23 — Owner deletion:** GIVEN my saved session is open, WHEN I confirm deleting it, THEN the session is removed and I return to refreshed Saved Nights. Its movies, collection entries, ratings, comments and other sessions remain unchanged. Cancelling confirmation makes no change. Pending deletion prevents duplicate submission; failure retains the detail and offers retry. Other accounts and signed-out visitors cannot delete it.
 - **E2-AC24 — History pagination feedback:** GIVEN saved history, WHEN I load another page, THEN existing sessions stay visible, the control indicates pending work, and errors can be retried. Once all sessions are loaded the control remains visible and disabled with an explicit completion label. If no further rows exist, no active load-more control is offered; short server-capped pages must not hide remaining sessions.
 
+## E2-US6 — Plan my night automatically
+
+**As a** user with limited free time, **I want** a suggested combination of my pending movies, **so that** I can fill my evening without exceeding it.
+
+- **E2-AC25 — Best fitting suggestion:** GIVEN eligible movies with known durations and a valid budget, WHEN I choose Plan my night, THEN the suggested draft maximizes total movie-plus-break minutes without exceeding the budget, uses each movie once, honors the chosen genre, and resolves equal totals by fewer movies then a stable order. It is not saved automatically.
+- **E2-AC30 — Safe replacement:** GIVEN an existing draft, WHEN I request a suggestion, THEN replacement requires confirmation. Cancelling, a collection-load failure, or no fitting movies preserves it. Loading/pending recovery prevents conflicting edits; unavailable durations are explained and excluded.
+
+## E2-US7 — Filter planning choices by genre
+
+**As a** user choosing what to watch, **I want** to filter my pending movies by genre, **so that** my choices and automatic plan match my mood.
+
+- **E2-AC26 — Genre:** GIVEN movie genre metadata, WHEN I choose a genre, THEN only matching candidates are shown and used in suggestions; All genres restores the full list. Existing draft movies remain selected. Missing genre metadata is not assumed to match; empty matches and metadata failures have explanations.
+
+## E2-US8 — Mark a saved night watched
+
+**As a** session owner, **I want** to mark my session watched, **so that** its movies move to Watched without updating each title separately.
+
+- **E2-AC27 — Completion:** GIVEN my uncompleted saved session, WHEN I confirm Mark as watched, THEN the session is recorded as watched and all matching movie entries still in my collection become Watched together. Saving alone never does this. Cancellation or server rejection leaves everything unchanged; a lost response is safely recoverable by retry; deleted entries are not recreated, other sessions/users/TV/ratings/comments are unchanged, and deleting the session does not undo progress.
+- **E2-AC29 — Safe owner-only completion:** GIVEN a watched session or another user’s session, WHEN completion is retried or attempted without ownership/sign-in, THEN retries of the already-completed owned session are harmless and foreign/anonymous attempts are denied. Completion cannot be undone from the session; the completed action stays disabled; pending/error/success state is visible.
+
+## E2-US9 — Trust the saved time budget
+
+**As a** session owner, **I want** over-budget or malformed sessions rejected regardless of the interface used, **so that** my saved plans obey the same timing rule.
+
+- **E2-AC28 — Database invariant:** GIVEN a direct save request bypassing the normal interface, WHEN its declared durations plus breaks exceed the budget, or its selection/durations/total are invalid, THEN the database rejects it. Exact fit and one movie without breaks remain valid. Ordinary callers cannot forge completion or bypass ownership checks.
+
 ## INVEST review
 
 - **Independent:** finding fitting movies has value without saving; assembling adds live planning; saving adds persistence; consulting adds retrieval. Stories share the domain model but remain separate user outcomes. Technical prerequisites are explicit ticket dependencies, not disguised user stories.
 - **Negotiable:** S1–S12 are visible proposals; wording and interface composition can change while client rules remain fixed.
 - **Valuable:** each story states its user benefit in “so that”.
-- **Estimable:** boundaries, failures, and expected behavior are defined; no optional optimizer, calendar, or social scope is hidden.
+- **Estimable:** boundaries, failures, and expected behavior are defined; the selected time optimizer is explicit; no calendar or social scope is hidden.
 - **Small:** each story covers one stage of the workflow; implementation is split into bounded tickets.
 - **Testable:** each E2-AC scenario has an observable result and a planned verification mapping in the epic spec.

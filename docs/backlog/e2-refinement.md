@@ -33,8 +33,8 @@ Integer available minutes from 30 to 600; own pending movies only; 10 minutes be
 | R21 | Duplicate entries already present in E1 | Accept planner deduplication only, S12 | Avoid rewriting E1 collection behavior, E2-AC03/12 |
 | R22 | Saved-list sorting or empty list unspecified | Accept newest first and clear empty state, S11 | Recent plans are easiest to recover, E2-AC19 |
 | R23 | Unauthorized direct reads/writes | Reject access | Required real ownership isolation, E2-AC21 |
-| R24 | Automatic fill, genre filter, mark completed | Reject from required scope | Optional features need separate specs; completion conflicts with the no-state-change rule |
-| R25 | Backend repeats the full time-budget calculation | Defer optional hardening | Client explicitly lists database fit validation as extra; required RLS and basic constraints remain mandatory |
+| R24 | Automatic fill, genre filter, mark completed | Original exclusion superseded by explicit user selection | E2-US6–US8, E2-AC25–27/29/30 and [optional spec](../specs/e2-optionals.md) now select these features. Saving still changes no progress; separate confirmed completion does. |
+| R25 | Backend repeats the full time-budget calculation | Original deferral superseded by explicit user selection | E2-US9, E2-AC28, E2-T11 and [optional spec](../specs/e2-optionals.md) now require database fit enforcement; RLS remains mandatory. |
 | R26 | Ambiguous retry after a lost save response | Accept idempotent draft identity, S10 | A retry should recover the same completed plan, not silently duplicate it; supports E2-AC16 |
 | R27 | Leave the planner for another screen before saving | Accept discarding the mounted draft, S10 | Keep the documented in-memory draft lifecycle; saved plans remain available in history. Navigating away is not a background save. |
 
@@ -46,3 +46,21 @@ Integer available minutes from 30 to 600; own pending movies only; 10 minutes be
 ## Student review and change control
 
 The requested implementation follows S1–S12, including immutable plans, name requirements, and deletion behavior. Amend these working decisions through the documents before changing code. Changes must propagate PRD → criteria → tickets/specs before code. New edge cases must be added here with a decision and reason; rejected scope should not be implemented silently.
+
+
+## Optional-feature refinement
+
+| Case | Decision and rationale | Criteria |
+| --- | --- | --- |
+| “gender” versus genre | Interpret as movie genre, matching details2.md; no demographic filtering | E2-AC26 |
+| Several valid combinations | Maximize occupied minutes, then fewer movies, then stable sorted input; reproducible and no unnecessary breaks | E2-AC25 |
+| Existing selection when suggesting | Replace only after confirmation; failed/empty suggestion preserves draft | E2-AC30 |
+| Unknown duration/genre | Never invent durations; missing genre matches only All genres; partial catalog failures remain retryable | E2-AC25/26 |
+| Watched contradicts earlier no-state-change rule | Saving still changes no progress; a separate explicit completion action deliberately updates owned movie progress atomically | E2-AC27 |
+| Deleted titles in a saved session | Skip missing entries; do not recreate deleted collection content | E2-AC27 |
+| Overlapping sessions and repeated completion | Only the chosen session is marked; retries of a completed session do not reapply changes or affect re-added titles | E2-AC29 |
+| Undo watched completion | Reject undo in this release: original per-movie states are not recoverable from a completed plan | E2-AC29 |
+| Caller supplies fake totals or completion timestamp | Enforce fit in CHECK and completion through an owner-checked transaction; reject forged initial completion | E2-AC28/29 |
+| False catalog runtimes | Database enforces supplied runtimes and arithmetic, not external catalog authenticity; no server TMDB integration is implied | E2-AC28 |
+| Invalid pre-existing session payload | Migration fails transactionally for manual review; do not silently delete or change saved plans | E2-AC28 |
+| Suggestion warning after a named draft | Keep planning/general feedback separate from save failure; no-fit preserves the draft and Save Night label, while actual failed/uncertain saves offer retry | E2-AC16/30; audit E2-F04 |

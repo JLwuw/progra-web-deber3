@@ -1,6 +1,6 @@
 # Documentation map
 
-The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 now has local implementation and automated evidence; the new migration and live/manual acceptance are still pending.
+The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 now has local implementation and automated evidence; the deployed migration state and live/manual acceptance are still unverified. Selected optional features include automatic planning, genre filtering, explicit watched completion and database fit validation.
 
 Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governed by the [repair spec](specs/e1-repairs.md).
 
@@ -12,13 +12,13 @@ Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governe
 4. [E2 stories and acceptance criteria](backlog/e2-stories.md): independently valuable stories and GIVEN / WHEN / THEN scenarios.
 5. [Refinement record](backlog/e2-refinement.md): client facts, proposed edge cases, accepted/rejected treatment, and rationale.
 6. [Tickets](backlog/e2-tickets.md): types, dependencies, Definition of Done, and delivery order.
-7. [Epic spec](specs/e2-movie-night.md): domain contracts, persistence, proposed migration and RLS, services, traceability, and verification plan.
+7. [Epic spec](specs/e2-movie-night.md) and [selected optional-feature spec](specs/e2-optionals.md): domain contracts, migrations/RLS, services, traceability and verification plan for E2-AC01–30.
 8. [Interface spec](specs/e2-interface.md): behavior and screen states; references [DESIGN.md](../DESIGN.md) without duplicating visual values.
 9. [Design guide](../DESIGN.md) and [brand board](design/brand-board.html): existing Bootstrap-based identity and identified design criteria.
 
 ## Scope and evidence discipline
 
-E2 requirements and their implementation remain reviewable; local automated evidence does not replace live acceptance. `[ASSUMPTION]` means a proposed student decision, not a client-confirmed fact. Refinement decisions are the agent's documented proposals; no student approval or user testing is implied. No application implementation or database execution is included in this documentation task.
+E2 requirements and their implementation remain reviewable; local automated evidence does not replace live acceptance. `[ASSUMPTION]` means a proposed student decision, not a client-confirmed fact. Refinement decisions are the agent's documented proposals; no student approval or user testing is implied. Application implementation and disposable local database tests are recorded in the audit. No deployed database execution is implied by documentation updates.
 
 The approved English paths are `docs/design/brand-board.html` and `docs/INITIAL-STATE.md`. They correspond to the design board and initial-state deliverables named in Spanish in the assignment. Documentation uses English equivalents for story, acceptance, assumption, and normative formats.
 
@@ -27,7 +27,7 @@ The approved English paths are `docs/design/brand-board.html` and `docs/INITIAL-
 The current checkpoint includes local Part C implementation and the automated portion of Part D. Read [verification](VERIFICACION.md) and [implementation audit](AUDITORIA.md) for actual local evidence. Student browser observations, live migration/RLS tests and final acceptance remain pending.
 
 - **A:** retain `docs/INITIAL-STATE.md` as the initial-state audit. Its creation was not performed in plan mode; do not claim otherwise. Audit the harness separately, including the required importing `CLAUDE.md` if missing.
-- **C:** E2 implementation is present by ticket; apply the new E2 migration before live persistence acceptance.
+- **C:** E2 implementation is present by ticket; apply any unapplied migrations 001–004 in order before live acceptance; do not replay already-applied migrations.
 - **D:** Vitest/domain/service/DOM tests and service-only access are implemented; live RLS and browser verification remain pending.
 - **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` now record planned manual checks and actual local evidence. The student must still fill the browser “actual result” column.
 - **History:** commit documents before corresponding code in the required order. This task does not create commits or rewrite history.
