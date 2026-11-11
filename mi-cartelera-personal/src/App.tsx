@@ -15,10 +15,21 @@ import { ListingScreen } from "./components/ListingScreen";
 import { ListingDetailScreen } from "./components/ListingDetailScreen";
 import { ListingEditScreen } from "./components/ListingEditScreen";
 
-function SignedInApp() {
-  const [view, setView] = useState<"search" | "listing" | "details" | "edit">(
-    "search",
-  );
+import { MovieNightScreen } from "./components/MovieNightScreen";
+import { SavedMovieNightsScreen } from "./components/SavedMovieNightsScreen";
+import { MovieNightDetailScreen } from "./components/MovieNightDetailScreen";
+
+function SignedInApp({ userId }: { userId: string }) {
+  const [view, setView] = useState<
+    | "search"
+    | "listing"
+    | "details"
+    | "edit"
+    | "movieNight"
+    | "savedNights"
+    | "nightDetail"
+  >("search");
+  const [nightId, setNightId] = useState<string | null>(null);
   const [target, setTarget] = useState<Media | null>(null);
   const [logoutError, setLogoutError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -45,6 +56,8 @@ function SignedInApp() {
         onNavSearch={() => setView("search")}
         handleLogout={handleLogout}
         loggingOut={loggingOut}
+        onMovieNight={() => setView("movieNight")}
+        onSavedNights={() => setView("savedNights")}
       />
       {logoutError && (
         <p className="error-auth container" role="alert">
@@ -52,6 +65,31 @@ function SignedInApp() {
         </p>
       )}
       {view === "search" && <SearchScreen />}
+      {view === "movieNight" && (
+        <MovieNightScreen
+          userId={userId}
+          onSaved={(night) => {
+            setNightId(night.id);
+            setView("nightDetail");
+          }}
+        />
+      )}
+      {view === "savedNights" && (
+        <SavedMovieNightsScreen
+          userId={userId}
+          onDetail={(id) => {
+            setNightId(id);
+            setView("nightDetail");
+          }}
+        />
+      )}
+      {view === "nightDetail" && nightId && (
+        <MovieNightDetailScreen
+          userId={userId}
+          id={nightId}
+          onBack={() => setView("savedNights")}
+        />
+      )}
       {view === "listing" && (
         <ListingScreen
           onListingDetail={(listing) => {
@@ -161,6 +199,11 @@ function App() {
       </main>
     );
   if (!session) return <AuthScreen />;
-  return <SignedInApp key={`${session.user.id}:${identityVersion}`} />;
+  return (
+    <SignedInApp
+      key={`${session.user.id}:${identityVersion}`}
+      userId={session.user.id}
+    />
+  );
 }
 export default App;

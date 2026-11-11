@@ -1,6 +1,6 @@
 # Database setup and upgrades
 
-Fresh installations: run schema.sql, then migrations/000_listing_integrity.sql in order. Existing installations: compare the deployed Project 3 schema with schema.sql, then apply the migration once. Never replay the bootstrap to repair an unknown schema automatically. The bootstrap is repeatable for the documented schema, but does not reconcile incompatible historical enum/table definitions.
+Fresh installations: run schema.sql, then migrations/000_listing_integrity.sql then migrations/001_movie_nights.sql and migrations/002_movie_night_deletion.sql in order. Existing installations: compare the deployed Project 3 schema with schema.sql, then apply the migration once. Never replay the bootstrap to repair an unknown schema automatically. The bootstrap is repeatable for the documented schema, but does not reconcile incompatible historical enum/table definitions.
 
 The repair migration adds an owner/page index, unique owner/type/catalog identity, and a nonempty-title constraint for future writes. It does not delete rows or change existing RLS policies. It aborts transactionally if duplicate titles exist. Review duplicates with this administrative read-only query:
 
@@ -19,3 +19,19 @@ Account deletion remains outside product scope; the restrictive auth.users forei
 Use two ordinary test accounts, A and B, plus a signed-out client. Through ordinary public-client requests, verify that A cannot select, update, delete or reassign B's entries, and cannot insert an entry owned by B; repeat in reverse. Verify signed-out access is denied and own collection CRUD still works. Record affected rows/errors and actual observations without recording credentials. Owner filters in services are defense in depth and are not evidence that RLS works.
 
 Rollback of an unused repair deployment may remove the new indexes/constraint; do not remove original RLS or user data. Back up and review any rollback after real usage. Never use a privileged key in the frontend.
+
+
+## E2 — Movie Night migration
+
+`migrations/001_movie_nights.sql` adds only the movie_nights table, its owner/history index, and select/insert RLS policies. Apply it once after the E1 migration. Its SQL matches the epic spec. E1 collection tables/policies are not changed. E2 migration application has not been performed or verified by the agent.
+
+Saved movies are ordered JSON snapshots without a collection foreign key; deleting an E1 entry does not destroy historical plans. Session UUIDs are generated once per draft to recover uncertain saves. Migration 001 grants select/insert; the additive 002 migration also grants DELETE with an owner-only policy. Saved contents cannot be updated, but an authenticated owner can remove their own session. Basic database range/shape checks do not reproduce the complete domain fit calculation; that additional database validation remains out of scope.
+
+Verify with test accounts A and B: create one night per owner, read/list only own nights, deny anonymous reads/inserts, reject insertion under the other owner, and deny all update attempts and foreign/anonymous delete attempts, while allowing confirmed deletion of an owned night. Record actual outcomes in docs/VERIFICACION.md and criterion E2-AC21 in docs/AUDITORIA.md. Do not use privileged keys to demonstrate ordinary-user access. Confirm that an E1 title can be removed while its saved-night snapshot stays readable.
+
+For an unused development deployment, rolling back E2 means dropping the new movie_nights table/index only; this destroys saved nights and must not be done after real usage without a backup and explicit data-preservation review. No rollback is run by this task. Never drop or disable E1 ownership policies as part of an E2 rollback.
+
+
+## Owner session deletion — additive migration 002
+
+Apply `migrations/002_movie_night_deletion.sql` once after 001. If 001 is already applied, do not rerun it; apply only 002. This grants authenticated DELETE and adds an auth.uid() ownership policy. It changes neither the E1 collection nor its policies, and does not grant UPDATE. Verify with two test accounts and a signed-out client: own deletion works, foreign/anonymous deletion is denied, other nights and all E1 entries/ratings/comments remain unchanged. Confirming application of 002 is still pending.

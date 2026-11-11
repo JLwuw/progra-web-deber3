@@ -126,3 +126,12 @@ export async function getMediaDetails(
     ),
   );
 }
+
+export async function getMovieRuntime(
+  id: number,
+  signal?: AbortSignal,
+): Promise<unknown> {
+  return record(
+    await request(`movie/${positiveId(id)}`, new URLSearchParams(), signal),
+  ).runtime;
+}

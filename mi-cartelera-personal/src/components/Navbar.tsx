@@ -3,6 +3,8 @@ interface NavbarProps {
   onNavListing: () => void;
   handleLogout: () => void;
   loggingOut?: boolean;
+  onMovieNight: () => void;
+  onSavedNights: () => void;
 }
 
 export function Navbar({
@@ -10,6 +12,8 @@ export function Navbar({
   onNavListing,
   handleLogout,
   loggingOut,
+  onMovieNight,
+  onSavedNights,
 }: NavbarProps) {
   return (
     <nav className="navbar navbar-expand">
@@ -31,6 +35,16 @@ export function Navbar({
             </button>
           </li>
 
+          <li className="nav-item">
+            <button className="btn btn-outline-primary" onClick={onMovieNight}>
+              Movie Night
+            </button>
+          </li>
+          <li className="nav-item">
+            <button className="btn btn-outline-primary" onClick={onSavedNights}>
+              Saved Nights
+            </button>
+          </li>
           <li className="nav-item">
             <button
               type="button"

@@ -196,12 +196,10 @@ describe("service boundaries", () => {
     const insert = {
       insert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      single: vi
-        .fn()
-        .mockResolvedValue({
-          data: null,
-          error: { code: "23505", message: "duplicate" },
-        }),
+      single: vi.fn().mockResolvedValue({
+        data: null,
+        error: { code: "23505", message: "duplicate" },
+      }),
     };
     getSupabaseMock.mockReturnValue({
       from: vi.fn().mockReturnValueOnce(lookup).mockReturnValueOnce(insert),
@@ -225,12 +223,10 @@ describe("service boundaries", () => {
   });
   it("encodes catalog queries and forwards the cancellation signal", async () => {
     vi.stubEnv("VITE_TMDB_API_KEY", "test-only");
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        json: async () => ({ results: [], total_pages: 0 }),
-      });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: [], total_pages: 0 }),
+    });
     vi.stubGlobal("fetch", fetchMock);
     const signal = new AbortController().signal;
     await searchMedia("A & B?", "tv", 2, signal);

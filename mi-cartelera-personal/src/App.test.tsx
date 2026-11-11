@@ -132,4 +132,25 @@ describe("session lifecycle", () => {
     fireEvent.click(screen.getByRole("button", { name: "Retry session" }));
     await screen.findByRole("button", { name: "Log In" });
   });
+  it("exposes Movie Night only after sign-in and discards it on account change", async () => {
+    let notify!: (value: Session | null) => void;
+    vi.mocked(subscribeToSession).mockImplementation((callback) => {
+      notify = callback;
+      return vi.fn();
+    });
+    vi.mocked(getCurrentSession).mockResolvedValue(null);
+    render(<App />);
+    await screen.findByRole("button", { name: "Log In" });
+    expect(screen.queryByRole("button", { name: "Movie Night" })).toBeNull();
+    act(() => notify(session("A")));
+    fireEvent.click(screen.getByRole("button", { name: "Movie Night" }));
+    fireEvent.change(screen.getByLabelText("Available minutes"), {
+      target: { value: "200" },
+    });
+    act(() => notify(session("B")));
+    fireEvent.click(screen.getByRole("button", { name: "Movie Night" }));
+    expect(
+      (screen.getByLabelText("Available minutes") as HTMLInputElement).value,
+    ).toBe("");
+  });
 });

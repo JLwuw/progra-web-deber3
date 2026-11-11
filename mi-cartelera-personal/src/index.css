@@ -270,7 +270,8 @@ button {
   color: var(--text-h);
   overflow-wrap: anywhere;
 }
-.media-grid .card-title {
+.media-grid .card-title,
+.movie-night-screen .card-title {
   font-size: 1.15rem;
   line-height: 1.4;
 }
@@ -539,4 +540,57 @@ button {
   width: 160px;
   max-width: 100%;
   margin-inline: auto;
+}
+
+/* E2 reuses the existing shared surfaces, spacing and responsive grid. */
+.movie-night-screen {
+  max-width: 1160px;
+  padding-top: 2.5rem;
+  padding-bottom: 4rem;
+}
+.night-budget {
+  max-width: 200px;
+}
+.night-summary,
+.night-unavailable {
+  padding: 1.4rem !important;
+}
+.night-totals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 0;
+}
+.night-totals dt {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+.night-totals dd {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.movie-night-screen .media-card h3 {
+  overflow-wrap: anywhere;
+}
+.night-summary:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+@media (max-width: 575px) {
+  .movie-night-screen {
+    padding-top: 1.5rem;
+  }
+}
+
+.movie-night-screen h1,
+.movie-night-screen .media-card h2 {
+  overflow-wrap: anywhere;
+}
+.night-summary li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.night-summary li .btn {
+  flex-shrink: 0;
 }
