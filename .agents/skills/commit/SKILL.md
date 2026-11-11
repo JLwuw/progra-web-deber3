@@ -1,11 +1,11 @@
 ---
 name: commit
-description: Create an English Conventional Commit from staged changes when explicitly invoked with /commit.
+description: Create an English Conventional Commit from independently reviewed staged changes when explicitly invoked with /commit.
 disable-model-invocation: true
 ---
 
-1. Read all staged changes with `git diff --staged` and inspect staged file names with `git diff --staged --name-only`.
-2. If nothing is staged, notify the user and stop. Never run `git add` or otherwise change the staging area on your own.
-3. Check staged file names and contents for sensitive data, including `.env`, `.env-local`, other environment files, credentials, API keys, tokens, passwords, and private keys. If any sensitive data is included, stop and notify the user without displaying secret values. Do not unstage or modify files automatically.
-4. Write a single-line commit message in English using Conventional Commits: `<type>: <description>` or `<type>(<scope>): <description>`. Use only `feat`, `fix`, `docs`, `test`, `refactor`, or `chore`. Keep the entire message at most 72 characters and describe the staged changes accurately.
-5. Show the message to the user, then run `git commit -m "<message>"`. Report the result. If the commit fails, report the failure and stop. Never push.
+1. Inspect staged names with `git diff --staged --name-only`. If nothing is staged, notify the user and stop. Never run `git add` or otherwise change staging on your own.
+2. Check names before reading content; never open environment files. Check the permitted staged diff and relevant contents for credentials/API keys/tokens/passwords/private keys without displaying secret values. If sensitive data is present, stop and notify the user; never unstage or modify files automatically.
+3. Follow [adversarial-review](../adversarial-review/SKILL.md): prepare the current snapshot, obtain an independent subagent's response and record it. A missing reviewer, failed/unverified required check or unresolved finding blocks the commit. Never approve your own implementation. Fixes/restaging invalidate review and require a fresh request and independent pass. Preserve this skill's staging restriction during repairs; ask the user to stage or give explicit staging authorization if needed.
+4. Read the complete reviewed staged diff and confirm the proposed message accurately describes it. Use an English single-line Conventional Commit: `<type>: <description>` or `<type>(<scope>): <description>`, with feat/fix/docs/test/refactor/chore and at most 72 characters.
+5. Show the message, run `python3 .agents/skills/adversarial-review/scripts/review_gate.py check`, then `git commit -m "<message>"`. The local hook repeats the check when installed. Report the result; if committing fails, report it and stop. Never bypass review or hooks and never push.

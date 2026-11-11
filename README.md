@@ -53,3 +53,22 @@ See [E2 verification](docs/VERIFICACION.md) and [E2 implementation audit](docs/A
 - [Database setup, duplicate review and two-account isolation checks](supabase/README.md)
 
 Screenshots and a published-app link have not been collected. No production deployment is claimed. Navigation currently uses in-memory views; refresh returns to Search. Local date filters follow the browser timezone.
+
+
+## Independent review before commits
+
+The [adversarial-review skill](.agents/skills/adversarial-review/SKILL.md) delegates review to a separate subagent before every proposed commit, including documentation changes. Enable the local gate once per clone from the repository root:
+
+```bash
+python3 .agents/skills/adversarial-review/scripts/review_gate.py install
+```
+
+Python 3 and Git are required. Installation changes only the local hooks path and refuses incompatible existing hooks. Stage the intended changes yourself or explicitly authorize staging, then ask Codex to review/commit (or invoke the existing explicit-only commit skill). The reviewer checks the actual staged version; unresolved findings or missing required verification block approval. Any staged change or parent change requires a fresh independent review. The commit skill retains its existing staging restrictions.
+
+Review requests/reports stay in local Git metadata. The hook checks snapshot binding and report shape; it does not launch an agent by itself. Without a valid recorded review, an ordinary git commit is blocked. Local hooks/records can be bypassed or modified; this is a development guard, not a tamper-proof or hosted policy. Other clones must activate it themselves. See [spec and verification criteria](docs/specs/adversarial-review.md).
+
+Run the isolated gate checks with:
+
+```bash
+python3 .agents/skills/adversarial-review/scripts/test_review_gate.py
+```

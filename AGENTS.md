@@ -36,5 +36,5 @@ App paths below are relative to `mi-cartelera-personal/`; docs/ and supabase/ ar
 - Never write keys or other sensive data in code
 - The frontend only uses the public (anon/publishable) keys. It never uses `service_role`.
 - No features are implemented without a corresponding spec inside `docs/specs/`.
-- Execute `npm test` and `npm run build` from the React App folder before deeming a task finished
-- For any visual task, read DESIGN.md before writing any code
+- Before finishing, run `npm test` and `npm run build` in the app folder; read DESIGN.md before visual code.
+- Before every commit, use `.agents/skills/adversarial-review/SKILL.md` with an independent subagent.
