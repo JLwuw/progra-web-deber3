@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "preview": "vite preview",
-    "test": "tsc -p tsconfig.test.json && vitest run"
+    "test": "tsc -p tsconfig.test.json && vitest run",
+    "test:db": "node ../supabase/tests/movie-nights.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

@@ -17,6 +17,7 @@ import {
   getSavedMovieNight,
   SaveUncertainError,
   deleteSavedMovieNight,
+  markMovieNightWatched,
 } from "../services/movieNightService";
 import type { MovieCandidate, SavedMovieNight } from "../types/MovieNight";
 vi.mock("../services/movieNightService", async (importOriginal) => ({
@@ -27,6 +28,7 @@ vi.mock("../services/movieNightService", async (importOriginal) => ({
   listSavedMovieNights: vi.fn(),
   getSavedMovieNight: vi.fn(),
   deleteSavedMovieNight: vi.fn(),
+  markMovieNightWatched: vi.fn(),
 }));
 const first = {
   tmdbId: 1,
@@ -93,6 +95,9 @@ beforeEach(() => {
     .mockResolvedValue({ nights: [saved], hasMore: false, nextOffset: 1 });
   vi.mocked(getSavedMovieNight).mockReset().mockResolvedValue(saved);
   vi.mocked(deleteSavedMovieNight).mockReset().mockResolvedValue(undefined);
+  vi.mocked(markMovieNightWatched)
+    .mockReset()
+    .mockResolvedValue({ ...saved, watchedAt: "2026-11-11T14:00:00Z" });
 });
 async function plan() {
   fireEvent.change(screen.getByLabelText("Available minutes"), {
@@ -389,4 +394,120 @@ describe("Movie Night interface", () => {
       screen.getByRole("button", { name: "All sessions loaded" }),
     ).toBeTruthy();
   });
+});
+
+describe("optional movie-night interactions", () => {
+  it("filters candidates without removing selected movies and uses the filter for planning", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    vi.mocked(loadMovieCandidates).mockResolvedValue([
+      { ...first, status: "ready", genres: [{ id: 1, name: "Drama" }] },
+      { ...second, status: "ready", genres: [{ id: 2, name: "Comedy" }] },
+    ]);
+    render(<MovieNightScreen userId="owner" onSaved={vi.fn()} />);
+    await plan();
+    fireEvent.click(screen.getByRole("button", { name: "Add First" }));
+    fireEvent.change(screen.getByLabelText("Genre"), {
+      target: { value: "2" },
+    });
+    expect(screen.queryByRole("button", { name: "Add First" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Remove First" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Plan my night" }));
+    await screen.findByRole("button", { name: "Remove Second" });
+    expect(screen.queryByRole("button", { name: "Remove First" })).toBeNull();
+    expect(loadMovieCandidates).toHaveBeenCalledTimes(2);
+    expect(saveMovieNight).not.toHaveBeenCalled();
+  });
+  it("preserves a draft on cancellation, loading failure and no fit, and locks pending edits", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<MovieNightScreen userId="owner" onSaved={vi.fn()} />);
+    await plan();
+    fireEvent.click(screen.getByRole("button", { name: "Add First" }));
+    fireEvent.click(screen.getByRole("button", { name: "Plan my night" }));
+    expect(loadMovieCandidates).toHaveBeenCalledOnce();
+    confirm.mockReturnValue(true);
+    let fail!: (error: Error) => void;
+    vi.mocked(loadMovieCandidates).mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          fail = reject;
+        }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Plan my night" }));
+    expect(
+      (screen.getByLabelText("Available minutes") as HTMLInputElement).disabled,
+    ).toBe(true);
+    expect((screen.getByLabelText("Genre") as HTMLSelectElement).disabled).toBe(
+      true,
+    );
+    await act(async () => fail(new Error("Catalog unavailable")));
+    expect(screen.getByRole("button", { name: "Remove First" })).toBeTruthy();
+    vi.mocked(loadMovieCandidates).mockResolvedValueOnce([]);
+    fireEvent.click(screen.getByRole("button", { name: "Plan my night" }));
+    await screen.findByText(/Your selection was kept/);
+    expect(screen.getByRole("button", { name: "Remove First" })).toBeTruthy();
+  });
+  it("confirms completion, preserves state on failure, guards deletion and retries safely", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(
+      <MovieNightDetailScreen id={saved.id} userId="owner" onBack={vi.fn()} />,
+    );
+    const button = (await screen.findByRole("button", {
+      name: "Mark as watched",
+    })) as HTMLButtonElement;
+    fireEvent.click(button);
+    expect(markMovieNightWatched).not.toHaveBeenCalled();
+    confirm.mockReturnValue(true);
+    vi.mocked(markMovieNightWatched).mockRejectedValueOnce(
+      new Error("Completion failed"),
+    );
+    fireEvent.click(button);
+    await screen.findByText(/Completion failed/);
+    expect(screen.getByText("Planned · Not watched yet")).toBeTruthy();
+    let finish!: (value: SavedMovieNight) => void;
+    vi.mocked(markMovieNightWatched).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    fireEvent.click(button);
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "Delete session",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(button.disabled).toBe(true);
+    await act(async () =>
+      finish({ ...saved, watchedAt: "2026-11-11T14:00:00Z" }),
+    );
+    expect(screen.getByRole("button", { name: "✓ Watched" })).toBeTruthy();
+    expect(screen.getByText("Watched")).toBeTruthy();
+    expect(button.disabled).toBe(true);
+    expect(markMovieNightWatched).toHaveBeenCalledTimes(2);
+  });
+});
+
+it("keeps Save Night after no-fit planning feedback and reserves retry for a failed save", async () => {
+  vi.spyOn(window, "confirm").mockReturnValue(true);
+  render(<MovieNightScreen userId="owner" onSaved={vi.fn()} />);
+  await plan();
+  fireEvent.click(screen.getByRole("button", { name: "Add First" }));
+  nameNight();
+  vi.mocked(loadMovieCandidates).mockResolvedValueOnce([]);
+  fireEvent.click(screen.getByRole("button", { name: "Plan my night" }));
+  await screen.findByText(/Your selection was kept/);
+  expect(saveMovieNight).not.toHaveBeenCalled();
+  expect(screen.getByRole("button", { name: "Remove First" })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "Retry saving" })).toBeNull();
+  vi.mocked(saveMovieNight).mockRejectedValueOnce(new Error("Save rejected"));
+  fireEvent.click(screen.getByRole("button", { name: "Save Night" }));
+  await screen.findByText("Save rejected");
+  expect(screen.getByRole("button", { name: "Retry saving" })).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("Session name"), {
+    target: { value: "Saturday" },
+  });
+  expect(screen.queryByText("Save rejected")).toBeNull();
+  expect(screen.getByRole("button", { name: "Save Night" })).toBeTruthy();
 });

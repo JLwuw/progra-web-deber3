@@ -8,7 +8,7 @@ import {
 } from "../lib/validation";
 import { getCurrentUserId } from "./authService";
 import { getListings } from "./listingService";
-import { getMovieRuntime } from "./tmdbService";
+import { getMoviePlanningDetails } from "./tmdbService";
 import {
   calculateSession,
   normalizeRuntime,
@@ -41,9 +41,9 @@ export async function loadMovieCandidate(
   signal?: AbortSignal,
 ): Promise<MovieCandidate> {
   try {
-    const runtime = normalizeRuntime(
-      await getMovieRuntime(movie.tmdbId, signal),
-    );
+    const details = await getMoviePlanningDetails(movie.tmdbId, signal);
+    const runtime = normalizeRuntime(details.runtime);
+    movie = { ...movie, genres: details.genres };
     signal?.throwIfAborted();
     return runtime.valid
       ? { ...movie, status: "ready", runtimeMinutes: runtime.value }
@@ -116,6 +116,9 @@ export function parseSavedMovieNight(value: unknown): SavedMovieNight {
   const id = text(row.id);
   const userId = text(row.user_id);
   const createdAt = text(row.created_at);
+  const watchedAt = row.watched_at == null ? null : text(row.watched_at);
+  if (watchedAt !== null && !Number.isFinite(Date.parse(watchedAt)))
+    throw new Error("Invalid completion date.");
   if (
     !id ||
     !userId ||
@@ -135,6 +138,7 @@ export function parseSavedMovieNight(value: unknown): SavedMovieNight {
     totalMinutes,
     movies,
     createdAt,
+    watchedAt,
   };
 }
 async function findSavedNight(
@@ -389,4 +393,22 @@ export async function deleteSavedMovieNight(
     throw new Error(
       "The session was not deleted. It may no longer exist or you may not have access.",
     );
+}
+
+export async function markMovieNightWatched(
+  id: string,
+  expectedOwner: string,
+): Promise<SavedMovieNight> {
+  const userId = await owner(expectedOwner);
+  const { data, error } = await getSupabase().rpc("mark_movie_night_watched", {
+    p_night_id: id,
+  });
+  if (error) throw new Error(error.message);
+  await owner(expectedOwner);
+  const night = parseSavedMovieNight(data);
+  if (night.id !== id || night.userId !== userId || !night.watchedAt)
+    throw new Error(
+      "Invalid session completion response. Retry to recover its status.",
+    );
+  return night;
 }

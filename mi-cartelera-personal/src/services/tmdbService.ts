@@ -135,3 +135,13 @@ export async function getMovieRuntime(
     await request(`movie/${positiveId(id)}`, new URLSearchParams(), signal),
   ).runtime;
 }
+
+export async function getMoviePlanningDetails(
+  id: number,
+  signal?: AbortSignal,
+) {
+  const item = record(
+    await request(`movie/${positiveId(id)}`, new URLSearchParams(), signal),
+  );
+  return { runtime: item.runtime, genres: parseMediaDetails(item).genres };
+}

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   calculateSession,
+  filterCandidatesByGenre,
+  suggestMovieNight,
   canAddMovie,
   PAUSE_MINUTES,
   sortCandidates,
@@ -29,10 +31,16 @@ export function useMovieNight(
   const [selected, setSelected] = useState<MovieSnapshot[]>([]);
   const [candidates, setCandidates] = useState<MovieCandidate[]>([]);
   const [requested, setRequested] = useState(false);
+  const [genre, setGenre] = useState("");
+  const [planning, setPlanning] = useState(false);
+  const automaticPlan = useRef<{ budget: number; genreId?: number } | null>(
+    null,
+  );
   const [refresh, setRefresh] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uncertain, setUncertain] = useState(false);
   const [review, setReview] = useState<{
@@ -58,6 +66,7 @@ export function useMovieNight(
   }, []);
   useEffect(() => {
     if (!requested) return;
+    const plan = automaticPlan.current;
     const controller = new AbortController();
     const controllers = requests.current;
     controllers.add(controller);
@@ -85,8 +94,30 @@ export function useMovieNight(
               setCandidates(merge(progress));
           },
         );
-        if (!controller.signal.aborted && version === generation.current)
+        if (!controller.signal.aborted && version === generation.current) {
           setCandidates(merge(movies));
+          if (plan) {
+            const suggestion = suggestMovieNight(
+              plan.budget,
+              movies,
+              PAUSE_MINUTES,
+              plan.genreId,
+            );
+            if (suggestion.valid && suggestion.value.length) {
+              id.current = null;
+              recoveryDrafts.current = [];
+              setReview(null);
+              setError(null);
+              setSaveError(null);
+              setSelected(suggestion.value);
+            } else
+              setError(
+                suggestion.valid
+                  ? "No pending movies with a known duration fit this budget and genre. Your selection was kept."
+                  : suggestion.reason,
+              );
+          }
+        }
       } catch (error) {
         if (!controller.signal.aborted)
           setLoadError(
@@ -95,7 +126,11 @@ export function useMovieNight(
               : "Unable to load pending movies.",
           );
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+          setPlanning(false);
+          automaticPlan.current = null;
+        }
       }
     }
     void load();
@@ -111,17 +146,37 @@ export function useMovieNight(
     selected.map((movie) => movie.runtimeMinutes),
     PAUSE_MINUTES,
   );
-  const locked = saving || uncertain;
+  const locked = saving || uncertain || planning;
   function edit(action: () => void) {
-    if (pendingSave.current || uncertain) return;
+    if (pendingSave.current || uncertain || automaticPlan.current) return;
     id.current = null;
     recoveryDrafts.current = [];
     setReview(null);
     setError(null);
+    setSaveError(null);
     action();
   }
   function findMovies() {
-    if (!budget.valid || locked) return;
+    if (!budget.valid || locked || automaticPlan.current || pendingSave.current)
+      return;
+    setRequested(true);
+    setRefresh((n) => n + 1);
+  }
+  function planNight() {
+    if (!budget.valid || locked || pendingSave.current || automaticPlan.current)
+      return;
+    if (
+      selected.length &&
+      !window.confirm(
+        "Replace your current movie selection with an automatic suggestion?",
+      )
+    )
+      return;
+    automaticPlan.current = {
+      budget: budget.value,
+      genreId: genre ? Number(genre) : undefined,
+    };
+    setPlanning(true);
     setRequested(true);
     setRefresh((n) => n + 1);
   }
@@ -207,10 +262,17 @@ export function useMovieNight(
                 ? "Review and accept the updated draft before saving."
                 : null;
   async function save() {
-    if (pendingSave.current || saveProblem || !budget.valid) return;
+    if (
+      pendingSave.current ||
+      automaticPlan.current ||
+      saveProblem ||
+      !budget.valid
+    )
+      return;
     pendingSave.current = true;
     setSaving(true);
     setError(null);
+    setSaveError(null);
     const controller = new AbortController();
     requests.current.add(controller);
     try {
@@ -242,7 +304,7 @@ export function useMovieNight(
       }
     } catch (error) {
       if (alive.current && !controller.signal.aborted) {
-        setError(
+        setSaveError(
           error instanceof Error
             ? error.message
             : "Unable to save this session.",
@@ -259,11 +321,28 @@ export function useMovieNight(
     available,
     name,
     selected,
-    candidates: sortCandidates(candidates),
+    candidates: sortCandidates(
+      filterCandidatesByGenre(candidates, genre ? Number(genre) : undefined),
+    ),
+    hasPendingMovies: candidates.length > 0,
+    genres: [
+      ...new Map(
+        candidates
+          .flatMap((movie) => movie.genres ?? [])
+          .map((genre) => [genre.id, genre]),
+      ).values(),
+    ].sort((a, b) => a.name.localeCompare(b.name, "en")),
+    genre,
+    setGenre: (value: string) => {
+      if (!locked && !automaticPlan.current) setGenre(value);
+    },
+    planNight,
+    planning,
     requested,
     loading,
     loadError,
     error,
+    saveError,
     saving,
     uncertain,
     locked,
@@ -284,7 +363,7 @@ export function useMovieNight(
         ),
       ),
     acceptReview: () => {
-      if (!review || pendingSave.current) return;
+      if (!review || pendingSave.current || automaticPlan.current) return;
       const refreshed = review.movies;
       const selectedIds = new Set(selected.map((movie) => movie.tmdbId));
       for (const tmdbId of selectedIds) {
@@ -293,7 +372,14 @@ export function useMovieNight(
         const fresh = refreshed.find((movie) => movie.tmdbId === tmdbId);
         candidateOverrides.current.set(
           tmdbId,
-          fresh ? { ...fresh, status: "ready" } : null,
+          fresh
+            ? {
+                ...fresh,
+                genres: candidates.find((movie) => movie.tmdbId === tmdbId)
+                  ?.genres,
+                status: "ready",
+              }
+            : null,
         );
       }
       // Source review can change the proposed payload, but never abandon an uncertain operation's UUID.
@@ -303,6 +389,7 @@ export function useMovieNight(
       }
       setReview(null);
       setError(null);
+      setSaveError(null);
       setSelected(refreshed);
       setCandidates((previous) =>
         previous
@@ -315,7 +402,9 @@ export function useMovieNight(
             const fresh = refreshed.find(
               (item) => item.tmdbId === movie.tmdbId,
             );
-            return fresh ? { ...fresh, status: "ready" as const } : movie;
+            return fresh
+              ? { ...movie, ...fresh, status: "ready" as const }
+              : movie;
           }),
       );
     },

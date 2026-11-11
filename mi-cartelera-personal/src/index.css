@@ -101,6 +101,9 @@ button {
   --bs-btn-hover-bg: #713e3b;
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-border-color: #b67671;
+  --bs-btn-disabled-color: #eda5a0;
+  --bs-btn-disabled-bg: #bd6d6912;
+  --bs-btn-disabled-border-color: #945b594d;
 }
 
 .navbar .btn:not(.btn-danger):hover {
@@ -131,6 +134,7 @@ button {
   --bs-btn-active-bg: #d2a454;
   --bs-btn-active-color: #21190d;
   --bs-btn-active-border-color: #d2a454;
+  --bs-btn-disabled-color: #21190d;
   --bs-btn-disabled-bg: #8c7757;
   --bs-btn-disabled-border-color: #8c7757;
 }
@@ -146,6 +150,9 @@ button {
   --bs-btn-hover-border-color: var(--accent);
   --bs-btn-active-bg: #e6b86a22;
   --bs-btn-active-color: #ffe0ac;
+  --bs-btn-disabled-color: #ded5c7;
+  --bs-btn-disabled-bg: #ffffff06;
+  --bs-btn-disabled-border-color: #5c5140;
 }
 
 .btn-danger,
@@ -156,6 +163,9 @@ button {
   --bs-btn-hover-bg: #713e3b;
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-border-color: #b67671;
+  --bs-btn-disabled-color: #eda5a0;
+  --bs-btn-disabled-bg: #bd6d6912;
+  --bs-btn-disabled-border-color: #945b594d;
 }
 
 .btn:focus-visible,
@@ -593,4 +603,22 @@ button {
 }
 .night-summary li .btn {
   flex-shrink: 0;
+}
+
+/* Override Bootstrap's light disabled field surfaces across all forms. */
+.form-control:disabled,
+.form-select:disabled {
+  background-color: #111217;
+  border-color: #3d3e48;
+  color: var(--text);
+  opacity: 1;
+  cursor: not-allowed;
+}
+.night-completion-action {
+  min-height: 48px;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+}
+.night-completion-action:disabled {
+  opacity: 1;
 }

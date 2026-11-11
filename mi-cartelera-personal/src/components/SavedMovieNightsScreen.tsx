@@ -79,6 +79,7 @@ export function SavedMovieNightsScreen({
             <article className="media-card">
               <div className="card-body">
                 <h2 className="card-title">{night.name}</h2>
+                <p>{night.watchedAt ? "Watched" : "Planned"}</p>
                 <p>
                   Saved{" "}
                   <time dateTime={night.createdAt}>

@@ -8,6 +8,7 @@ import {
   parseSavedMovieNight,
   SaveUncertainError,
   deleteSavedMovieNight,
+  markMovieNightWatched,
 } from "./movieNightService";
 import type { Media } from "../types/Media";
 import type { MovieNightDraft } from "../types/MovieNight";
@@ -15,12 +16,14 @@ const mocks = vi.hoisted(() => ({
   getSupabase: vi.fn(),
   getCurrentUserId: vi.fn(),
   getListings: vi.fn(),
-  getMovieRuntime: vi.fn(),
+  getMoviePlanningDetails: vi.fn(),
 }));
 vi.mock("../lib/supabase", () => ({ getSupabase: mocks.getSupabase }));
 vi.mock("./authService", () => ({ getCurrentUserId: mocks.getCurrentUserId }));
 vi.mock("./listingService", () => ({ getListings: mocks.getListings }));
-vi.mock("./tmdbService", () => ({ getMovieRuntime: mocks.getMovieRuntime }));
+vi.mock("./tmdbService", () => ({
+  getMoviePlanningDetails: mocks.getMoviePlanningDetails,
+}));
 const movie = {
   tmdbId: 1,
   title: "First",
@@ -93,7 +96,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   mocks.getCurrentUserId.mockResolvedValue("owner");
   mocks.getListings.mockResolvedValue([listing()]);
-  mocks.getMovieRuntime.mockResolvedValue(90);
+  mocks.getMoviePlanningDetails.mockResolvedValue({ runtime: 90, genres: [] });
 });
 describe("Movie Night service", () => {
   it("loads only distinct owned pending movies with partial errors and bounded concurrency", async () => {
@@ -109,13 +112,13 @@ describe("Movie Night service", () => {
     ]);
     let active = 0;
     let peak = 0;
-    mocks.getMovieRuntime.mockImplementation(async (id: number) => {
+    mocks.getMoviePlanningDetails.mockImplementation(async (id: number) => {
       active++;
       peak = Math.max(peak, active);
       await Promise.resolve();
       active--;
       if (id === 3) throw new Error("Catalog failed");
-      return id === 2 ? null : 90;
+      return { runtime: id === 2 ? null : 90, genres: [] };
     });
     const progress = vi.fn();
     const candidates = await loadMovieCandidates("owner", undefined, progress);
@@ -125,7 +128,7 @@ describe("Movie Night service", () => {
       "error",
       "ready",
     ]);
-    expect(mocks.getMovieRuntime).toHaveBeenCalledTimes(4);
+    expect(mocks.getMoviePlanningDetails).toHaveBeenCalledTimes(4);
     expect(peak).toBeLessThanOrEqual(3);
     expect(
       progress.mock.calls[0][0].every(
@@ -151,7 +154,7 @@ describe("Movie Night service", () => {
     await expect(
       loadMovieCandidates("owner", controller.signal),
     ).rejects.toThrow();
-    expect(mocks.getMovieRuntime).not.toHaveBeenCalled();
+    expect(mocks.getMoviePlanningDetails).not.toHaveBeenCalled();
   });
   it("saves exactly one ordered snapshot without updating the collection", async () => {
     const query = queries(
@@ -180,8 +183,16 @@ describe("Movie Night service", () => {
         mocks.getListings.mockResolvedValue([
           { ...listing(), watchState: "watching" },
         ]);
-      if (change === "runtime") mocks.getMovieRuntime.mockResolvedValue(100);
-      if (change === "unknown") mocks.getMovieRuntime.mockResolvedValue(null);
+      if (change === "runtime")
+        mocks.getMoviePlanningDetails.mockResolvedValue({
+          runtime: 100,
+          genres: [],
+        });
+      if (change === "unknown")
+        mocks.getMoviePlanningDetails.mockResolvedValue({
+          runtime: null,
+          genres: [],
+        });
       const result = await saveMovieNight(draft, "owner");
       expect(result.status).toBe("review");
       expect(query.insert).not.toHaveBeenCalled();
@@ -191,7 +202,9 @@ describe("Movie Night service", () => {
   );
   it("does not erase selection information when runtime refresh fails", async () => {
     queries({ data: null, error: null });
-    mocks.getMovieRuntime.mockRejectedValue(new Error("Network failed"));
+    mocks.getMoviePlanningDetails.mockRejectedValue(
+      new Error("Network failed"),
+    );
     await expect(saveMovieNight(draft, "owner")).rejects.toThrow(
       "Network failed",
     );
@@ -203,7 +216,7 @@ describe("Movie Night service", () => {
     expect(result.status).toBe("saved");
     expect(query.insert).not.toHaveBeenCalled();
     expect(mocks.getListings).not.toHaveBeenCalled();
-    expect(mocks.getMovieRuntime).not.toHaveBeenCalled();
+    expect(mocks.getMoviePlanningDetails).not.toHaveBeenCalled();
   });
   it("retains identity after a lost save response and recovers without another insert", async () => {
     const query = queries(
@@ -235,7 +248,7 @@ describe("Movie Night service", () => {
     expect((await getSavedMovieNight(draft.id, "owner")).movies).toEqual([
       movie,
     ]);
-    expect(mocks.getMovieRuntime).not.toHaveBeenCalled();
+    expect(mocks.getMoviePlanningDetails).not.toHaveBeenCalled();
     expect(mocks.getListings).not.toHaveBeenCalled();
   });
   it("orders history stably, scopes by owner and pages by returned count", async () => {
@@ -291,7 +304,10 @@ describe("Movie Night service", () => {
   });
   it("recovers a late original insert when it wins against a reviewed retry", async () => {
     const reviewed = { ...draft, movies: [{ ...movie, runtimeMinutes: 95 }] };
-    mocks.getMovieRuntime.mockResolvedValue(95);
+    mocks.getMoviePlanningDetails.mockResolvedValue({
+      runtime: 95,
+      genres: [],
+    });
     const query = queries(
       { data: null, error: null },
       {
@@ -360,7 +376,7 @@ describe("Movie Night service", () => {
       ["user_id", "owner"],
     ]);
     expect(mocks.getListings).not.toHaveBeenCalled();
-    expect(mocks.getMovieRuntime).not.toHaveBeenCalled();
+    expect(mocks.getMoviePlanningDetails).not.toHaveBeenCalled();
   });
   it("does not claim deletion succeeded for inaccessible or missing sessions", async () => {
     queries({ data: [], error: null });
@@ -383,5 +399,55 @@ describe("Movie Night service", () => {
       hasMore: true,
       nextOffset: 1,
     });
+  });
+});
+
+describe("optional metadata and completion services", () => {
+  it("loads genres alongside runtime in one request", async () => {
+    mocks.getMoviePlanningDetails.mockResolvedValue({
+      runtime: 90,
+      genres: [{ id: 18, name: "Drama" }],
+    });
+    expect(await loadMovieCandidate(listing())).toMatchObject({
+      status: "ready",
+      genres: [{ id: 18, name: "Drama" }],
+    });
+    expect(mocks.getMoviePlanningDetails).toHaveBeenCalledOnce();
+  });
+  it("calls the completion RPC and validates its owned completed row", async () => {
+    const rpc = vi
+      .fn()
+      .mockResolvedValue({
+        data: { ...row, watched_at: "2026-11-11T14:00:00Z" },
+        error: null,
+      });
+    mocks.getSupabase.mockReturnValue({ rpc });
+    expect(
+      (await markMovieNightWatched(draft.id, "owner")).watchedAt,
+    ).toBeTruthy();
+    expect(rpc).toHaveBeenCalledWith("mark_movie_night_watched", {
+      p_night_id: draft.id,
+    });
+  });
+  it("rejects account changes, server errors, and malformed or foreign completion responses", async () => {
+    const rpc = vi.fn();
+    mocks.getSupabase.mockReturnValue({ rpc });
+    mocks.getCurrentUserId.mockResolvedValueOnce("other");
+    await expect(markMovieNightWatched(draft.id, "owner")).rejects.toThrow(
+      /account changed/,
+    );
+    expect(rpc).not.toHaveBeenCalled();
+    rpc.mockResolvedValueOnce({ data: null, error: { message: "Denied" } });
+    await expect(markMovieNightWatched(draft.id, "owner")).rejects.toThrow(
+      "Denied",
+    );
+    for (const data of [
+      row,
+      { ...row, user_id: "other", watched_at: "2026-11-11T14:00:00Z" },
+      { ...row, watched_at: "bad" },
+    ]) {
+      rpc.mockResolvedValueOnce({ data, error: null });
+      await expect(markMovieNightWatched(draft.id, "owner")).rejects.toThrow();
+    }
   });
 });

@@ -53,6 +53,14 @@ export function MovieNightScreen({
           >
             Find movies
           </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={!night.budget.valid || night.locked}
+            onClick={night.planNight}
+          >
+            {night.planning ? "Planning…" : "Plan my night"}
+          </button>
         </div>
         <p id="budget-help" className="mt-2 mb-0">
           Whole minutes, from 30 to 600.
@@ -66,6 +74,38 @@ export function MovieNightScreen({
       <div className="row g-4">
         <div className="col-12 col-lg-7">
           <h2 className="h4">What fits</h2>
+          <label className="form-label" htmlFor="night-genre">
+            Genre
+          </label>
+          <select
+            id="night-genre"
+            className="form-select mb-3"
+            value={night.genre}
+            disabled={night.locked}
+            onChange={(event) => night.setGenre(event.target.value)}
+          >
+            <option value="">All genres</option>
+            {night.genre &&
+              !night.genres.some(
+                (genre) => String(genre.id) === night.genre,
+              ) && (
+                <option value={night.genre}>
+                  Selected genre (metadata unavailable)
+                </option>
+              )}
+            {night.genres.map((genre) => (
+              <option key={genre.id} value={genre.id}>
+                {genre.name}
+              </option>
+            ))}
+          </select>
+          {night.requested &&
+            !night.loading &&
+            !night.loadError &&
+            night.hasPendingMovies &&
+            night.candidates.length === 0 && (
+              <p role="status">No pending movies match this genre.</p>
+            )}
           {!night.requested && (
             <p>Enter your available time, then choose Find movies.</p>
           )}
@@ -87,7 +127,7 @@ export function MovieNightScreen({
           {night.requested &&
             !night.loading &&
             !night.loadError &&
-            night.candidates.length === 0 && (
+            !night.hasPendingMovies && (
               <p role="status">
                 You have no pending movies. Add a movie to your collection and
                 set it to Plan to Watch.
@@ -208,6 +248,11 @@ export function MovieNightScreen({
                 {night.error}
               </p>
             )}
+            {night.saveError && (
+              <p role="alert" className="error-search">
+                {night.saveError}
+              </p>
+            )}
             {night.review && (
               <div className="error-search" role="alert">
                 <h2 className="h5">Review required</h2>
@@ -223,6 +268,7 @@ export function MovieNightScreen({
                 </p>
                 <button
                   className="btn btn-secondary"
+                  disabled={night.saving || night.planning}
                   onClick={night.acceptReview}
                 >
                   Accept updated draft
@@ -238,12 +284,14 @@ export function MovieNightScreen({
             )}
             <button
               className="btn btn-primary w-100"
-              disabled={night.saving || Boolean(night.saveProblem)}
+              disabled={
+                night.saving || night.planning || Boolean(night.saveProblem)
+              }
               onClick={() => void night.save()}
             >
               {night.saving
                 ? "Saving…"
-                : night.uncertain || night.error
+                : night.uncertain || night.saveError
                   ? "Retry saving"
                   : "Save Night"}
             </button>

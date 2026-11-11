@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import {
   getSavedMovieNight,
   deleteSavedMovieNight,
+  markMovieNightWatched,
 } from "../services/movieNightService";
 import { calculateSession } from "../dominio/movieNight";
 import type { SavedMovieNight } from "../types/MovieNight";
@@ -22,6 +23,36 @@ export function MovieNightDetailScreen({
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const pendingDelete = useRef(false);
+  const [completing, setCompleting] = useState(false);
+  const [completionError, setCompletionError] = useState<string | null>(null);
+  async function handleWatched() {
+    if (
+      !night ||
+      night.watchedAt ||
+      pendingDelete.current ||
+      !window.confirm(
+        "Mark this session watched? All its movies still in your collection will be marked Finished. This cannot be undone from the session.",
+      )
+    )
+      return;
+    pendingDelete.current = true;
+    setCompleting(true);
+    setCompletionError(null);
+    try {
+      const updated = await markMovieNightWatched(id, userId);
+      if (active.current) setNight(updated);
+    } catch (error) {
+      if (active.current)
+        setCompletionError(
+          error instanceof Error
+            ? error.message
+            : "Unable to mark this session watched. Retry to recover its status.",
+        );
+    } finally {
+      pendingDelete.current = false;
+      if (active.current) setCompleting(false);
+    }
+  }
   const active = useRef(true);
   useEffect(() => {
     active.current = true;
@@ -96,6 +127,49 @@ export function MovieNightDetailScreen({
       )}
       {night && (
         <>
+          <section
+            className="search-bar p-4 my-4"
+            aria-label="Session completion"
+            aria-busy={completing}
+          >
+            <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p className="eyebrow mb-1">Session status</p>
+                <p className="h4 mb-0" role="status">
+                  {night.watchedAt
+                    ? "Watched"
+                    : completing
+                      ? "Marking as watched…"
+                      : "Planned · Not watched yet"}
+                </p>
+              </div>
+              <button
+                type="button"
+                className={`btn ${night.watchedAt ? "btn-secondary" : "btn-primary"} night-completion-action`}
+                disabled={deleting || completing || Boolean(night.watchedAt)}
+                aria-describedby="completion-help"
+                onClick={() => void handleWatched()}
+              >
+                {night.watchedAt
+                  ? "✓ Watched"
+                  : completing
+                    ? "Marking as watched…"
+                    : completionError
+                      ? "Retry marking as watched"
+                      : "Mark as watched"}
+              </button>
+            </div>
+            <p id="completion-help" className="mt-3 mb-0">
+              {night.watchedAt
+                ? "Matching collection movies were marked Finished. This session is complete."
+                : "Marking this session watched also marks its movies still in your collection Finished."}
+            </p>
+            {completionError && (
+              <p className="error-search mt-3 mb-0" role="alert">
+                {completionError} Retry to recover the session status.
+              </p>
+            )}
+          </section>
           <p>
             Saved{" "}
             <time dateTime={night.createdAt}>
@@ -141,7 +215,7 @@ export function MovieNightDetailScreen({
       {night && (
         <button
           className="btn btn-danger mt-4 me-3"
-          disabled={deleting}
+          disabled={deleting || completing}
           onClick={() => void handleDelete()}
         >
           {deleting
@@ -153,7 +227,7 @@ export function MovieNightDetailScreen({
       )}
       <button
         className="btn btn-secondary mt-4"
-        disabled={deleting}
+        disabled={deleting || completing}
         onClick={onBack}
       >
         Back to Saved Nights

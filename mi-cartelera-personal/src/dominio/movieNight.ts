@@ -120,3 +120,67 @@ export function sortCandidates(
     return a.title.localeCompare(b.title, "en") || a.tmdbId - b.tmdbId;
   });
 }
+
+export function filterCandidatesByGenre(
+  movies: readonly MovieCandidate[],
+  genreId?: number,
+): MovieCandidate[] {
+  return movies.filter(
+    (movie) =>
+      genreId === undefined ||
+      movie.genres?.some((genre) => genre.id === genreId),
+  );
+}
+
+/** Exact 0/1 time packing. A trailing break is removed from the transformed capacity. */
+export function suggestMovieNight(
+  available: unknown,
+  movies: readonly MovieCandidate[],
+  pauseMinutes = PAUSE_MINUTES,
+  genreId?: number,
+): Validation<MovieSnapshot[]> {
+  const budget = validateAvailableMinutes(available);
+  if (!budget.valid) return budget;
+  if (
+    !Number.isSafeInteger(pauseMinutes) ||
+    pauseMinutes < 0 ||
+    pauseMinutes > 600
+  )
+    return { valid: false, reason: "Invalid break length." };
+  const capacity = budget.value + pauseMinutes;
+  const plans: (MovieSnapshot[] | undefined)[] = Array(capacity + 1);
+  plans[0] = [];
+  const seen = new Set<number>();
+  for (const movie of sortCandidates(
+    filterCandidatesByGenre(movies, genreId),
+  )) {
+    if (
+      movie.status !== "ready" ||
+      !normalizeRuntime(movie.runtimeMinutes).valid ||
+      seen.has(movie.tmdbId)
+    )
+      continue;
+    seen.add(movie.tmdbId);
+    const weight = movie.runtimeMinutes + pauseMinutes;
+    for (let total = capacity; total >= weight; total--) {
+      const previous = plans[total - weight];
+      if (!previous) continue;
+      const next = [
+        ...previous,
+        {
+          tmdbId: movie.tmdbId,
+          title: movie.title,
+          posterUrl: movie.posterUrl,
+          runtimeMinutes: movie.runtimeMinutes,
+        },
+      ];
+      const existing = plans[total];
+      if (!existing || next.length < existing.length) plans[total] = next;
+    }
+  }
+  for (let total = capacity; total > 0; total--) {
+    const plan = plans[total];
+    if (plan?.length) return { valid: true, value: plan };
+  }
+  return { valid: true, value: [] };
+}

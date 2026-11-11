@@ -4,7 +4,12 @@ export interface MovieSnapshot {
   posterUrl: string | null;
   runtimeMinutes: number;
 }
+export interface MovieGenre {
+  id: number;
+  name: string;
+}
 export interface CandidateMovie {
+  genres?: MovieGenre[];
   tmdbId: number;
   title: string;
   posterUrl: string | null;
@@ -26,6 +31,7 @@ export interface SavedMovieNight extends MovieNightDraft {
   pauseMinutes: number;
   totalMinutes: number;
   createdAt: string;
+  watchedAt?: string | null;
 }
 export type Validation<T> =
   { valid: true; value: T } | { valid: false; reason: string };
