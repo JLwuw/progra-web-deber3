@@ -1,6 +1,6 @@
 # Documentation map
 
-The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. This documentation prepares section 1.4.B. E2 is specified, not implemented or verified.
+The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 now has local implementation and automated evidence; the new migration and live/manual acceptance are still pending.
 
 Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governed by the [repair spec](specs/e1-repairs.md).
 
@@ -18,16 +18,16 @@ Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governe
 
 ## Scope and evidence discipline
 
-All E2 documents are drafts ready for review. `[ASSUMPTION]` means a proposed student decision, not a client-confirmed fact. Refinement decisions are the agent's documented proposals; no student approval or user testing is implied. No application implementation or database execution is included in this documentation task.
+E2 requirements and their implementation remain reviewable; local automated evidence does not replace live acceptance. `[ASSUMPTION]` means a proposed student decision, not a client-confirmed fact. Refinement decisions are the agent's documented proposals; no student approval or user testing is implied. No application implementation or database execution is included in this documentation task.
 
 The approved English paths are `docs/design/brand-board.html` and `docs/INITIAL-STATE.md`. They correspond to the design board and initial-state deliverables named in Spanish in the assignment. Documentation uses English equivalents for story, acceptance, assumption, and normative formats.
 
-## Scope of the current review
+## Implementation and acceptance checkpoint
 
-The current review covers Parts A and B only. Parts C and D are future work, not missing deliverables for this checkpoint. Planned implementation and verification are not evidence of completed work.
+The current checkpoint includes local Part C implementation and the automated portion of Part D. Read [verification](VERIFICACION.md) and [implementation audit](AUDITORIA.md) for actual local evidence. Student browser observations, live migration/RLS tests and final acceptance remain pending.
 
 - **A:** retain `docs/INITIAL-STATE.md` as the initial-state audit. Its creation was not performed in plan mode; do not claim otherwise. Audit the harness separately, including the required importing `CLAUDE.md` if missing.
-- **C:** implement E2 by ticket after its documents are committed.
-- **D:** add Vitest and run domain tests, implement service-only external access, verify E1 regression behavior, and demonstrate RLS with two accounts.
-- **D:** create `docs/VERIFICACION.md` with the student's “actual result”, and `docs/AUDITORIA.md` with criterion status and evidence. Planned checks in the specs are not results.
+- **C:** E2 implementation is present by ticket; apply the new E2 migration before live persistence acceptance.
+- **D:** Vitest/domain/service/DOM tests and service-only access are implemented; live RLS and browser verification remain pending.
+- **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` now record planned manual checks and actual local evidence. The student must still fill the browser “actual result” column.
 - **History:** commit documents before corresponding code in the required order. This task does not create commits or rewrite history.
