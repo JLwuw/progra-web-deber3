@@ -1,5 +1,31 @@
 # E2 — Implementation audit
 
+## Selected quality bonus — adversarial review
+
+The user selected independent review before every commit after the Part D checkpoint below. This adds E2-US10, E2-AC31–33, E2-T12 and ADV-01–05; the previous four product optionals remain selected. Specification: [adversarial-review.md](specs/adversarial-review.md). No historical commit is retroactively certified.
+
+| Criterion | Status | Actual local evidence |
+| --- | --- | --- |
+| E2-AC31 / ADV-01 | meets | Separate fresh-context subagent /root/review_skill_forward_test reviewed staged fixture objects without being given the intended defect. It returned FAIL for a 600-minute boundary violation, then caught a coercion exception in an intermediate revision; a later independent pass checked 1,016 inputs. A separate /root/review_skill_implementation reviewed the proposed gate/skill snapshot and returned PASS after running the isolated gate tests and 113 application tests/build. |
+| E2-AC32 / ADV-02/03 | meets | Real fixture commit blocked after the independently reported FAIL. After a new staged tree/request and actual independent PASS, a real fixture commit succeeded. Fourteen gate integration tests exercise missing/stale/malformed/non-independent/nonpass approvals, changed HEAD/content/name/mode, renewed requests, exact approval, empty/unborn/unmerged indexes and unstaged-only edits. |
+| E2-AC33 / ADV-04/05 | meets | Tests preserve staged contents and incompatible hook configuration, deny environment-file paths without reading them, and retain failed review records. Git-local core.hooksPath is now .githooks in this clone. The commit skill remains explicit-only and does not stage automatically; AGENTS.md remains at most 40 lines. The implementation task created no real project commits or pushes; subsequent delivery is separately authorized and reviewed. |
+
+Review requests/responses are local Git metadata, outside the staged tree. The helper validates report structure and snapshot identity, not the truth of claimed independence or test evidence. Hooks/records can be deliberately modified/bypassed and are not hosted enforcement. Every actual proposed project commit still needs its own fresh independent review. Tests use disposable repositories and synthetic reports for mechanical cases; only the two named forward/implementation reviewers above are claimed as real independent reviews.
+
+The initial implementation review covered the seven-file tooling snapshot with 13 gate tests; environment-report-path coverage was subsequently added as the fourteenth test, and related product/backlog/readme documents were updated. The complete final working tree is reviewed again in an isolated staged copy before task completion; any findings require normal fixes and a new review. This is not a reusable approval for a later project commit.
+
+The new adversarial-review skill passes the bundled skill validator. That validator rejects the existing commit skill's preserved disable-model-invocation field, which is required by details2.md; the field and existing allow_implicit_invocation: false policy were deliberately retained. Both frontmatters were separately parsed and checked for required names/descriptions and correct flag types. Runtime helpers use only Python's standard library. PyYAML was installed in a temporary directory solely for the bundled validator, without changing project dependencies.
+
+No browser, live Supabase, hosting or previously pending student evidence is completed by this quality bonus. The earlier D-05/D-07 deviations remain below. Required application checks and integration-test results are rerun on the final implementation; verification is local.
+
+### Independently reviewed delivery
+
+The user subsequently authorized delivery commits. The first actual staged documentation proposal received FAIL from /root/review_commit_contract because README presented activation/test commands before the implementation files existed in that tree. The operational README instructions were moved to the implementation commit. A fresh request for the corrected seven-file documentation tree received PASS, reusing test/build evidence only after verifying the application subtree was identical. The installed hook checked the actual staged tree and parent before creating documentation commit a640d07.
+
+Implementation commit 1ee5217 received a separate PASS from /root/review_commit_tooling. That reviewer exported the actual staged tree, passed all 14 gate integration tests, all 113 application tests and production build, and checked skill validation with the documented pre-existing commit-frontmatter compatibility limit. The hook verified the exact tree and parent before committing.
+
+Review requests and full responses, including the failed proposal, are retained in local Git review history. Implementation and audit/verification each require a separate request and independent verdict for their own staged tree and parent. No prior temporary-fixture approval substitutes for these actual delivery reviews; no hook is bypassed. Existing student browser/live evidence and early chronology deviations remain unchanged.
+
 ## Part D — Quality and verification, current checkpoint
 
 Verified November 11, 2026 against details2.md §1.4 D on commit d195929 (application code unchanged during this verification). English statuses **meets**, **does not meet**, and **unverified** correspond to cumple, no cumple, and sin verificar. This section supersedes earlier audit summaries for the current delivery; historical findings/evidence remain below.

@@ -72,3 +72,8 @@ Apply migrations 003_movie_night_fit.sql and 004_movie_night_watched.sql after 0
 Visual follow-up: during Plan my night and other submissions, confirm disabled inputs/selects remain dark and button variants retain their styling. Saved detail must show a prominent completion action near the top, with Planned, pending, retry and Watched states. Actual browser result: Pending.
 
 E2-F04 browser regression: create a named draft, run Plan my night with no fitting refreshed candidates, and confirm the warning and draft remain while the save action still reads Save Night. Only an actual failed/uncertain save should show Retry saving; editing a resolvable failed draft clears obsolete save-failure feedback. Actual student result: Pending.
+
+
+## Selected quality bonus — independent review
+
+The local gate and independent-subagent forward-test are recorded in [AUDITORIA.md](AUDITORIA.md#selected-quality-bonus--adversarial-review). They are tooling checks, not student browser results. E2-AC31–33 do not require new application UI: observe a future staged commit request, independent findings/review record, rejection of changed/unapproved content, and acceptance only of the reviewed snapshot. Each clone must enable its local hook. Existing live/browser pending cells remain unchanged.
