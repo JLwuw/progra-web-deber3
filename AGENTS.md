@@ -9,7 +9,7 @@ Web App to search for movies and TV shows, add them to a personal listing, and t
 - Tests with Vitest; formatting Prettier
 
 ## Project Structure
-The React App is inside `mi-cartelera-personal` from there:
+App paths below are relative to `mi-cartelera-personal/`; docs/ and supabase/ are at repository root:
 - `src/lib/supabase.ts`: Supabase client
 - `src/types/`: domain types
 - `src/services/`: access to Supabase
@@ -22,7 +22,7 @@ The React App is inside `mi-cartelera-personal` from there:
 ## Commands
 `cd mi-cartelera-personal` to access React App root. From there:
 - `npm run dev`:  start dev server
-- `npm test`: Vite tests
+- `npm test`: Vitest regression tests
 - `npm run build`: compile for prod
 
 ## Conventions

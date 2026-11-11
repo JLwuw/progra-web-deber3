@@ -1,15 +1,27 @@
-import type { MediaType } from "./MediaType"
-import type { WatchState } from "./WatchState"
+import type { MediaType } from "./MediaType";
+import type { WatchState } from "./WatchState";
 
 export interface Media {
-    id: number
-    user_id: string
-    tmdb_id: number
-    title: string
-    poster_url: string
-    media_type: MediaType
-    watch_state: WatchState
-    user_grade?: number
-    comment?: string
-    created_at?: string | null
+  id: number;
+  userId: string;
+  tmdbId: number;
+  title: string;
+  posterUrl: string | null;
+  mediaType: MediaType;
+  watchState: WatchState;
+  userGrade: number | null;
+  comment: string | null;
+  createdAt: string | null;
+}
+export interface SearchMedia {
+  tmdbId: number;
+  title: string;
+  posterUrl: string | null;
+  mediaType: MediaType;
+  releaseYear: string | null;
+}
+export interface ListingChanges {
+  watchState: WatchState;
+  userGrade: number | null;
+  comment: string | null;
 }

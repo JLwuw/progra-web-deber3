@@ -31,6 +31,8 @@ MUST means required; MUST NOT means prohibited. Existing E1 behavior remains the
 
 ## Domain contracts — src/dominio/movieNight.ts
 
+E1 repair prerequisite: [e1-repairs.md](e1-repairs.md) provides the repaired camelCase Media model, auth subscription service, catalog service, and Vitest runner. Reuse these rather than repeating completed cleanup.
+
 Domain code MUST be pure, typed without any, deterministic, and free of network, storage, React, dates generated internally, or Supabase imports.
 
 - `validateAvailableMinutes(raw)` returns a discriminated valid integer result or a validation reason. Check empty/text input before numeric conversion.

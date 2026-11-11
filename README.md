@@ -1,6 +1,8 @@
-## Setup
+# Mi Cartelera Personal
 
-### 1. Install dependencies
+A private movie and TV watchlist: search real titles, save them, track viewing progress, and keep personal ratings and comments. Movie Night (E2) is specified in docs/ but is not implemented yet.
+
+## Setup
 
 From the repository root:
 
@@ -9,31 +11,39 @@ cd mi-cartelera-personal
 npm ci
 ```
 
-Run the remaining npm commands from this folder as well.
+Run the remaining npm commands from this folder. Use a Node version supported by the locked Vite/Vitest dependencies (CI uses Node 22).
 
-### 2. Set up Supabase
+Create a Supabase project with email/password authentication. Follow [database setup and migration instructions](supabase/README.md): fresh projects run schema.sql then the ordered migration; existing projects follow the upgrade/preflight instructions. Public frontend credentials do not bypass row-level security. The migration is not automatically applied by the application.
 
-1. Create a Supabase project.
-2. Open its SQL editor and run [supabase/schema.sql](supabase/schema.sql)
-3. Enable email/password authentication for the project.
-4. Copy the project URL and public anon key for the next step. Use the public client key.
+Create local configuration with these variable names using your own values:
 
-### 3. Configure environment variables
+- VITE_SUPABASE_URL: Supabase project URL.
+- VITE_SUPABASE_ANON_KEY: public anon/publishable client key, never a privileged service-role key.
+- VITE_TMDB_API_KEY: TMDB v3 API key, not the API read access token.
 
-Copy `mi-cartelera-personal/.env.example` to `mi-cartelera-personal/.env`. 
-
-Replace the placeholders in `.env`:
-
-```dotenv
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_public_anon_key
-VITE_TMDB_API_KEY=your_tmdb_v3_api_key
-```
-
-The TMDB variable expects an API key, **not an API read access token**.
-
-### 4. Start the app
+No environment example is assumed. Do not commit local environment files or real credentials. Vite client variables are browser-visible; they are not server-side secrets.
 
 ```sh
 npm run dev
 ```
+
+Missing Supabase configuration displays startup guidance. Missing catalog configuration displays a search/detail error. After updating local configuration, restart the development server.
+
+## Verification
+
+```sh
+npm test
+npm run lint
+npm run build
+```
+
+Tests type-check their sources and use mocked network/authentication boundaries; they do not load project environment files. They are not proof of deployed RLS or catalog availability. See [E1 repair results](docs/E1-REPAIRS.md) for the checklist and outstanding manual checks.
+
+## Documentation and delivery
+
+- [Documentation index](docs/README.md)
+- [Historical initial-state audit](docs/INITIAL-STATE.md)
+- [Design guide](DESIGN.md) and [brand board](docs/design/brand-board.html)
+- [Database setup, duplicate review and two-account isolation checks](supabase/README.md)
+
+Screenshots and a published-app link have not been collected. No production deployment is claimed. Navigation currently uses in-memory views; refresh returns to Search. Local date filters follow the browser timezone.

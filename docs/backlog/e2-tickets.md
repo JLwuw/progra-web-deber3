@@ -1,6 +1,6 @@
 # E2 — Tickets
 
-Status: all tickets are TODO; documentation only. Read the PRD, refinement, stories, epic spec, interface spec, and DESIGN.md before implementing. Dependencies give implementation order, not permission to bypass the spec.
+Status: all E2 tickets are TODO; documentation only. E1 prerequisites are tracked separately in [E1 repairs](../specs/e1-repairs.md); reuse completed test infrastructure and service cleanup rather than rebuilding them. Read the PRD, refinement, stories, epic spec, interface spec, and DESIGN.md before implementing. Dependencies give implementation order, not permission to bypass the spec.
 
 ## Shared Definition of Done
 

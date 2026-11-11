@@ -1,30 +1,33 @@
 interface NavbarProps {
-  onNavSearch: () => void
-  onNavListing: () => void
-  handleLogout: () => void
+  onNavSearch: () => void;
+  onNavListing: () => void;
+  handleLogout: () => void;
+  loggingOut?: boolean;
 }
 
-export function Navbar( {onNavSearch, onNavListing, handleLogout}: NavbarProps) {
+export function Navbar({
+  onNavSearch,
+  onNavListing,
+  handleLogout,
+  loggingOut,
+}: NavbarProps) {
   return (
     <nav className="navbar navbar-expand">
       <div className="container nav-shell">
-        <span className="app-brand"><span aria-hidden="true">◈</span> My Listing<span className="brand-caption">YOUR PERSONAL BOX OFFICE</span></span>
+        <span className="app-brand">
+          <span aria-hidden="true">◈</span> My Listing
+          <span className="brand-caption">YOUR PERSONAL BOX OFFICE</span>
+        </span>
         <ul className="navbar-nav align-items-center gap-3">
           <li className="nav-item">
-            <button 
-              onClick={onNavSearch}
-              className="btn btn-outline-secondary"
-            > 
-              Search 
+            <button onClick={onNavSearch} className="btn btn-outline-secondary">
+              Search
             </button>
           </li>
 
           <li className="nav-item">
-            <button 
-              onClick={onNavListing}
-              className="btn btn-outline-primary"
-            > 
-              My Listing 
+            <button onClick={onNavListing} className="btn btn-outline-primary">
+              My Listing
             </button>
           </li>
 
@@ -33,8 +36,9 @@ export function Navbar( {onNavSearch, onNavListing, handleLogout}: NavbarProps) 
               type="button"
               className="btn btn-danger"
               onClick={handleLogout}
+              disabled={loggingOut}
             >
-              Logout
+              {loggingOut ? "Signing out…" : "Logout"}
             </button>
           </li>
         </ul>

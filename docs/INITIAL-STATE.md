@@ -2,9 +2,11 @@
 
 Audit date: November 11, 2026.
 
+Historical baseline: the findings below describe the pre-repair state. See [E1 remediation and verification](E1-REPAIRS.md) for current status; this baseline is preserved rather than overwritten.
+
 ## Audit scope and confidence
 
-This audit compares the current repository with `instrucciones.md`, the project conventions in `AGENTS.md`, and `docs/prd/mi-cartelera-personal.md`. It covers application source, configuration, the SQL setup script, documentation, and local build and lint results. It records the existing state; no application fixes were made as part of this audit.
+This audit compares the current repository with `details1.md` (named `instrucciones.md` at audit time), the project conventions in `AGENTS.md`, and `docs/prd/mi-cartelera-personal.md`. It covers application source, configuration, the SQL setup script, documentation, and local build and lint results. It records the existing state; no application fixes were made as part of this audit.
 
 Features described as implemented have a corresponding code path. They have not been verified end to end against live accounts, TMDB, or a deployed database. Environment files were neither read nor modified. Actual credentials, deployed policies, email settings, hosting, and production behavior remain unverified. This is not a dependency vulnerability assessment.
 

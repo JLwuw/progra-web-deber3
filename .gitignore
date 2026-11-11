@@ -1,0 +1,7 @@
+# Local configuration and generated artifacts at every project level
+.env*
+!.env.example
+node_modules/
+dist/
+coverage/
+*.log

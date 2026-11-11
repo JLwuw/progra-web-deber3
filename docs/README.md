@@ -2,6 +2,8 @@
 
 The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. This documentation prepares section 1.4.B. E2 is specified, not implemented or verified.
 
+Current E1 repair status: [remediation and verification](E1-REPAIRS.md), governed by the [repair spec](specs/e1-repairs.md).
+
 ## Read in this order
 
 1. [Initial-state audit](INITIAL-STATE.md): historical baseline of E1, including known defects and verification limits.

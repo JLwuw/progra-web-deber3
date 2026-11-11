@@ -1,51 +1,50 @@
+import { MediaPoster } from "./MediaPoster";
 import { useState } from "react";
 
-import type { Media } from "../types/Media"
+import type { Media } from "../types/Media";
 import type { WatchState } from "../types/WatchState";
 
 import { updateListing } from "../services/listingService";
 
 interface ListingEditProps {
-    listing: Media,
-    onListingExit: () => void
+  listing: Media;
+  onListingExit: () => void;
 }
 
-
-
-export function ListingEditScreen( { listing, onListingExit }: ListingEditProps  ) {
-
+export function ListingEditScreen({
+  listing,
+  onListingExit,
+}: ListingEditProps) {
   const [error, setError] = useState<string | null>(null);
-  const [watchState, setWatchState] = useState<WatchState>("plan_to_watch")
-  const [rating, setRating] = useState<number>(listing.user_grade ? listing.user_grade : 0)
-  const [comment, setComment] = useState<string>(listing.comment ? listing.comment : "")
-  const [sent, setSent] = useState<boolean>(false)
+  const [watchState, setWatchState] = useState<WatchState>(listing.watchState);
+  const [rating, setRating] = useState<number>(
+    listing.userGrade ? listing.userGrade : 0,
+  );
+  const [comment, setComment] = useState<string>(
+    listing.comment ? listing.comment : "",
+  );
+  const [sent, setSent] = useState<boolean>(false);
 
   async function onEditListing(event: React.SubmitEvent) {
-    event.preventDefault()
-    setSent(true)
-    const id = listing.id
-    const user_grade = rating === 0 ? undefined : rating
-    const user_comment = comment === "" ? undefined : comment
-
-    const new_listing: Omit<Media, "id" | "user_id"> = {
-      tmdb_id: listing.tmdb_id,
-      title: listing.title,
-      poster_url: listing.poster_url,
-      media_type: listing.media_type,
-      watch_state: watchState,
-      user_grade: user_grade,
-      comment: user_comment
-    } 
+    event.preventDefault();
+    if (sent) return;
+    setSent(true);
+    setError(null);
+    const changes = {
+      watchState,
+      userGrade: rating === 0 ? null : rating,
+      comment: comment === "" ? null : comment,
+    };
 
     try {
-      await updateListing(id, new_listing)
-      onListingExit()
-    }
-    catch(err) {
-      setError(err instanceof Error ? err.message : "No se pudo crear el tripulante.");
-    }
-    finally {
-      setSent(false)
+      await updateListing(listing.id, changes);
+      onListingExit();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Unable to update this title.",
+      );
+    } finally {
+      setSent(false);
     }
   }
 
@@ -57,15 +56,20 @@ export function ListingEditScreen( { listing, onListingExit }: ListingEditProps 
             <h2 className="text-center mb-4"> Edit Listing: </h2>
 
             <h2 className="card-title mb-3">{listing.title}</h2>
-            <img className="w-500 mb-3" src={listing.poster_url}/>
+            <MediaPoster src={listing.posterUrl} title={listing.title} />
 
-            {error && <div className="error-auth">⚠️ {error}</div>}
+            {error && (
+              <div className="error-auth" role="alert">
+                ⚠️ {error}
+              </div>
+            )}
             <form onSubmit={onEditListing}>
               <div className="mb-3">
-                <label className="form-label text-white">
+                <label htmlFor="edit-state" className="form-label text-white">
                   Watch State
                 </label>
                 <select
+                  id="edit-state"
                   className="form-select"
                   value={watchState}
                   onChange={(e) => setWatchState(e.target.value as WatchState)}
@@ -78,16 +82,15 @@ export function ListingEditScreen( { listing, onListingExit }: ListingEditProps 
               </div>
 
               <div className="mb-3">
-                <label className="form-label text-white">
+                <label htmlFor="edit-rating" className="form-label text-white">
                   Rating (1–5) 0 for empty
                 </label>
                 <input
+                  id="edit-rating"
                   type="number"
                   className="form-control"
                   value={rating}
-                  onChange={(e) =>
-                    setRating(Number(e.target.value))
-                  }
+                  onChange={(e) => setRating(Number(e.target.value))}
                   min={0}
                   max={5}
                   step={1}
@@ -96,10 +99,11 @@ export function ListingEditScreen( { listing, onListingExit }: ListingEditProps 
               </div>
 
               <div className="mb-3">
-                <label className="form-label text-white">
+                <label htmlFor="edit-comment" className="form-label text-white">
                   Comment
                 </label>
                 <input
+                  id="edit-comment"
                   type="text"
                   className="form-control"
                   value={comment}
@@ -116,16 +120,16 @@ export function ListingEditScreen( { listing, onListingExit }: ListingEditProps 
                 {sent ? "Loading..." : "Confirm"}
               </button>
             </form>
-            <button 
+            <button
               className="btn btn-danger"
+              disabled={sent}
               onClick={onListingExit}
             >
               Exit
             </button>
-
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

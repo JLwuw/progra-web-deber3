@@ -1,200 +1,192 @@
-import { useState, useEffect } from "react";
-
-import type { MediaType } from "../types/MediaType.ts"
-import type { WatchState } from "../types/WatchState.ts";
-import type { Media } from "../types/Media.ts"
-
-import { insertListing } from "../services/listingService.ts"
-import { getCurrentUserId } from "../services/authService.ts";
-
-import { SearchMediaCard } from "./SearchMediaCard.tsx"
-
-const BASE_URL = "https://api.themoviedb.org/3/search"
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY
-
-const POSTER_SIZE = "w500"
-const POSTER_BASE_URL = `https://image.tmdb.org/t/p/${POSTER_SIZE}`
-
-const RESULT_COUNT = 5
+import { useState, useEffect, useRef } from "react";
+import type { MediaType } from "../types/MediaType";
+import type { SearchMedia } from "../types/Media";
+import { insertListing } from "../services/listingService";
+import { searchMedia } from "../services/tmdbService";
+import { SearchMediaCard } from "./SearchMediaCard";
 
 export function SearchScreen() {
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [input, setInput] = useState<string>("")
-  const [search, setSearch] = useState<string>("")
+  const [input, setInput] = useState("");
+  const [search, setSearch] = useState("");
   const [searchType, setSearchType] = useState<MediaType>("movie");
-  const [retryCounter, setRetryCounter] = useState<number>(1)
-  const [searchResult, setSearchResult] = useState<Omit<Media, "id" | "user_id">[]>([])
-  
-  function onSearch(event: React.SubmitEvent) {
-    event.preventDefault()
-    if (input === '') return
-    setSearch(input.trim())
-  }
-  
-  function onRetry() {
-    setSearch(input.trim())
-    setRetryCounter((previous) => previous += 1)
-  }
-
-  function parseResults(
-    results: Array<{
-      title?: string
-      name?: string
-      id: number
-      poster_path: string | null
-    }>,
-    searchType: MediaType
-  ): Omit<Media, "id" | "user_id">[] {
-    let media_list: Array<Omit<Media, "id" | "user_id">> = []
-
-    results.forEach((element) => {
-      const title: string = (searchType === 'movie' ? element.title : element.name) ?? ""
-      const tmdb_id: number = element.id
-      const poster_url: string = POSTER_BASE_URL + element.poster_path
-      const media_type: MediaType = searchType
-      const watch_state: WatchState = "plan_to_watch"
-
-      const media: Omit<Media, "id" | "user_id"> = {
-        title: title,
-        tmdb_id: tmdb_id,
-        poster_url: poster_url,
-        media_type: media_type,
-        watch_state: watch_state
-      }
-
-      media_list.push(media) 
-    })
-
-    return media_list
-  }
-
-  async function onAddListing(media: Omit<Media, "id" | "user_id">) {
-    try {
-      const user_id = await getCurrentUserId()
-      if (!user_id) throw new Error("Unable to get User ID")
-      await insertListing(media, user_id)
-      window.alert(`"${media.title}" has been added successfully.`)
-    }
-
-    catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error ocurred")
-    }
-  }
-
+  const [page, setPage] = useState(1);
+  const [retryCounter, setRetryCounter] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<SearchMedia[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [addStates, setAddStates] = useState<
+    Record<string, { pending: boolean; added: boolean; error: string | null }>
+  >({});
+  const pendingAdds = useRef(new Set<string>());
+  const mounted = useRef(true);
   useEffect(() => {
-    async function getSearchResults() {
-      if (search === "") return
-
-      setLoading(true)
-      setError(null)
-
-      const endpoint = searchType === "movie" ? "movie" : "tv"
-
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (!search) return;
+    const controller = new AbortController();
+    async function loadResults() {
+      setLoading(true);
+      setError(null);
+      setResults([]);
       try {
-        const url = BASE_URL + `/${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(search)}`
-        const response = await fetch(url)
-
-        if (!response.ok) {
-          throw new Error(`failed to find data for: ${search}`)
+        const data = await searchMedia(
+          search,
+          searchType,
+          page,
+          controller.signal,
+        );
+        if (!controller.signal.aborted) {
+          setResults(data.results);
+          setTotalPages(data.totalPages);
         }
-
-        const data = await response.json()
-        const results = data.results.slice(0, RESULT_COUNT);
-        
-        if (results.length <= 0) {
-          throw new Error(`No results found for: ${search}`)
-        }
-
-        console.log(results)
-
-        const cleaned_results = parseResults(results, searchType)
-        setSearchResult(cleaned_results)
+      } catch (err) {
+        if (!controller.signal.aborted)
+          setError(err instanceof Error ? err.message : "Search failed.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
       }
-
-      catch(err: any) {
-        setError(err instanceof Error ? err.message : "An unexpected error ocurred")
-      }
-
-      finally {
-        setLoading(false)
-      }
-      
     }
-
-    getSearchResults()
-
-  }, [search, retryCounter])
-
+    void loadResults();
+    return () => controller.abort();
+  }, [search, searchType, page, retryCounter]);
+  async function onAddListing(media: SearchMedia) {
+    const key = `${media.mediaType}:${media.tmdbId}`;
+    if (pendingAdds.current.has(key) || addStates[key]?.added) return;
+    pendingAdds.current.add(key);
+    setAddStates((prev) => ({
+      ...prev,
+      [key]: { pending: true, added: false, error: null },
+    }));
+    try {
+      await insertListing(media);
+      if (mounted.current)
+        setAddStates((prev) => ({
+          ...prev,
+          [key]: { pending: false, added: true, error: null },
+        }));
+    } catch (err) {
+      if (mounted.current)
+        setAddStates((prev) => ({
+          ...prev,
+          [key]: {
+            pending: false,
+            added: false,
+            error: err instanceof Error ? err.message : "Unable to add title.",
+          },
+        }));
+    } finally {
+      pendingAdds.current.delete(key);
+    }
+  }
   return (
-    <div className="search-screen container flex-column py-5">
+    <main className="search-screen container flex-column py-5">
+      <h1 className="h2">Search movies and TV shows</h1>
       <div className="row mb-5 justify-content-center">
         <div className="search-bar p-4 col-8 d-flex flex-column gap-3">
-          <form onSubmit={onSearch}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (!input.trim()) return;
+              setSearch(input.trim());
+              setPage(1);
+              setRetryCounter((n) => n + 1);
+            }}
+          >
             <div className="mb-3">
-              <label className="form-label"> Movie/Series Name </label>
-              <input type="text" className="form-control mb-2" value={input} placeholder="Star Wars..."
-              onChange={(e) => setInput(e.target.value)} required />
-              <button className="btn btn-primary" disabled={loading}>
-                {loading ? "Loading..." : "Search"}
-              </button>
+              <label htmlFor="title-search" className="form-label">
+                Movie/Series Name
+              </label>
+              <input
+                id="title-search"
+                type="search"
+                className="form-control"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                required
+                placeholder="Star Wars…"
+              />
+              <button className="btn btn-primary">Search</button>
             </div>
           </form>
-          
-          <div className="btn-group mx-5" role="group" aria-label="Search type">
-            <button
-              type="button"
-              className={`btn ${searchType === "movie" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setSearchType("movie")}
-              aria-pressed={searchType === "movie"}
-            >
-              Movies
-            </button>
-
-            <button
-              type="button"
-              className={`btn ${searchType === "tv" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setSearchType("tv")}
-              aria-pressed={searchType === "tv"}
-            >
-              TV Shows
-            </button>
-          </div>
-        </div>        
-      </div>
-
-      <div className="row justify-content-center">
-        <div className="col-8">
-          {loading && (
-            <div className="d-flex flex-column align-items-center gap-2">
-              <div className="spinner-loading"></div>
-              <p className="mb-0 text-white">Loading...</p>
-            </div>
-          )}
-          {!loading && error && (
-            <div className="error-search">
-              <p>⚠️ {error}</p>
-              <button className="btn btn-danger" onClick={onRetry}>
-                Retry
+          <div className="btn-group" role="group" aria-label="Search type">
+            {(["movie", "tv"] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`btn ${searchType === type ? "btn-primary" : "btn-outline-primary"}`}
+                aria-pressed={searchType === type}
+                onClick={() => {
+                  setSearchType(type);
+                  setPage(1);
+                }}
+              >
+                {type === "movie" ? "Movies" : "TV Shows"}
               </button>
-            </div>
-          )}
-
-          {!loading && !error && searchResult[0] && (
-            <div className="media-grid">
-              <h2 className="text-white"> 
-                Showing Results for {searchResult[0].media_type === "movie" ? "Movies" : "TV Shows"}
-              </h2>
-              {searchResult.map(result => (
-                <div className="col-8 mb-4" key={result.tmdb_id}>
-                  <SearchMediaCard media={result} onAddListing={onAddListing}/>
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
-
-    </div>
-  )
+      {loading && <p role="status">Loading…</p>}
+      {error && (
+        <div className="error-search" role="alert">
+          <p>{error}</p>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setRetryCounter((n) => n + 1)}
+          >
+            Retry search
+          </button>
+        </div>
+      )}
+      {!loading && !error && search && (
+        <>
+          {results.length === 0 && (
+            <p role="status">No results found for “{search}”.</p>
+          )}
+          <div className="media-grid">
+            {results.map((media) => {
+              const key = `${media.mediaType}:${media.tmdbId}`;
+              return (
+                <SearchMediaCard
+                  key={key}
+                  media={media}
+                  onAddListing={onAddListing}
+                  pending={addStates[key]?.pending ?? false}
+                  added={addStates[key]?.added ?? false}
+                  error={addStates[key]?.error ?? null}
+                />
+              );
+            })}
+          </div>
+          <nav
+            aria-label="Search result pages"
+            className="d-flex gap-3 align-items-center mt-4"
+          >
+            <button
+              className="btn btn-secondary"
+              disabled={page <= 1}
+              onClick={() => setPage((n) => n - 1)}
+            >
+              Previous
+            </button>
+            <span role="status">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="btn btn-secondary"
+              disabled={page >= totalPages}
+              onClick={() => setPage((n) => n + 1)}
+            >
+              Next
+            </button>
+          </nav>
+        </>
+      )}
+    </main>
+  );
 }
