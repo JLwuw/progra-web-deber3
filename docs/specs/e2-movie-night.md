@@ -1,6 +1,6 @@
 # E2 — Movie Night epic specification
 
-Status: base and four selected optional features are implemented locally. Apply the additive migrations in sequence; deployed migration state and live acceptance remain unverified. The [optional-feature spec](e2-optionals.md) extends this contract with E2-AC25–30. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
+Status: base and four selected optional features are implemented locally, with automated checks and three student verification batches. Student reports include migration application, persistence, isolation and completion; exact migration versions and unreported subcases remain undocumented. See [the latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026). Apply only missing additive migrations in sequence. The [optional-feature spec](e2-optionals.md) extends this contract with E2-AC25–30. Sources: [PRD](../prd/mi-cartelera-personal.md), [stories](../backlog/e2-stories.md), [refinement](../backlog/e2-refinement.md), [tickets](../backlog/e2-tickets.md). Interface contract: [e2-interface.md](e2-interface.md). All paths beginning src/ are relative to mi-cartelera-personal/; supabase/ and docs/ paths are relative to the repository root.
 
 ## Boundaries and normative criteria
 
@@ -227,4 +227,4 @@ commit;
 
 ## Selected optional extensions
 
-The user selected automatic planning, genre filtering, explicit watched completion and database fit enforcement. See [e2-optionals.md](e2-optionals.md), E2-US6–US9, E2-AC25–30 and E2-T08–T11. Saving still never changes progress; separate confirmed watched completion is the deliberate exception to the former no-completion scope. New migrations 003/004 extend 001/002 without rewriting or replaying them. Deployed application of each migration remains unverified.
+The user selected automatic planning, genre filtering, explicit watched completion and database fit enforcement. See [e2-optionals.md](e2-optionals.md), E2-US6–US9, E2-AC25–30 and E2-T08–T11. Saving still never changes progress; separate confirmed watched completion is the deliberate exception to the former no-completion scope. New migrations 003/004 extend 001/002 without rewriting or replaying them. Migration application is student-reported; individual deployed versions have not been independently inspected by the agent. Student outcomes and limits are recorded in the latest audit.

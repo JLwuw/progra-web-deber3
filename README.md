@@ -56,10 +56,11 @@ Screenshots and a published-app link have not been collected. No production depl
 
 ### Historical process exceptions
 
-Two assignment process requirements were missed during the initial documentation work:
+The following assignment process requirements were not fully met:
 
 - The initial-state audit was not written in plan mode.
 - The first PRD was committed together with the harness in `7ba6971`, before the initial-state audit in `3768c52`. Backlog and specifications first appeared together in `e3a0b7e`, so the literal requested document-by-document commit sequence is not fully demonstrated.
+- Implementation commits grouped multiple tickets: `f32e474` contains core E2 domain, services, interface and persistence work, including deletion/history; `b63689b` contains multiple selected optional features. The rubric's one-commit-per-ticket requirement is therefore not met literally.
 
 These were unintentional mistakes identified during review. Later E2 and selected optional-feature specifications precede their implementation, but that does not retroactively satisfy the earlier process requirements. The original history is preserved. See [the audit's D-07 record](docs/AUDITORIA.md#mandatory-part-d-requirements) and [documentation status](docs/README.md) for evidence and current verification results.
 

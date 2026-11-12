@@ -1,6 +1,6 @@
 # E2 — Stories and acceptance criteria
 
-Status: implemented locally; final browser/live acceptance remains pending. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. GIVEN / WHEN / THEN express the assignment’s acceptance format in English; user stories use As a / I want / so that.
+Status: implemented locally; three student verification batches now record browser/security/design outcomes. See [verification](../VERIFICACION.md) and [the latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026) for reported scope and remaining evidence limits. Scope and assumptions come from the [PRD](../prd/mi-cartelera-personal.md). Criteria intentionally describe observable behavior without implementation details. GIVEN / WHEN / THEN express the assignment’s acceptance format in English; user stories use As a / I want / so that.
 
 ## E2-US1 — Find movies for the time I have
 

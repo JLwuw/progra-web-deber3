@@ -1,6 +1,6 @@
 # E2 — Tickets
 
-Status: E2-T01–T05 are implemented locally; E2-T02/T04/T05 still require live/database/browser acceptance before their full Definition of Done is met. E2-T06 has verification/audit worksheets; student results remain pending. E1 prerequisites are tracked separately in [E1 repairs](../specs/e1-repairs.md); reuse completed test infrastructure and service cleanup rather than rebuilding them. Read the PRD, refinement, stories, epic spec, interface spec, and DESIGN.md before implementing. Dependencies give implementation order, not permission to bypass the spec.
+Status: E2-T01–T12 have local implementation and documented evidence. Three student batches dated November 11, 2026 (Opera, local application) populate [verification](../VERIFICACION.md), including browser flows, isolation and design observations. [The latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026) records which outcomes are reported and which detailed subcases remain unverified; full DoD is not inferred from a summary success. E1 prerequisites are tracked in [E1 repairs](../specs/e1-repairs.md). Dependencies define implementation order. Several tickets share implementation commits; see the [historical process exceptions](../../README.md#historical-process-exceptions).
 
 ## Shared Definition of Done
 
@@ -61,19 +61,19 @@ E2-T08–T11 explicitly select automatic planning, genre filtering, watched comp
 
 ## Implementation checkpoint
 
-| Ticket | Local implementation/evidence | Remaining acceptance |
+| Ticket | Local implementation/evidence | Student evidence / remaining limits |
 | --- | --- | --- |
 | E2-T01 | Pure domain rules and unit tests; existing Vitest runner reused | None for the local domain scope |
-| E2-T02 | Snapshot schema/RLS migration and persistence/idempotency tests | Apply 001_movie_nights.sql; verify live isolation with two accounts |
-| E2-T03 | Runtime/genre TMDB service under E2-T09, bounded concurrency, partial error/retry and cancellation tests | Real catalog/collection smoke test |
-| E2-T04 | Authenticated planner and timing/selection DOM tests | Browser viewport, keyboard and accessibility checks |
-| E2-T05 | Named save/review/retry, history/detail, account reset and immutable snapshots | Real save/reload/deletion-history flows after migration |
-| E2-T06 | VERIFICACION.md and AUDITORIA.md prepared with local evidence | Student fills actual browser results; live RLS evidence and final audit update |
+| E2-T02 | Snapshot schema/RLS migration and persistence/idempotency tests | Migration application and isolation reported; per-migration versions and detailed per-operation logs not supplied |
+| E2-T03 | Runtime/genre service, bounded concurrency, partial error/retry and cancellation tests | Eligibility, unknown duration and retry stability reported; exhaustive catalog/race subcases not individually described |
+| E2-T04 | Authenticated planner and timing/selection DOM tests | Responsive/keyboard/Narrator/reduced-motion outcomes and two contrast ratios reported; exact viewport values and all control/state contrast pairs not supplied |
+| E2-T05 | Named save/review/retry, history/detail, account reset and immutable snapshots | Saves, source confirmation, snapshot survival, draft discard and deletion reported; detailed reload and lost-response subcases retain automated evidence |
+| E2-T06 | VERIFICACION.md and AUDITORIA.md contain automated evidence and three student batches | All criterion rows have results; latest audit preserves specific evidence limitations |
 
 No application commit or database deployment is created automatically by writing this checkpoint. The previously committed PRD/backlog/specs precede the E2 implementation.
 
 
-Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie request ownership and overrides; uncertain saves retain their UUID and recover matching submitted attempts through source review. Regression tests pass. The database migration is unchanged; live/browser acceptance remains pending.
+Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie request ownership and overrides; uncertain saves retain their UUID and recover matching submitted attempts through source review. Regression tests pass. The student reports stable retries and no duplicate saves; individual lost-response/source-review race outcomes remain supported by automated tests rather than an exhaustive browser report.
 
 
 ## E2-T07 — Delete owned sessions and repair history pagination feedback
@@ -101,7 +101,7 @@ Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie re
 
 - **Type:** optional database/service/UI feature. **Dependencies:** E2-T02, E2-T05, E2-T11.
 - **Criteria:** E2-AC27/29; DES-04/05/07.
-- **DoD:** migration 004, authenticated owner-only transactional completion, idempotent retry and direct-write restrictions; service/UI and isolated PostgreSQL rollback/isolation tests pass; live application/RLS/browser evidence remains separately pending.
+- **DoD:** migration 004, authenticated owner-only transactional completion, idempotent retry and direct-write restrictions; service/UI and isolated PostgreSQL rollback/isolation checks; separately recorded student browser/security evidence with explicit limits.
 
 ## E2-T11 — Database fit enforcement
 
@@ -112,7 +112,7 @@ Audit repairs E2-F01/F02 are fixed locally: retry/batch updates use per-movie re
 
 ## Current optional-feature checkpoint
 
-E2-T07–T11 have local implementation and automated evidence. T08 provides the pure optimizer and safe replacement; T09 adds combined runtime/genre metadata and filtering; T10 provides the prominent one-way watched action and atomic RPC; T11 enforces snapshot fit in migration 003. Migration 004 adds completion. Live migration state, two-account security and detailed browser/design acceptance remain unverified. See [audit](../AUDITORIA.md) and [verification](../VERIFICACION.md). Save-warning isolation is covered by E2-F04's regression under T08/T05.
+E2-T07–T11 have local implementation and automated evidence. T08 provides the optimizer and safe replacement; T09 adds metadata/filtering; T10 adds one-way completion; T11 enforces fit in migration 003, with completion in 004. Student batches report suggestions/filtering, draft retention, save-warning behavior, state updates, completion isolation/retries, deletion without progress reversal and invalid-state rejection. Individual migration versions, direct-insert payload matrix and complete control/state design measurements remain undocumented. See [audit](../AUDITORIA.md) and [verification](../VERIFICACION.md). Save-warning isolation also has E2-F04's automated regression under T08/T05.
 
 
 ## E2-T12 — Independent adversarial pre-commit review

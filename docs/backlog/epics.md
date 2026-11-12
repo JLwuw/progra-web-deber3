@@ -10,7 +10,7 @@ Status: already built, with known gaps and unverified behavior recorded in [INIT
 
 ## E2 — Movie Night
 
-Status: implemented locally; migration application and live/manual acceptance remain pending. Let an authenticated user choose a time budget, build a fitting session from their own pending movies, save it, and consult it later.
+Status: implemented locally, with automated checks and three student verification batches dated November 11, 2026 (Opera, local application). Student results include planning, persistence, isolation, completion and design checks; specific unreported subcases and migration-version limits remain in [the latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026). Let an authenticated user choose a time budget, build a fitting session from their own pending movies, save it, and consult it later.
 
 - [Stories and acceptance criteria](e2-stories.md)
 - [Refinement and assumptions](e2-refinement.md)
@@ -19,7 +19,7 @@ Status: implemented locally; migration application and live/manual acceptance re
 - [Interface spec](../specs/e2-interface.md)
 - [Design criteria](../../DESIGN.md#verifiable-design-criteria)
 
-Traceability uses E2-US identifiers for stories, E2-AC for acceptance criteria, E2-T for tickets, and DES for design criteria. Verification remains planned until evidence is recorded by the student.
+Traceability uses E2-US identifiers for stories, E2-AC for acceptance criteria, E2-T for tickets, and DES for design criteria. [Verification](../VERIFICACION.md) now records student outcomes for all AC01–30 and design rows; those reports remain distinct from agent-executed automated checks.
 
 
 ## Selected optional E2 extensions

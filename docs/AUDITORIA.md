@@ -1,5 +1,11 @@
 # E2 — Implementation audit
 
+## Rubric documentation alignment — November 11, 2026
+
+Current PRD/backlog/specification summaries now point to the three student verification batches instead of describing all browser/security results as pending. Earlier audit checkpoints remain historical; detailed unreported subcases and migration-version limits remain explicit.
+
+The rubric additionally asks for one commit per ticket. This was not followed literally: `f32e474` groups core domain/service/interface/persistence and deletion/history work, and `b63689b` groups selected optional-feature tickets. This is a historical process exception alongside the plan-mode and early document-order exceptions, now disclosed in the root README. Specifications still precede the corresponding E2 implementation commits. No history is rewritten and no new functional acceptance is inferred from this documentation cleanup.
+
 ## Student verification batch 3 — November 11, 2026
 
 Latest student-evidence checkpoint: **Opera, local application, November 11, 2026**. [Batch 3](VERIFICACION.md#student-batch-3--november-11-2026) supplements the preceding reports; E3-AC30 maps to E2-AC30. Earlier tables are historical wherever superseded. Evidence remains student testimony, not independently executed agent browser/security/contrast checks.

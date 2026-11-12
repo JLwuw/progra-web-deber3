@@ -1,6 +1,6 @@
 # Mi Cartelera Personal — Product Requirements Document
 
-Status: product requirements for details2.md. E1 is the existing product; E2 is implemented locally with live acceptance still pending. “Built” does not mean all requirements have been verified: the initial-state audit records E1 gaps.
+Status: product requirements for details2.md. E1 is the existing product; E2 is implemented locally with three student verification batches recorded in [verification](../VERIFICACION.md); [the latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026) distinguishes reported outcomes from unverified details. “Built” does not mean all requirements have been verified: the initial-state audit records E1 gaps.
 
 ## Problem
 

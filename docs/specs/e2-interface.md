@@ -1,6 +1,6 @@
 # E2 — Interface specification
 
-Status: implemented locally; real-browser acceptance remains pending. Behavior references [E2 acceptance criteria](../backlog/e2-stories.md). Visual source of truth: **DESIGN.md**, at the repository root, especially Bootstrap customization, responsive behavior, UI patterns, and DES-01–08. This spec deliberately does not duplicate colors, dimensions, or typography values.
+Status: implemented locally; student browser results are recorded in three dated batches, including keyboard, Narrator, reduced motion and two contrast measurements. See [verification](../VERIFICACION.md) and [the latest audit](../AUDITORIA.md#student-verification-batch-3--november-11-2026) for specific limits. Behavior references [E2 acceptance criteria](../backlog/e2-stories.md). Visual source of truth: **DESIGN.md**, at the repository root, especially Bootstrap customization, responsive behavior, UI patterns, and DES-01–08. This spec deliberately does not duplicate colors, dimensions, or typography values.
 
 ## Entry and navigation
 

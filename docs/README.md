@@ -1,6 +1,6 @@
 # Documentation map
 
-The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 now has local implementation and automated evidence; the deployed migration state and live/manual acceptance are still unverified. Selected optional features include automatic planning, genre filtering, explicit watched completion and database fit validation.
+The current assignment is [details2.md](../details2.md); [details1.md](../details1.md) describes the existing Project 3. Parts A–B document the baseline and contract. E2 has local implementation, automated evidence and three student verification batches covering browser/security/design outcomes. Exact deployed migration versions and specific unreported subcases remain undocumented; see [the latest audit](AUDITORIA.md#student-verification-batch-3--november-11-2026) for evidence limits. Selected optional features include automatic planning, genre filtering, explicit watched completion and database fit validation.
 
 E1 requirements and historical remediation evidence are consolidated in the [canonical E1 repair document](specs/e1-repairs.md). Current E2/Part D results remain in the implementation audit.
 
@@ -31,6 +31,7 @@ The current checkpoint includes local Part C implementation, automated Part D ch
 - **D:** Vitest/domain/service/DOM tests and service-only access are implemented; student reports include browser flows, user/anonymous isolation and direct-write checks. Agent checks remain distinct from student observations.
 - **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` record the student's results, Narrator on Windows, reported contrast ratios and any unreported details.
 - **History:** commit documents before corresponding code in the required order. This task does not create commits or rewrite history.
+- **Rubric process exception:** core and optional implementation commits grouped multiple tickets, so one commit per ticket is not demonstrated. See [the root disclosure](../README.md#historical-process-exceptions); original history is preserved.
 
 
 ## Part D verification status
