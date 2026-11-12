@@ -24,17 +24,17 @@ The approved English paths are `docs/design/brand-board.html` and `docs/INITIAL-
 
 ## Implementation and acceptance checkpoint
 
-The current checkpoint includes local Part C implementation and the automated portion of Part D. Read [verification](VERIFICACION.md) and [implementation audit](AUDITORIA.md) for actual local evidence. Student browser observations, live migration/RLS tests and final acceptance remain pending.
+The current checkpoint includes local Part C implementation, automated Part D checks and three student verification batches dated November 11, 2026, using Opera locally. Read [verification](VERIFICACION.md) and [the latest audit checkpoint](AUDITORIA.md#student-verification-batch-3--november-11-2026) for reported outcomes and remaining evidence limits. All AC01–30 rows have student results; this does not independently certify unreported subcases.
 
-- **A:** retain `docs/INITIAL-STATE.md` as the initial-state audit. Its creation was not performed in plan mode; do not claim otherwise. Audit the harness separately, including the required importing `CLAUDE.md` if missing.
+- **A:** retain `docs/INITIAL-STATE.md` as the initial-state audit. Its creation was not performed in plan mode; do not claim otherwise. CLAUDE.md imports AGENTS.md; the local review gate is activated, and formatter execution/trust limits are documented separately.
 - **C:** E2 implementation is present by ticket; apply any unapplied migrations 001–004 in order before live acceptance; do not replay already-applied migrations.
-- **D:** Vitest/domain/service/DOM tests and service-only access are implemented; live RLS and browser verification remain pending.
-- **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` now record planned manual checks and actual local evidence. The student must still fill the browser “actual result” column.
+- **D:** Vitest/domain/service/DOM tests and service-only access are implemented; student reports include browser flows, user/anonymous isolation and direct-write checks. Agent checks remain distinct from student observations.
+- **D:** `docs/VERIFICACION.md` and `docs/AUDITORIA.md` record the student's results, Narrator on Windows, reported contrast ratios and any unreported details.
 - **History:** commit documents before corresponding code in the required order. This task does not create commits or rewrite history.
 
 
 ## Part D verification status
 
-The [current Part D audit](AUDITORIA.md#part-d--quality-and-verification-current-checkpoint) checks all seven mandatory quality/verification requirements and all E2/design criteria. Local domain tests, TypeScript/service boundaries, credential-pattern scan, build, lint and isolated SQL regression pass. The student reports browser workflows checked, but detailed actual-result cells and two-account isolation remain pending. The literal early Git sequence does not meet the requested order because the first PRD predates the initial-state audit; later E2/optional specs correctly precede their code. History is retained without rewriting it.
+The [earlier Part D audit](AUDITORIA.md#part-d--quality-and-verification-current-checkpoint) records the seven quality requirements and automated baseline. The [latest student checkpoint](AUDITORIA.md#student-verification-batch-3--november-11-2026) supersedes earlier missing-results statements: all worksheet criteria have reported outcomes, including isolation, completion retries, Narrator and two contrast measurements. Specific unreported subcases remain identified. The literal early Git sequence does not meet the requested order because the first PRD predates the initial-state audit; later E2/optional specs correctly precede their code. History is retained without rewriting it.
 
 Independent adversarial review is an additional selected development bonus: [spec](specs/adversarial-review.md), E2-US10 / AC31–33 / T12. The original four product optionals remain selected. Its results are recorded separately from the earlier Part D checkpoint; local review does not complete pending student/live acceptance.

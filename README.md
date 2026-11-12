@@ -43,7 +43,7 @@ Tests type-check their sources and use mocked network/authentication boundaries;
 
 Sign in and choose Movie Night. Enter 30–600 whole minutes, choose Find movies, then select pending movies with known durations. The summary includes a 10-minute break only between movies. Give the plan a name and save it; Saved Nights lists your saved plans newest first. Their contents cannot be edited; owners can delete a plan from its detail page after confirmation. Saving does not change the movies’ viewing status. A changed duration or collection entry requires review before saving. Reloading, signing out, or leaving the planner discards an unsaved draft.
 
-See [E2 verification](docs/VERIFICACION.md) and [E2 implementation audit](docs/AUDITORIA.md) for automated evidence and pending live/browser checks.
+See [E2 verification](docs/VERIFICACION.md) and [E2 implementation audit](docs/AUDITORIA.md) for automated evidence, the student's dated browser/security results and remaining evidence limits.
 
 ## Documentation and delivery
 
@@ -53,6 +53,15 @@ See [E2 verification](docs/VERIFICACION.md) and [E2 implementation audit](docs/A
 - [Database setup, duplicate review and two-account isolation checks](supabase/README.md)
 
 Screenshots and a published-app link have not been collected. No production deployment is claimed. Navigation currently uses in-memory views; refresh returns to Search. Local date filters follow the browser timezone.
+
+### Historical process exceptions
+
+Two assignment process requirements were missed during the initial documentation work:
+
+- The initial-state audit was not written in plan mode.
+- The first PRD was committed together with the harness in `7ba6971`, before the initial-state audit in `3768c52`. Backlog and specifications first appeared together in `e3a0b7e`, so the literal requested document-by-document commit sequence is not fully demonstrated.
+
+These were unintentional mistakes identified during review. Later E2 and selected optional-feature specifications precede their implementation, but that does not retroactively satisfy the earlier process requirements. The original history is preserved. See [the audit's D-07 record](docs/AUDITORIA.md#mandatory-part-d-requirements) and [documentation status](docs/README.md) for evidence and current verification results.
 
 
 ## Independent review before commits

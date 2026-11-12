@@ -1,5 +1,66 @@
 # E2 — Implementation audit
 
+## Student verification batch 3 — November 11, 2026
+
+Latest student-evidence checkpoint: **Opera, local application, November 11, 2026**. [Batch 3](VERIFICACION.md#student-batch-3--november-11-2026) supplements the preceding reports; E3-AC30 maps to E2-AC30. Earlier tables are historical wherever superseded. Evidence remains student testimony, not independently executed agent browser/security/contrast checks.
+
+| Criterion | Status | Evidence / limits |
+| --- | --- | --- |
+| E2-AC29 | meets for student-reported cancellation, isolation, retry and progress behavior | Together with batch 2: cancellation succeeds, foreign/anonymous completion blocked, retries work, direct update/insert attempts denied, deletion does not revert progress. Payloads and repeated-completion steps not individually specified; direct insert denial is not a claim that valid owner saves are blocked. |
+| E2-AC30 / E2-F04 | meets for reported draft/feedback behavior | Student confirms draft retention on cancellation/no fit/load failure, warning preserving the save button and clearing feedback after editing. Conflicting-action locking has automated evidence; not individually described in this browser report. |
+| DES-05 | meets on student-reported Narrator check | Batch 2's successful reasons/announcements were tested with Microsoft Narrator on Windows, as clarified in batch 3. |
+| DES-08 | meets for reported measured pairs; full-state contrast remains unverified | Student reports background/text 9.7:1 and background/accent 10.18:1. Exact colors/tool and other rendered control/focus/state pairs not supplied. Do not extend two reported ratios into an unconditional whole-interface compliance claim. |
+| D-05 | meets for recorded student outcome worksheet | All AC01–30 and design rows now contain student outcomes across three dated batches. Specific unreported subcases and evidence limits remain visible; this does not certify every full acceptance criterion or erase historical process deviations. |
+
+No application code or live data changes. The student's results complete the previously empty AC30 row and supplement AC29/DES-05/DES-08. No commit is created by recording them.
+
+## Student verification batch 2 — November 11, 2026
+
+Latest student-evidence update: Opera, local application, test date November 11, 2026. [Batch 2 observations](VERIFICACION.md#student-batch-2--november-11-2026) supersede older pending statements for the reported checks. E2-A IDs were normalized to E2-AC. Evidence is the student's written report, not independent agent browser/database execution; no attachments, HTTP responses, tool names or contrast ratios were supplied.
+
+| Criterion | Status | Evidence / limits |
+| --- | --- | --- |
+| E2-AC05 | meets | Student confirms unavailable runtime reason and blocked addition; existing automated tests supply additional edge coverage. |
+| E2-AC06 | meets | Student confirms successful retry survives older progress updates; automated stale-response regressions also pass. |
+| E2-AC16 | meets for reported one-write/no-duplicate behavior | Student confirms a single write without duplicate session; lost-response/source-review races have automated evidence but no individually reported browser outcomes. |
+| E2-AC21 | meets on student-reported isolation outcome | Student confirms anonymous denial and user separation. Per-operation HTTP/error/affected-row details not supplied; not an agent-certified exhaustive probe. |
+| E2-AC23 | meets on student-reported deletion/isolation outcome | Expected deletion and blocked foreign/anonymous requests reported. Cancellation/pending/error/retry not individually described; automated coverage remains separate. |
+| E2-AC28 | unverified for complete live criterion; rejection reported successful | Invalid-state rejection reported. Exact-fit direct acceptance and specific malformed/over-budget payload matrix not individually documented. |
+| E2-AC29 | unverified for complete criterion; cancellation reported successful | Completion failure/retry/idempotency, foreign/anonymous RPC, forged completion and post-deletion progress checks not individually reported. |
+| DES-05 | unverified for complete assistive-technology criterion; feedback reported successful | Reasons/announcements displayed correctly; screen reader/listening observation not specified. |
+| DES-06 | meets on student report | Nonessential movement removed while other elements remain. |
+| DES-08 | unverified for reproducible measured evidence; student reports contrast passed | Checker/tool, tested pairs and measured ratios not supplied. Success preserved without inventing measurements. |
+| E2-AC30 / E2-F04 | unverified in browser | No student result for safe replacement/no-fit/load-failure and save-label regression; automated evidence remains valid. |
+| D-05 | incomplete for remaining scenarios | Both batches entered; AC30 and unreported subcases remain visible. |
+
+No application code, live database or historical process claim changes with this update. Unreported details remain identified in the worksheet; already reported checks need not be repeated merely to fill it. Earlier checkpoint tables are historical where superseded here.
+
+## Student verification batch 1 — November 11, 2026
+
+This historical batch superseded earlier missing-results statements; batches 2 and 3 above supply subsequent evidence. Source: the student's written observations in this conversation, dated November 11, 2026, using Opera with the application running locally. Version/URL and attachments were not supplied. Results are entered in [VERIFICACION.md](VERIFICACION.md#student-batch-1--november-11-2026). Unreported details remain identified in the worksheet. No agent browser/live-database execution is implied.
+
+| Criteria | Current assessment | Evidence and limits |
+| --- | --- | --- |
+| E2-AC01/02/03/07/08/09/10/12/14 | meets for reported local workflows | Student reports authentication gate, valid input/eligibility, distinct empty explanations, correct metrics/exact-fit save, blocked overflow/duplicates and valid-name/nonempty save. Existing automated tests provide additional edge coverage. |
+| E2-AC04 | meets locally; browser tie cases unverified | Student confirms individual runtime fit. Deterministic runtime/title/identity ordering has automated evidence; browser tie cases were not individually reported. |
+| E2-AC11 | meets for reported removal behavior; focus observation unverified | Student confirms order preservation and recalculated breaks. Keyboard navigation is reported under DES-04; precise focus retention after removal is not stated. |
+| E2-AC13 | meets for clarified over-budget workflow | Initially reported Failed because remaining time was negative and saving blocked. Student then confirmed removal/increasing the budget worked. This is the required retained, correctable, unsavable over-budget draft, not a reproduced defect. Invalid-input edge cases additionally have automated coverage. |
+| E2-AC15 | partially verified; full live acceptance unverified | Student reports migration applied and listing/session unaltered. Applied filenames, complete save/reload/detail observation and unchanged viewing states are not individually documented. |
+| E2-AC17/18/19/20/22 | meets for reported local workflows | Student reports explicit confirmation of source changes, cross-session reuse without duplicates, newest-first paginated/empty history, preserved snapshot after removal, draft discard and normal E1 behavior. Existing automated tests cover additional races/boundaries. |
+| E2-AC24 | meets locally; browser failure path unverified | Student reports pages behave as intended; automated tests cover retained history and loading/error/exhaustion footer. Failure/retry was not individually described in the browser report. |
+| E2-AC25 | meets locally; additional browser edges unverified | Student reports valid automatic configurations; pure tests establish optimality/ties. Editable-unsaved and single/exact-fit browser observations not individually supplied. |
+| E2-AC26 | meets for reported genre/empty behavior | Student confirms filtering and explained empty matches. Draft preservation while changing genre remains an unreported browser subcase with automated coverage. |
+| E2-AC27 | partially verified; full live acceptance unverified | Student confirms movie-state update. Reload persistence, atomicity and preserved grade/comment/TV data were not individually observed in this batch. |
+| E2-AC05/06/16/30 and E2-F04 | meets local automated contract; browser cases unverified | Current passing suite includes unknown duration, partial retry/stale responses, pending/uncertain saves, safe replacement/no-fit/failure and Save Night label regression. No student results supplied for these scenarios. |
+| E2-AC21/23/28/29 | unverified for required deployed checks | No new direct A/B/anonymous isolation, deletion/error/retry, malformed direct insert, forged completion or completion recovery evidence supplied. Prior SQL/test definitions are not proof of current deployed enforcement. |
+| DES-01/02/07 | meets for reported local comparison/regression | Student reports consistent design and preserved workflows. |
+| DES-03/04 | partially verified; complete criterion unverified | Student reports responsive widths/zoom and keyboard navigation; exact required sizes/200% zoom, focus-retention observations and full label/focus inspection not specified. |
+| DES-05/06/08 | unverified | Broad optional DES-01–08 success describes features working on new pages. It does not establish screen-reader announcements, reduced-motion behavior or measured contrast ratios. |
+| Optional visual follow-up | unverified beyond general approval | Exact disabled field/button and Planned/pending/retry/Watched state observations not supplied. |
+| D-05 | incomplete; results now partially recorded | Dated student observations now populate both tables. Remaining scenario results and specific live/design checks stay pending instead of being inferred. |
+
+Automated checks rerun while recording this batch: all 113 tests across eight files passed, including test-source TypeScript checking; TypeScript/Vite production build passed. No application code changed. PostgreSQL tools were unavailable in this Windows environment during the recent review, so earlier isolated SQL results are historical evidence and were not rerun here. Historical plan-mode/commit-order exceptions remain unchanged. No files staged or committed by this update.
+
 ## Windows tooling repair — November 11, 2026
 
 This checkpoint supersedes earlier environment-specific activation claims for this Windows clone. The user authorized review-gate, hook and formatting repairs; no project commit, staging, history rewrite or live-service action was performed.
@@ -43,7 +104,7 @@ Review requests and full responses, including the failed proposal, are retained 
 
 ## Part D — Quality and verification, current checkpoint
 
-Verified November 11, 2026 against details2.md §1.4 D on commit d195929 (application code unchanged during this verification). English statuses **meets**, **does not meet**, and **unverified** correspond to cumple, no cumple, and sin verificar. This section supersedes earlier audit summaries for the current delivery; historical findings/evidence remain below.
+Verified November 11, 2026 against details2.md §1.4 D on commit d195929 (application code unchanged during this verification). English statuses **meets**, **does not meet**, and **unverified** correspond to cumple, no cumple, and sin verificar. This is the earlier automated checkpoint; the student batch 1 section above supersedes its statements about missing student observations. Historical findings/evidence remain below.
 
 **Conclusion: five of seven Part D requirements meet the locally verifiable contract. Two are incomplete: scenario-level student browser evidence, and the literal early commit ordering.** No new application defect was reproduced. Passing local tests does not certify the deployed Supabase instance, real TMDB integration or browser accessibility.
 
